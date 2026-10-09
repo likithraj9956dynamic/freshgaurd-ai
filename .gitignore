@@ -1,0 +1,40 @@
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Node & Build Outputs
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+**/dist/
+build/
+**/build/
+.vercel/
+**/.vercel/
+
+# Raw datasets (too large for git)
+data/raw/*.csv
+data/raw/*.zip
+data/processed/*.csv
+
+# Reports (generated)
+data/reports/*.json
+data/reports/*.txt
+
+# Open Food Facts cache
+data/off_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
