@@ -1,5 +1,6 @@
 // ============================================================
-// FreshGuard AI — Supplier Experience: Emergency Supply Requests
+// FreshGuard AI — Supplier Experience: Emergency Stock Requests
+// Enterprise Expedited Replenishment Directives
 // ============================================================
 
 import { useState } from 'react';
@@ -32,29 +33,35 @@ export function SupplierRequestsPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16">
       
-      {/* Header */}
-      <section className="relative rounded border border-[#C5A059]/30 bg-gradient-to-br from-[#0B3B2C]/80 via-[#071C16] to-[#041410] p-6 sm:p-8 shadow-2xl">
-        <div className="space-y-3 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-[#C5A059]/30 bg-[#0B3B2C]/60 text-xs font-mono text-[#E0C588]">
-            <AlertOctagon className="w-3.5 h-3.5 text-[#F87171]" />
-            <span>CASCADE FRESH DISTRIBUTORS · EXPEDITED REPLENISHMENT DIRECTIVES</span>
+      {/* Enterprise Header */}
+      <section className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200">
+              <AlertOctagon className="w-3.5 h-3.5 text-amber-700" />
+              <span>Cascade Fresh Distributors · Expedited Replenishment Directives</span>
+            </div>
+            <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
+              Emergency Stock Requests
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500">
+              High-priority stockout replenishment orders transmitted directly by FreshBasket Head Office Operations Directors to prevent critical shelf vacancies.
+            </p>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-editorial font-normal text-[#FDFBF7]">
-            Emergency Stock Requests
-          </h1>
-
-          <p className="text-xs sm:text-sm text-[#8E9B90] leading-relaxed">
-            High-priority stockout replenishment orders transmitted directly by FreshBasket Head Office Operations Directors to prevent critical shelf vacancies.
-          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500 font-mono">
+              Pending Authorization: <strong className="text-amber-700">1 Urgent</strong>
+            </span>
+          </div>
         </div>
       </section>
 
       {feedback && (
-        <div className="p-4 rounded border border-[#16A34A]/40 bg-[#16A34A]/15 text-[#4ADE80] text-xs flex items-center gap-2.5">
-          <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+        <div className="p-3.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2.5">
+          <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600" />
           <span>{feedback}</span>
         </div>
       )}
@@ -67,23 +74,23 @@ export function SupplierRequestsPage() {
           return (
             <div
               key={req.id}
-              className="royal-card p-6 sm:p-8 border-[#9E2A2B]/40 shadow-xl space-y-5"
+              className="bg-white rounded-lg p-6 border border-slate-200 shadow-sm space-y-5"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-3">
-                    <span className="font-mono text-base font-bold text-[#FDFBF7]">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="font-mono text-base font-bold text-slate-900">
                       {req.requestNumber}
                     </span>
-                    <span className="badge-royal-critical">
+                    <span className="inline-flex items-center text-[10px] font-semibold uppercase px-2.5 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200">
                       URGENCY: {req.urgency.toUpperCase()}
                     </span>
-                    <span className="text-xs text-[#8E9B90]">
-                      Target: <strong className="text-[#FDFBF7]">{req.storeName}</strong>
+                    <span className="text-xs text-slate-500">
+                      Target Store: <strong className="text-slate-800">{req.storeName}</strong>
                     </span>
                   </div>
-                  <p className="text-xs text-[#8E9B90]">
-                    Dispatched by: <strong className="text-[#FDFBF7]">{req.requestedBy}</strong> · {new Date(req.requestedAt).toLocaleString()}
+                  <p className="text-xs text-slate-500">
+                    Dispatched by: <strong className="text-slate-700">{req.requestedBy}</strong> · {new Date(req.requestedAt).toLocaleString()}
                   </p>
                 </div>
 
@@ -92,40 +99,40 @@ export function SupplierRequestsPage() {
                     <button
                       type="button"
                       onClick={() => handleAcceptRequest(req.id)}
-                      className="btn-royal-gold text-xs px-4 py-2.5 flex items-center gap-2"
+                      className="btn-primary text-xs px-4 py-2.5 flex items-center gap-2"
                     >
                       <Send className="w-3.5 h-3.5" />
                       <span>Accept &amp; Dispatch Hot-Shot Fleet</span>
                     </button>
                   ) : (
-                    <span className="inline-flex items-center gap-1.5 text-xs text-[#16A34A] font-semibold px-3 py-1.5 rounded border border-[#16A34A]/30 bg-[#16A34A]/10">
-                      <CheckCircle2 className="w-4 h-4" />
+                    <span className="inline-flex items-center gap-1.5 text-xs text-emerald-700 font-medium px-3 py-1.5 rounded border border-emerald-200 bg-emerald-50">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                       <span>Hot-Shot Dispatched · In Transit</span>
                     </span>
                   )}
                 </div>
               </div>
 
-              {/* Justification & Timeline */}
+              {/* Justification & Directive */}
               <div className="space-y-2">
-                <span className="text-[11px] font-mono text-[#C5A059] uppercase block">
+                <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide block">
                   Executive Operational Directive
                 </span>
-                <p className="text-xs text-[#8E9B90] leading-relaxed bg-[#071C16] p-4 rounded border border-white/5">
+                <p className="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3.5 rounded border border-slate-200">
                   {req.reason}
                 </p>
               </div>
 
               {/* Requested Products */}
               <div className="space-y-2">
-                <span className="text-[11px] font-mono text-[#C5A059] uppercase block">
+                <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide block">
                   Expedited SKUs Required
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {req.items.map((item, idx) => (
-                    <div key={idx} className="p-3.5 rounded border border-white/5 bg-[#071C16] flex items-center justify-between text-xs">
-                      <span className="font-medium text-[#FDFBF7]">{item.productName}</span>
-                      <span className="font-mono text-[#E0C588] font-bold">
+                    <div key={idx} className="p-3 rounded bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+                      <span className="font-medium text-slate-900">{item.productName}</span>
+                      <span className="font-mono text-emerald-700 font-bold">
                         {item.quantity} {item.unit}
                       </span>
                     </div>
@@ -133,9 +140,12 @@ export function SupplierRequestsPage() {
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[11px] text-[#8E9B90] font-mono">
-                <span>DEADLINE REQUIREMENT: {req.requiredBy}</span>
-                <span className="text-[#16A34A]">PRIORITY DOCK CLEARANCE GRANTED</span>
+              <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-500">
+                <span className="font-mono">REQUIREMENT DEADLINE: {req.requiredBy}</span>
+                <span className="text-emerald-700 font-medium flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Priority Dock Clearance Granted
+                </span>
               </div>
             </div>
           );

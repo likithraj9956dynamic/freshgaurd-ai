@@ -2,36 +2,43 @@
 // FreshGuard AI — Store Manager: Daily Floor Directives Ledger
 // ============================================================
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { STORE_MANAGER_TASKS } from '../../mocks/tasks';
 import type { StoreTask } from '../../types';
 import {
   ClipboardList,
   CheckCircle2,
-  Clock,
-  AlertCircle,
   ScanBarcode,
-  ArrowRight,
-  Filter,
-  CheckCheck
+  CheckCheck,
+  Check
 } from 'lucide-react';
 
 export function StoreTasksPage() {
   const [tasks, setTasks] = useState<StoreTask[]>(STORE_MANAGER_TASKS);
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   const advanceTask = (id: string) => {
     setTasks((prev) =>
       prev.map((t) => {
         if (t.id !== id) return t;
-        if (t.status === 'pending') return { ...t, status: 'acknowledged' as const };
-        if (t.status === 'acknowledged') return { ...t, status: 'in-progress' as const };
-        if (t.status === 'in-progress')
+        if (t.status === 'pending') {
+          setFeedback(`Directive "${t.title}" acknowledged.`);
+          return { ...t, status: 'acknowledged' as const };
+        }
+        if (t.status === 'acknowledged') {
+          setFeedback(`Directive "${t.title}" marked in-progress on floor.`);
+          return { ...t, status: 'in-progress' as const };
+        }
+        if (t.status === 'in-progress') {
+          setFeedback(`Directive "${t.title}" resolved and logged.`);
           return { ...t, status: 'completed' as const, completedAt: new Date().toISOString() };
+        }
         return t;
       })
     );
+    setTimeout(() => setFeedback(null), 3000);
   };
 
   const markAllUrgentCompleted = () => {
@@ -42,6 +49,8 @@ export function StoreTasksPage() {
           : t
       )
     );
+    setFeedback('All urgent directives marked resolved.');
+    setTimeout(() => setFeedback(null), 3000);
   };
 
   const pending = tasks.filter((t) => t.status !== 'completed');
@@ -54,192 +63,177 @@ export function StoreTasksPage() {
   });
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       
       {/* Header */}
-      <section className="relative rounded border border-[#C5A059]/30 bg-gradient-to-br from-[#0B3B2C]/80 via-[#071C16] to-[#041410] p-6 sm:p-8 shadow-2xl">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-3 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-[#C5A059]/30 bg-[#0B3B2C]/60 text-xs font-mono text-[#E0C588]">
-              <ClipboardList className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span>STORE 017 · FLOOR TASK EXECUTION DIRECTIVES</span>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl font-editorial font-normal text-[#FDFBF7]">
-              Daily Directives Ledger
-            </h1>
-
-            <p className="text-xs sm:text-sm text-[#8E9B90] leading-relaxed">
-              Operational floor commands dispatched from Head Office. Advance each action item through
-              <span className="text-[#FDFBF7] font-semibold"> Acknowledged → In-Progress → Completed</span> to log verified resolution back to the network.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={markAllUrgentCompleted}
-              className="btn-royal-outline text-xs px-4 py-2.5 flex items-center gap-2"
-            >
-              <CheckCheck className="w-4 h-4 text-[#16A34A]" />
-              <span>Resolve Urgent Tasks</span>
-            </button>
-            <Link
-              to="/store/product-lookup"
-              className="btn-royal-gold text-xs px-4 py-2.5 flex items-center gap-2"
-            >
-              <ScanBarcode className="w-4 h-4" />
-              <span>Scan Barcode</span>
-            </Link>
-          </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+            Daily Directives Ledger
+          </h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Store #017 (Tacoma Downtown) · Advance items through Acknowledged → In-Progress → Completed
+          </p>
         </div>
 
-        {/* Task Counter Matrix */}
-        <div className="grid grid-cols-3 gap-4 pt-6 max-w-md">
-          <div className="p-3 rounded border border-white/5 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">ASSIGNED</span>
-            <span className="text-xl font-editorial text-[#FDFBF7]">{tasks.length}</span>
-          </div>
-          <div className="p-3 rounded border border-white/5 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">ACTIVE PENDING</span>
-            <span className="text-xl font-editorial text-[#E0C588]">{pending.length}</span>
-          </div>
-          <div className="p-3 rounded border border-white/5 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">RESOLVED</span>
-            <span className="text-xl font-editorial text-[#16A34A]">{completed.length}</span>
-          </div>
-        </div>
-      </section>
-
-      {/* Filter Tabs */}
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setFilter('all')}
-            className={`text-xs px-3.5 py-1.5 rounded transition-all font-mono ${
-              filter === 'all'
-                ? 'bg-[#C5A059] text-[#041410] font-semibold'
-                : 'text-[#8E9B90] hover:text-[#FDFBF7] hover:bg-white/5'
-            }`}
+            onClick={markAllUrgentCompleted}
+            className="btn-secondary text-xs flex items-center gap-1.5"
           >
-            All Tasks ({tasks.length})
+            <CheckCheck className="w-3.5 h-3.5 text-emerald-700" />
+            <span>Resolve Urgent Tasks</span>
           </button>
-          <button
-            type="button"
-            onClick={() => setFilter('pending')}
-            className={`text-xs px-3.5 py-1.5 rounded transition-all font-mono ${
-              filter === 'pending'
-                ? 'bg-[#C5A059] text-[#041410] font-semibold'
-                : 'text-[#8E9B90] hover:text-[#FDFBF7] hover:bg-white/5'
-            }`}
+          <Link
+            to="/store/product-lookup"
+            className="btn-primary text-xs flex items-center gap-1.5"
           >
-            Pending Resolution ({pending.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilter('completed')}
-            className={`text-xs px-3.5 py-1.5 rounded transition-all font-mono ${
-              filter === 'completed'
-                ? 'bg-[#C5A059] text-[#041410] font-semibold'
-                : 'text-[#8E9B90] hover:text-[#FDFBF7] hover:bg-white/5'
-            }`}
-          >
-            Completed Archive ({completed.length})
-          </button>
+            <ScanBarcode className="w-3.5 h-3.5" />
+            <span>Scan Barcode</span>
+          </Link>
         </div>
-
-        <span className="text-[11px] font-mono text-[#8E9B90]">
-          DEMONSTRATION DIRECTIVES ACTIVE
-        </span>
       </div>
 
-      {/* Tasks List */}
-      <div className="space-y-4">
-        {displayedTasks.map((t) => {
-          const isDone = t.status === 'completed';
-          return (
-            <div
-              key={t.id}
-              className={`royal-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all ${
-                isDone ? 'opacity-70 border-white/5 bg-[#071C16]/50' : 'border-[#C5A059]/30'
-              }`}
-            >
-              <div className="space-y-2.5 max-w-3xl">
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <span
-                    className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded font-bold ${
-                      t.priority === 'urgent'
-                        ? 'bg-[#9E2A2B]/20 text-[#F87171] border border-[#9E2A2B]/40'
-                        : 'bg-[#C5A059]/20 text-[#E0C588] border border-[#C5A059]/30'
-                    }`}
-                  >
-                    {t.priority} PRIORITY
-                  </span>
-                  <span className="text-xs font-mono text-[#C5A059]">STORE #{t.storeId}</span>
-                  <span className="text-xs text-[#8E9B90]">
-                    Status:{' '}
-                    <strong
-                      className={`uppercase text-[10px] font-mono ${
-                        isDone ? 'text-[#16A34A]' : 'text-[#FDFBF7]'
-                      }`}
-                    >
-                      {t.status}
-                    </strong>
-                  </span>
-                  {t.completedAt && (
-                    <span className="text-[10px] font-mono text-[#16A34A]">
-                      ✓ Resolved at {new Date(t.completedAt).toLocaleTimeString()}
-                    </span>
-                  )}
-                </div>
+      {feedback && (
+        <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+          <span>{feedback}</span>
+        </div>
+      )}
 
-                <h2 className="text-xl font-editorial text-[#FDFBF7]">
-                  {t.title}
-                </h2>
+      {/* Task Summary Badges */}
+      <div className="grid grid-cols-3 gap-3 max-w-md">
+        <div className="bg-white p-3 rounded-md border border-slate-200 shadow-xs">
+          <span className="text-[11px] text-slate-500 block">Total Assigned</span>
+          <span className="text-xl font-bold text-slate-900">{tasks.length}</span>
+        </div>
+        <div className="bg-white p-3 rounded-md border border-slate-200 shadow-xs">
+          <span className="text-[11px] text-slate-500 block">Active Pending</span>
+          <span className="text-xl font-bold text-amber-700">{pending.length}</span>
+        </div>
+        <div className="bg-white p-3 rounded-md border border-slate-200 shadow-xs">
+          <span className="text-[11px] text-slate-500 block">Completed</span>
+          <span className="text-xl font-bold text-emerald-700">{completed.length}</span>
+        </div>
+      </div>
 
-                <p className="text-xs text-[#8E9B90] leading-relaxed">
-                  {t.instruction}
-                </p>
+      {/* Filter Tabs */}
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+        <button
+          type="button"
+          onClick={() => setFilter('all')}
+          className={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors ${
+            filter === 'all'
+              ? 'bg-[#164e3d] text-white'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+          }`}
+        >
+          All Tasks ({tasks.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setFilter('pending')}
+          className={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors ${
+            filter === 'pending'
+              ? 'bg-[#164e3d] text-white'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+          }`}
+        >
+          Pending Resolution ({pending.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setFilter('completed')}
+          className={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors ${
+            filter === 'completed'
+              ? 'bg-[#164e3d] text-white'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+          }`}
+        >
+          Completed Archive ({completed.length})
+        </button>
+      </div>
 
-                {t.affectedProducts.length > 0 && (
-                  <div className="text-xs text-[#8E9B90] pt-1">
-                    <span className="text-[#E0C588] font-mono text-[11px]">Affected SKUs: </span>
-                    <span className="text-[#FDFBF7]">{t.affectedProducts.join(', ')}</span>
-                  </div>
-                )}
+      {/* Tasks Table */}
+      <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="enterprise-table">
+            <thead>
+              <tr>
+                <th>Task Description</th>
+                <th>Priority</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th className="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {displayedTasks.map((t) => {
+                const isDone = t.status === 'completed';
+                const isUrgent = t.priority === 'urgent';
+                const isHigh = t.priority === 'high';
 
-                {t.evidence && t.evidence.length > 0 && (
-                  <div className="flex flex-wrap gap-2 pt-1 text-[11px]">
-                    {t.evidence.map((ev, idx) => (
-                      <span key={idx} className="px-2 py-0.5 rounded bg-white/5 text-[#8E9B90] font-mono">
-                        {ev.label}: <strong className="text-white">{ev.detail}</strong>
+                return (
+                  <tr key={t.id} className={isDone ? 'opacity-60 bg-slate-50/50' : ''}>
+                    <td>
+                      <div className="font-medium text-slate-900">{t.title}</div>
+                      <div className="text-xs text-slate-500">{t.instruction}</div>
+                      {t.affectedProducts.length > 0 && (
+                        <div className="text-[11px] text-slate-600 mt-1">
+                          <strong>Affected SKUs:</strong> {t.affectedProducts.join(', ')}
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold uppercase ${
+                          isUrgent
+                            ? 'bg-red-100 text-red-800 border border-red-200'
+                            : isHigh
+                            ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                            : 'bg-slate-100 text-slate-700 border border-slate-200'
+                        }`}
+                      >
+                        {t.priority}
                       </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="flex-shrink-0 flex items-center gap-3">
-                {!isDone ? (
-                  <button
-                    onClick={() => advanceTask(t.id)}
-                    className="btn-royal-gold text-xs px-4 py-2.5"
-                  >
-                    {t.status === 'pending' && 'Acknowledge Directive'}
-                    {t.status === 'acknowledged' && 'Commence Floor Work'}
-                    {t.status === 'in-progress' && 'Mark Completed ✓'}
-                  </button>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 text-xs text-[#16A34A] font-semibold px-3 py-1.5 rounded border border-[#16A34A]/30 bg-[#16A34A]/10">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>Completed</span>
-                  </span>
-                )}
-              </div>
-            </div>
-          );
-        })}
+                    </td>
+                    <td className="text-slate-600 font-mono text-xs whitespace-nowrap">
+                      12:00 Today
+                    </td>
+                    <td>
+                      <span className="capitalize text-xs text-slate-700">
+                        {t.status.replace('-', ' ')}
+                      </span>
+                      {t.completedAt && (
+                        <span className="block text-[10px] text-emerald-700 font-mono">
+                          {new Date(t.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      )}
+                    </td>
+                    <td className="text-right">
+                      {!isDone ? (
+                        <button
+                          type="button"
+                          onClick={() => advanceTask(t.id)}
+                          className="btn-primary text-xs px-2.5 py-1 whitespace-nowrap"
+                        >
+                          {t.status === 'pending' && 'Acknowledge'}
+                          {t.status === 'acknowledged' && 'Start Work'}
+                          {t.status === 'in-progress' && 'Mark Done ✓'}
+                        </button>
+                      ) : (
+                        <span className="text-emerald-700 font-medium text-xs inline-flex items-center gap-1">
+                          <Check className="w-3.5 h-3.5" /> Completed
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>

@@ -1,5 +1,6 @@
 // ============================================================
 // FreshGuard AI — Supplier Experience: Delivery Schedules & Fleet
+// Enterprise Fleet Logistics & Cold-Chain Telemetry Ledger
 // ============================================================
 
 import { useState } from 'react';
@@ -9,11 +10,13 @@ import {
   CalendarClock,
   Truck,
   CheckCircle2,
-  Clock,
   AlertTriangle,
   Thermometer,
   Navigation,
-  CheckCheck
+  CheckCheck,
+  Building2,
+  Clock,
+  ShieldCheck
 } from 'lucide-react';
 
 export function SupplierDeliveriesPage() {
@@ -44,54 +47,60 @@ export function SupplierDeliveriesPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16">
       
-      {/* Header */}
-      <section className="relative rounded border border-[#C5A059]/30 bg-gradient-to-br from-[#0B3B2C]/80 via-[#071C16] to-[#041410] p-6 sm:p-8 shadow-2xl">
-        <div className="space-y-3 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-[#C5A059]/30 bg-[#0B3B2C]/60 text-xs font-mono text-[#E0C588]">
-            <CalendarClock className="w-3.5 h-3.5 text-[#C5A059]" />
-            <span>CASCADE FRESH DISTRIBUTORS · FLEET DISPATCH &amp; TELEMETRY</span>
+      {/* Enterprise Header */}
+      <section className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+              <CalendarClock className="w-3.5 h-3.5 text-emerald-700" />
+              <span>Cascade Fresh Distributors · Fleet Logistics Ledger</span>
+            </div>
+            <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
+              Delivery Fleet Schedules & Telemetry
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500">
+              Real-time monitoring of refrigerated freight, driver manifests, carrier ETAs, and sensor telemetry across Pacific Northwest receiving docks.
+            </p>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-editorial font-normal text-[#FDFBF7]">
-            Delivery Fleet Schedules
-          </h1>
-
-          <p className="text-xs sm:text-sm text-[#8E9B90] leading-relaxed">
-            Real-time tracking of refrigerated delivery transport, carrier ETA timestamps, and cold-chain temperature telemetry across the Pacific Northwest retail network.
-          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500 font-mono">
+              Sensors Online: <strong className="text-emerald-700">8/8 Active</strong>
+            </span>
+          </div>
         </div>
 
-        {/* Fleet Metrics */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 max-w-2xl">
-          <div className="p-3.5 rounded border border-white/5 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">ACTIVE FLEET</span>
-            <span className="text-xl font-editorial text-[#FDFBF7]">8 Vehicles</span>
+        {/* Fleet Metrics Strip */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-5 mt-5 border-t border-slate-100">
+          <div className="p-3 rounded bg-slate-50 border border-slate-200">
+            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide block">Active Fleet</span>
+            <span className="text-xl font-bold text-slate-900 mt-0.5 block">8 Vehicles</span>
           </div>
-          <div className="p-3.5 rounded border border-[#9E2A2B]/40 bg-[#9E2A2B]/15">
-            <span className="text-[10px] font-mono text-[#F87171] block">ROUTE DELAYS</span>
-            <span className="text-xl font-editorial text-[#F87171]">1 Active (I-5)</span>
+          <div className="p-3 rounded bg-rose-50 border border-rose-200">
+            <span className="text-[11px] font-semibold text-rose-700 uppercase tracking-wide block">Transit Delays</span>
+            <span className="text-xl font-bold text-rose-800 mt-0.5 block">1 Active (I-5)</span>
           </div>
-          <div className="p-3.5 rounded border border-white/5 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">AVG COLD-CHAIN</span>
-            <span className="text-xl font-editorial text-[#16A34A]">3.1°C</span>
+          <div className="p-3 rounded bg-slate-50 border border-slate-200">
+            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide block">Avg Temperature</span>
+            <span className="text-xl font-bold text-emerald-700 mt-0.5 block">3.1°C (Optimal)</span>
           </div>
-          <div className="p-3.5 rounded border border-white/5 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">COMPLIANCE</span>
-            <span className="text-xl font-editorial text-[#E0C588]">100% Sensor Log</span>
+          <div className="p-3 rounded bg-slate-50 border border-slate-200">
+            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide block">Compliance Audit</span>
+            <span className="text-xl font-bold text-slate-900 mt-0.5 block">100% Sensor Log</span>
           </div>
         </div>
       </section>
 
       {feedback && (
-        <div className="p-4 rounded border border-[#16A34A]/40 bg-[#16A34A]/15 text-[#4ADE80] text-xs flex items-center gap-2.5">
-          <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+        <div className="p-3.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2.5">
+          <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600" />
           <span>{feedback}</span>
         </div>
       )}
 
-      {/* Fleet Deliveries Grid */}
+      {/* Fleet Deliveries List */}
       <div className="space-y-4">
         {orders.map((po) => {
           const isDelivered = po.status === 'delivered';
@@ -100,25 +109,27 @@ export function SupplierDeliveriesPage() {
           return (
             <div
               key={po.id}
-              className={`royal-card p-6 space-y-4 transition-all ${
-                isDelayed ? 'border-[#9E2A2B]/40' : 'border-[#C5A059]/25'
+              className={`bg-white rounded-lg p-5 border shadow-sm space-y-4 transition-all ${
+                isDelayed ? 'border-rose-300 ring-1 ring-rose-200' : 'border-slate-200'
               }`}
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-white/5">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-slate-100">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2.5">
-                    <span className="font-mono text-sm font-bold text-[#FDFBF7]">{po.orderNumber}</span>
-                    <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded font-bold ${
-                      isDelayed ? 'bg-[#9E2A2B]/30 text-[#F87171] border border-[#9E2A2B]/50' :
-                      isDelivered ? 'bg-[#16A34A]/20 text-[#4ADE80]' :
-                      'bg-[#C5A059]/20 text-[#E0C588]'
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <span className="font-mono text-sm font-bold text-slate-900">{po.orderNumber}</span>
+                    <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded border ${
+                      isDelayed ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                      isDelivered ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                      'bg-amber-50 text-amber-800 border-amber-200'
                     }`}>
                       {po.status.replace('_', ' ')}
                     </span>
-                    <span className="text-xs text-[#8E9B90]">→ Destination: <strong className="text-[#FDFBF7]">{po.storeName}</strong></span>
+                    <span className="text-xs text-slate-500">
+                      Destination Dock: <strong className="text-slate-800">{po.storeName}</strong>
+                    </span>
                   </div>
-                  <p className="text-xs text-[#8E9B90]">
-                    Vehicle: <strong className="text-[#FDFBF7]">{po.deliveryVehicleId || 'Pending Assignment'}</strong> · Driver: {po.driverName}
+                  <p className="text-xs text-slate-500">
+                    Carrier Vehicle: <strong className="text-slate-700">{po.deliveryVehicleId || 'Pending Assignment'}</strong> · Driver: {po.driverName}
                   </p>
                 </div>
 
@@ -127,7 +138,7 @@ export function SupplierDeliveriesPage() {
                     <button
                       type="button"
                       onClick={() => advanceDeliveryStatus(po.id)}
-                      className="btn-royal-gold text-xs px-4 py-2 flex items-center gap-1.5"
+                      className="btn-primary text-xs px-3.5 py-2 flex items-center gap-1.5"
                     >
                       <Navigation className="w-3.5 h-3.5" />
                       <span>
@@ -137,8 +148,8 @@ export function SupplierDeliveriesPage() {
                       </span>
                     </button>
                   ) : (
-                    <span className="inline-flex items-center gap-1.5 text-xs text-[#16A34A] font-semibold px-3 py-1.5 rounded border border-[#16A34A]/30 bg-[#16A34A]/10">
-                      <CheckCheck className="w-4 h-4" />
+                    <span className="inline-flex items-center gap-1.5 text-xs text-emerald-700 font-medium px-3 py-1.5 rounded border border-emerald-200 bg-emerald-50">
+                      <CheckCheck className="w-4 h-4 text-emerald-600" />
                       <span>Delivered &amp; Signed</span>
                     </span>
                   )}
@@ -146,28 +157,28 @@ export function SupplierDeliveriesPage() {
               </div>
 
               {/* Transit Details Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                <div className="p-3 rounded border border-white/5 bg-[#071C16]">
-                  <span className="text-[10px] font-mono text-[#8E9B90] block">EXPECTED ETA</span>
-                  <span className="font-mono text-[#FDFBF7] mt-0.5 block">{new Date(po.expectedDelivery).toLocaleString()}</span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div className="p-3 rounded bg-slate-50 border border-slate-200">
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide block">Scheduled Dock ETA</span>
+                  <span className="font-mono text-slate-800 font-medium mt-0.5 block">{new Date(po.expectedDelivery).toLocaleString()}</span>
                 </div>
-                <div className="p-3 rounded border border-white/5 bg-[#071C16]">
-                  <span className="text-[10px] font-mono text-[#8E9B90] block">COLD TELEMETRY</span>
-                  <span className="font-mono text-[#16A34A] mt-0.5 block flex items-center gap-1">
+                <div className="p-3 rounded bg-slate-50 border border-slate-200">
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide block">Refrigeration Sensor</span>
+                  <span className="font-mono text-emerald-700 font-medium mt-0.5 flex items-center gap-1">
                     <Thermometer className="w-3.5 h-3.5" />
-                    {po.temperatureLog || '3.2°C (Optimal)'}
+                    {po.temperatureLog || '3.2°C (Compliant)'}
                   </span>
                 </div>
-                <div className="p-3 rounded border border-white/5 bg-[#071C16]">
-                  <span className="text-[10px] font-mono text-[#8E9B90] block">LOAD MANIFEST</span>
-                  <span className="font-mono text-[#E0C588] mt-0.5 block">{po.totalUnits} Units · ${po.totalValue.toFixed(2)}</span>
+                <div className="p-3 rounded bg-slate-50 border border-slate-200">
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide block">Manifest Payload</span>
+                  <span className="font-mono text-slate-800 font-medium mt-0.5 block">{po.totalUnits} Units · ${po.totalValue.toFixed(2)}</span>
                 </div>
               </div>
 
               {isDelayed && (
-                <div className="p-3 rounded border border-[#9E2A2B]/40 bg-[#9E2A2B]/10 text-xs text-[#8E9B90] flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-[#F87171] flex-shrink-0" />
-                  <span>Freight transit delay logged on I-5 corridor. FreshBasket Store 017 notified.</span>
+                <div className="p-3 rounded bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-rose-600 flex-shrink-0" />
+                  <span>Freight transit delay logged on I-5 corridor. FreshBasket Store 017 dock master notified.</span>
                 </div>
               )}
             </div>

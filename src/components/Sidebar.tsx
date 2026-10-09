@@ -1,22 +1,19 @@
 // ============================================================
-// FreshGuard AI — Role-Adaptive Royal Sidebar
+// FreshGuard AI — Enterprise Sidebar Navigation
 // ============================================================
 
 import React from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
-  Compass,
+  LayoutDashboard,
   Store,
   Search,
   Scale,
   CheckCircle2,
-  Smartphone,
   Sliders,
   Menu,
   X,
-  ShieldAlert,
-  Crown,
   ScanBarcode,
   PackageCheck,
   Truck,
@@ -25,50 +22,50 @@ import {
   LogOut,
   CalendarClock,
   Layers,
-  Flame
+  Flame,
+  ShieldCheck
 } from 'lucide-react';
 
 export function Sidebar({ location }: { location: ReturnType<typeof useLocation> }) {
   const { user, role, logout } = useAuth();
-  const navigate = useNavigate();
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
 
   React.useEffect(() => {
     setIsMobileOpen(false);
   }, [location]);
 
-  // Build navigation items based on active authenticated role
+  // Clean, predictable enterprise navigation items
   const getNavItems = () => {
     if (role === 'store_manager') {
       return [
-        { path: '/store', label: 'Store Command', subtitle: 'Branch #017 overview', icon: Store, exact: true },
-        { path: '/store/tasks', label: 'Daily Directives', subtitle: 'Priority floor tasks', icon: ClipboardList },
-        { path: '/store/inventory', label: 'Inventory & Expiry', subtitle: 'Stockouts & shelf-life', icon: Layers },
-        { path: '/store/alerts', label: 'Wastage & Spoilage', subtitle: 'Shrinkage & advisories', icon: Flame },
-        { path: '/store/deliveries', label: 'Incoming Deliveries', subtitle: 'Supplier dock ETA', icon: Truck },
-        { path: '/store/product-lookup', label: 'Barcode Registry', subtitle: 'Open Food Facts check', icon: ScanBarcode },
+        { path: '/store', label: 'Store Overview', subtitle: 'Branch #017 summary', icon: LayoutDashboard, exact: true },
+        { path: '/store/tasks', label: 'Daily Tasks', subtitle: 'Priority floor directives', icon: ClipboardList },
+        { path: '/store/inventory', label: 'Inventory & Expiry', subtitle: 'Stockouts & shelf life', icon: Layers },
+        { path: '/store/alerts', label: 'Wastage & Spoilage', subtitle: 'Shrinkage logs', icon: Flame },
+        { path: '/store/deliveries', label: 'Incoming Deliveries', subtitle: 'Carrier dock intake', icon: Truck },
+        { path: '/store/product-lookup', label: 'Product Registry', subtitle: 'Barcode audit', icon: ScanBarcode },
       ];
     }
 
     if (role === 'supplier') {
       return [
-        { path: '/supplier', label: 'Dispatch Hub', subtitle: 'Cascade Fresh operations', icon: Truck, exact: true },
-        { path: '/supplier/orders', label: 'Purchase Orders', subtitle: 'Order confirmation & lines', icon: PackageCheck },
-        { path: '/supplier/deliveries', label: 'Delivery Schedules', subtitle: 'Fleet status & cold-chain', icon: CalendarClock },
-        { path: '/supplier/requests', label: 'Emergency Stock', subtitle: 'Expedited supply requests', icon: AlertOctagon },
+        { path: '/supplier', label: 'Logistics Overview', subtitle: 'Fulfillment summary', icon: LayoutDashboard, exact: true },
+        { path: '/supplier/orders', label: 'Purchase Orders', subtitle: 'Order confirmations', icon: PackageCheck },
+        { path: '/supplier/deliveries', label: 'Delivery Schedules', subtitle: 'Fleet tracking & ETAs', icon: CalendarClock },
+        { path: '/supplier/requests', label: 'Emergency Requests', subtitle: 'Expedited stock', icon: AlertOctagon },
       ];
     }
 
-    // Default: Main Manager (Network-wide executive scope)
+    // Default: Main Manager
     return [
-      { path: '/manager', label: 'Command Centre', subtitle: 'Executive briefing (12 Stores)', icon: Compass, exact: true },
-      { path: '/manager/network', label: 'Store Network', subtitle: 'Constellation & transfers', icon: Store },
-      { path: '/manager/stores/1012', label: 'Store 017 Dossier', subtitle: 'Featured investigation', icon: ShieldAlert },
-      { path: '/manager/investigations', label: 'Investigation Room', subtitle: 'Causal graph & evidence', icon: Search },
-      { path: '/manager/decisions', label: 'Decision Chamber', subtitle: 'Strategy simulation & risk', icon: Scale },
-      { path: '/manager/actions', label: 'Action Centre', subtitle: 'Approval governance ledger', icon: CheckCircle2 },
-      { path: '/manager/product-lookup', label: 'Product Registry', subtitle: 'Barcode telemetry', icon: ScanBarcode },
-      { path: '/manager/settings', label: 'Settings', subtitle: 'System & AI credentials', icon: Sliders },
+      { path: '/manager', label: 'Operations Overview', subtitle: 'Network executive summary', icon: LayoutDashboard, exact: true },
+      { path: '/manager/network', label: 'Store Network', subtitle: '12 regional branches', icon: Store },
+      { path: '/manager/stores/1012', label: 'Store 017 Dossier', subtitle: 'Detailed investigation', icon: ShieldCheck },
+      { path: '/manager/investigations', label: 'AI Investigations', subtitle: 'Causal root analysis', icon: Search },
+      { path: '/manager/decisions', label: 'Decision Chamber', subtitle: 'Strategy simulation', icon: Scale },
+      { path: '/manager/actions', label: 'Action Governance', subtitle: 'Approvals ledger', icon: CheckCircle2 },
+      { path: '/manager/product-lookup', label: 'Product Registry', subtitle: 'Barcode lookup', icon: ScanBarcode },
+      { path: '/manager/settings', label: 'System Settings', subtitle: 'Configurations & keys', icon: Sliders },
     ];
   };
 
@@ -77,13 +74,13 @@ export function Sidebar({ location }: { location: ReturnType<typeof useLocation>
   const getRoleBadge = () => {
     switch (role) {
       case 'main_manager':
-        return { label: 'MAIN MANAGER', sub: 'NETWORK HQ · 12 SITES', color: 'text-[#C5A059]' };
+        return { label: 'Main Manager', sub: 'Network Operations HQ' };
       case 'store_manager':
-        return { label: 'STORE MANAGER', sub: 'BRANCH #017 · TACOMA', color: 'text-[#4ADE80]' };
+        return { label: 'Store Manager', sub: 'Branch #017 (Tacoma)' };
       case 'supplier':
-        return { label: 'SUPPLIER PARTNER', sub: 'CASCADE FRESH LOGISTICS', color: 'text-[#60A5FA]' };
+        return { label: 'Supplier Partner', sub: 'Cascade Fresh Logistics' };
       default:
-        return { label: 'GUEST STAKEHOLDER', sub: 'AUTHENTICATION REQ', color: 'text-[#8E9B90]' };
+        return { label: 'User', sub: 'Operations' };
     }
   };
 
@@ -91,58 +88,53 @@ export function Sidebar({ location }: { location: ReturnType<typeof useLocation>
 
   return (
     <>
-      {/* Mobile Toggle */}
+      {/* Mobile Toggle Button */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 rounded border border-[#C5A059]/30 bg-[#071C16] text-[#FDFBF7]"
+        className="lg:hidden fixed top-3 left-3 z-50 p-2 rounded-md bg-[#0f2e24] text-white border border-emerald-800 shadow-md"
         onClick={() => setIsMobileOpen(!isMobileOpen)}
         aria-label="Toggle navigation"
       >
-        {isMobileOpen ? <X className="w-5 h-5 text-[#C5A059]" /> : <Menu className="w-5 h-5 text-[#C5A059]" />}
+        {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
-      {/* Royal Editorial Sidebar */}
+      {/* Enterprise Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-40 h-screen w-72 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col justify-between ${
+        className={`fixed top-0 left-0 z-40 h-screen w-64 transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col justify-between bg-[#0f2e24] text-slate-200 border-r border-[#164e3d] ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
-        style={{
-          backgroundColor: '#041410',
-          borderRight: '1px solid rgba(197, 160, 89, 0.18)',
-          boxShadow: '10px 0 30px rgba(0,0,0,0.4)',
-        }}
       >
-        {/* Header / Brand */}
-        <div className="overflow-y-auto app-scrollbar">
-          <div className="px-6 pt-7 pb-6 border-b border-[#C5A059]/15">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded border border-[#C5A059]/40 bg-[#0B3B2C] flex items-center justify-center shadow-inner">
-                <Crown className="w-5 h-5 text-[#C5A059]" />
+        {/* Brand & Role Header */}
+        <div>
+          <div className="p-5 border-b border-[#1b5e4b]/40">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-md bg-[#164e3d] border border-emerald-600/40 flex items-center justify-center text-white font-bold text-xs">
+                FG
               </div>
-              <div>
-                <span className="font-cinzel text-sm font-bold tracking-wider text-[#FDFBF7] block">
-                  FRESHGUARD
+              <div className="min-w-0">
+                <span className="text-sm font-semibold tracking-tight text-white block">
+                  FreshGuard AI
                 </span>
-                <span className="text-[10px] font-mono tracking-widest text-[#C5A059] uppercase block mt-0.5">
-                  OPERATIONS PLATFORM
+                <span className="text-[11px] text-emerald-300/80 font-mono block">
+                  Retail Operations
                 </span>
               </div>
             </div>
 
-            {/* Role Scoped Status Chip */}
-            <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[11px]">
-              <span className={`font-mono text-[10px] font-bold tracking-wider ${badgeInfo.color}`}>
-                {badgeInfo.label}
-              </span>
-              <span className="inline-flex items-center gap-1.5 text-[#E0C588] text-[10px] font-mono">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse"></span>
+            {/* Scope / Role Tag */}
+            <div className="mt-3.5 pt-3 border-t border-emerald-800/40 flex items-center justify-between text-xs">
+              <div className="min-w-0">
+                <p className="font-semibold text-white text-xs truncate">{badgeInfo.label}</p>
+                <p className="text-[11px] text-emerald-300/70 truncate">{badgeInfo.sub}</p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-900/80 text-emerald-300 border border-emerald-700/50">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                 ACTIVE
               </span>
             </div>
-            <p className="text-[10px] text-[#8E9B90] font-mono mt-0.5 truncate">{badgeInfo.sub}</p>
           </div>
 
           {/* Navigation Links */}
-          <nav className="mt-4 px-3 space-y-1">
+          <nav className="p-3 space-y-1 overflow-y-auto app-scrollbar max-h-[calc(100vh-210px)]">
             {navItems.map((item) => {
               const isActive = item.exact
                 ? location.pathname === item.path
@@ -152,70 +144,49 @@ export function Sidebar({ location }: { location: ReturnType<typeof useLocation>
                 <NavLink
                   key={item.path}
                   to={item.path}
-                  className={`group flex items-center gap-3.5 px-3.5 py-3 rounded text-left transition-all relative ${
+                  className={`flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
                     isActive
-                      ? 'bg-gradient-to-r from-[#0B3B2C]/80 to-[#071C16]/60 border border-[#C5A059]/30 text-[#FDFBF7]'
-                      : 'text-[#8E9B90] hover:text-[#FDFBF7] hover:bg-white/[0.03] border border-transparent'
+                      ? 'bg-[#1b5e4b] text-white shadow-sm'
+                      : 'text-slate-300 hover:text-white hover:bg-white/[0.06]'
                   }`}
                   onClick={() => setIsMobileOpen(false)}
                 >
                   <Icon
-                    className={`w-4 h-4 flex-shrink-0 transition-colors ${
-                      isActive ? 'text-[#C5A059]' : 'text-[#8E9B90] group-hover:text-[#C5A059]'
+                    className={`w-4 h-4 flex-shrink-0 ${
+                      isActive ? 'text-emerald-300' : 'text-slate-400'
                     }`}
                   />
-                  <div className="min-w-0">
-                    <p className={`text-xs font-medium tracking-wide ${isActive ? 'text-[#FDFBF7]' : 'text-[#D0CDC5]'}`}>
-                      {item.label}
-                    </p>
-                    <p className="text-[10px] text-[#8E9B90] truncate leading-tight mt-0.5">
-                      {item.subtitle}
-                    </p>
-                  </div>
-                  {isActive && (
-                    <div className="absolute right-2 w-1.5 h-1.5 rounded-full bg-[#C5A059]" />
-                  )}
+                  <span className="truncate">{item.label}</span>
                 </NavLink>
               );
             })}
           </nav>
         </div>
 
-        {/* Footer: User Profile & Logout */}
-        <div className="p-4 mx-3 mb-4 rounded border border-[#C5A059]/20 bg-[#071C16]/80 text-[#8E9B90] space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded border border-[#C5A059]/40 bg-[#0B3B2C] flex items-center justify-center text-[11px] font-cinzel text-[#C5A059] font-bold flex-shrink-0">
-                {user?.avatar || 'FG'}
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-[#FDFBF7] truncate">{user?.name || 'Authorized User'}</p>
-                <p className="text-[10px] text-[#8E9B90] truncate">{user?.title || 'Stakeholder'}</p>
-              </div>
+        {/* User Profile & Sign Out Footer */}
+        <div className="p-3.5 border-t border-[#1b5e4b]/40 bg-[#0c261e]">
+          <div className="flex items-center justify-between gap-2">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-white truncate">{user?.name || 'Operator'}</p>
+              <p className="text-[11px] text-slate-400 truncate">{user?.email || 'Authenticated'}</p>
             </div>
-
             <button
               type="button"
               onClick={logout}
-              className="p-1.5 rounded border border-white/10 hover:border-[#9E2A2B]/60 hover:bg-[#9E2A2B]/20 text-[#8E9B90] hover:text-[#F87171] transition-colors"
-              title="Sign out of FreshGuard"
+              className="p-1.5 rounded-md text-slate-400 hover:text-red-300 hover:bg-red-950/40 border border-transparent hover:border-red-900/50 transition-colors"
+              title="Sign Out"
               aria-label="Sign out"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-4 h-4" />
             </button>
-          </div>
-
-          <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-[#8E9B90]/80">
-            <span>DATA ISOLATION</span>
-            <span className="text-[#16A34A]">ENFORCED</span>
           </div>
         </div>
       </aside>
 
-      {/* Mobile backdrop */}
+      {/* Mobile Backdrop */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/70 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-30 bg-black/50 backdrop-blur-xs lg:hidden"
           onClick={() => setIsMobileOpen(false)}
         />
       )}

@@ -148,64 +148,58 @@ export function ProductLookupPage() {
   };
 
   return (
-    <div className="space-y-10 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16">
       
-      {/* ============================================================
-          HEADER: PRODUCT REGISTRY & BARCODE INTELLIGENCE
-          ============================================================ */}
-      <section className="relative rounded border border-[#C5A059]/30 bg-gradient-to-br from-[#0B3B2C]/70 to-[#041410] p-8 sm:p-10 shadow-2xl">
-        <div className="max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-[#C5A059]/30 bg-[#0B3B2C]/50">
-            <ScanBarcode className="w-3.5 h-3.5 text-[#C5A059]" />
-            <span className="text-[11px] font-mono tracking-widest text-[#E0C588] uppercase">
-              OPEN FOOD FACTS API v2 · LIVE TELEMETRY
-            </span>
+      {/* Enterprise Header */}
+      <section className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+        <div className="max-w-3xl space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+            <ScanBarcode className="w-3.5 h-3.5 text-emerald-700" />
+            <span>Open Food Facts API v2 · Live Telemetry Registry</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-editorial font-normal text-[#FDFBF7]">
-            Product Intelligence & Barcode Registry
+          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
+            Product Intelligence &amp; Barcode Registry
           </h1>
 
-          <p className="text-sm sm:text-base text-[#8E9B90] font-light leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
             Direct read-only integration with the Open Food Facts global food database.
             Query barcodes (EAN, UPC, GTIN) to inspect registered formulations, ingredient lists,
             verified nutritional matrices, and regulatory categorisation without modifying core inventory state.
           </p>
 
-          <div className="pt-2 flex flex-wrap items-center gap-4 text-xs font-mono text-[#C5A059]">
+          <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500 font-mono">
             <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse"></span>
+              <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
               API STATUS: ONLINE
             </span>
-            <span className="text-white/20">|</span>
-            <span className="text-[#8E9B90]">
+            <span className="text-slate-300">|</span>
+            <span>
               ENDPOINT: world.openfoodfacts.org/api/v2
             </span>
-            <span className="text-white/20">|</span>
-            <span className="text-[#8E9B90]">
+            <span className="text-slate-300">|</span>
+            <span>
               LICENSE: ODbL / DbCL
             </span>
           </div>
         </div>
       </section>
 
-      {/* ============================================================
-          SEARCH CONTROLS & SAMPLE BARCODES
-          ============================================================ */}
-      <div className="royal-card p-6 sm:p-8 space-y-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Search Controls & Sample Barcodes */}
+      <div className="bg-white rounded-lg p-6 border border-slate-200 shadow-sm space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <label htmlFor="barcode-input" className="block">
-            <span className="text-xs font-mono tracking-wider text-[#C5A059] uppercase block mb-1.5">
+            <span className="text-xs font-semibold text-slate-700 uppercase tracking-wide block mb-1">
               Enter or Scan Product Barcode
             </span>
-            <span className="text-xs text-[#8E9B90] block">
+            <span className="text-xs text-slate-500 block">
               Supports 8 to 14-digit numeric barcodes (EAN-8, UPC-12, EAN-13, GTIN-14)
             </span>
           </label>
 
           <div className="flex flex-col sm:flex-row items-stretch gap-3">
             <div className="relative flex-1">
-              <ScanBarcode className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#C5A059]/70" />
+              <ScanBarcode className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 id="barcode-input"
                 type="text"
@@ -213,13 +207,13 @@ export function ProductLookupPage() {
                 value={inputBarcode}
                 onChange={(e) => setInputBarcode(e.target.value)}
                 disabled={isLoading}
-                className="w-full rounded text-sm font-mono pl-10 pr-10 py-3 bg-[#071C16] text-[#FDFBF7] border border-[#C5A059]/30 focus:border-[#C5A059] focus:outline-none transition-colors placeholder:text-[#8E9B90]/50"
+                className="w-full rounded-md text-xs font-mono pl-10 pr-10 py-2.5 bg-white text-slate-900 border border-slate-300 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none transition-colors placeholder:text-slate-400"
               />
               {inputBarcode && (
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#8E9B90] hover:text-[#FDFBF7]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600"
                   title="Clear input"
                 >
                   <X className="w-4 h-4" />
@@ -230,16 +224,16 @@ export function ProductLookupPage() {
             <button
               type="submit"
               disabled={isLoading || !inputBarcode.trim()}
-              className="btn-royal-gold px-7 py-3 text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary px-5 py-2.5 text-xs flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                   <span>Querying Registry...</span>
                 </>
               ) : (
                 <>
-                  <Search className="w-4 h-4" />
+                  <Search className="w-3.5 h-3.5" />
                   <span>Verify Barcode</span>
                 </>
               )}
@@ -248,8 +242,8 @@ export function ProductLookupPage() {
         </form>
 
         {/* Quick Sample Selector */}
-        <div className="pt-4 border-t border-white/5 space-y-2.5">
-          <span className="text-[11px] font-mono tracking-wider text-[#8E9B90] uppercase block">
+        <div className="pt-3 border-t border-slate-100 space-y-2">
+          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide block">
             Quick Test Barcodes (Live Open Food Facts Data):
           </span>
           <div className="flex flex-wrap gap-2">
@@ -258,14 +252,14 @@ export function ProductLookupPage() {
                 key={s.barcode}
                 type="button"
                 onClick={() => handleSelectSample(s.barcode)}
-                className={`text-xs px-3 py-1.5 rounded border transition-colors flex items-center gap-2 ${
+                className={`text-xs px-2.5 py-1.5 rounded-md border transition-colors flex items-center gap-1.5 ${
                   inputBarcode === s.barcode
-                    ? 'border-[#C5A059] bg-[#0B3B2C] text-[#FDFBF7]'
-                    : 'border-white/10 bg-[#071C16] text-[#8E9B90] hover:text-[#FDFBF7] hover:border-[#C5A059]/40'
+                    ? 'border-emerald-600 bg-emerald-50 text-emerald-900 font-medium ring-1 ring-emerald-600'
+                    : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
                 }`}
               >
-                <span className="font-mono text-[#E0C588]">{s.barcode}</span>
-                <span className="text-white/40">·</span>
+                <span className="font-mono font-medium text-emerald-700">{s.barcode}</span>
+                <span className="text-slate-300">·</span>
                 <span>{s.name}</span>
               </button>
             ))}

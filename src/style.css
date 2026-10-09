@@ -1,135 +1,223 @@
 /* ============================================================
-   FreshGuard AI — Royal Editorial Design System
-   Aesthetic: Luxurious, Cinematic, Royal, Editorial Operations
+   FreshGuard AI — Enterprise Operations Design System
+   Aesthetic: Clean, Formal, Accessible, Usable Retail Operations
    ============================================================ */
 
 @import "tailwindcss";
 
 @theme {
-  /* Royal Palette */
-  --color-emerald-deep: #06281e;
-  --color-emerald-royal: #0B3B2C;
-  --color-emerald-light: #125440;
-  
-  --color-forest-midnight: #041410;
-  --color-forest-dark: #071C16;
-  --color-forest-card: #0A241D;
-  --color-forest-elevated: #0E3027;
+  /* Enterprise Retail Palette */
+  --color-primary-900: #0f2e24;
+  --color-primary-800: #164e3d;
+  --color-primary-700: #1b5e4b;
+  --color-primary-600: #22765e;
+  --color-primary-100: #e6f4ef;
+  --color-primary-50: #f0f9f6;
 
-  --color-gold-antique: #C5A059;
-  --color-gold-light: #E0C588;
-  --color-gold-dark: #8C6F32;
-  --color-gold-glow: rgba(197, 160, 89, 0.15);
-
-  --color-ivory: #FDFBF7;
-  --color-ivory-dim: #E8E5DF;
-  --color-ivory-muted: #B8B5AD;
-  --color-sage-muted: #8E9B90;
-
-  --color-crimson-restrained: #9E2A2B;
-  --color-crimson-soft: rgba(158, 42, 43, 0.18);
-  --color-crimson-glow: rgba(158, 42, 43, 0.35);
+  --color-slate-900: #0f172a;
+  --color-slate-800: #1e293b;
+  --color-slate-700: #334155;
+  --color-slate-600: #475569;
+  --color-slate-500: #64748b;
+  --color-slate-400: #94a3b8;
+  --color-slate-300: #cbd5e1;
+  --color-slate-200: #e2e8f0;
+  --color-slate-100: #f1f5f9;
+  --color-slate-50: #f8fafc;
 
   /* Typography */
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
-  --font-cinzel: 'Cinzel', Georgia, serif;
-  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 :root {
-  --bg-midnight: #041410;
-  --bg-forest: #071C16;
-  --bg-card: #0A241D;
-  --bg-elevated: #0E3027;
-  --gold-primary: #C5A059;
-  --gold-subtle: rgba(197, 160, 89, 0.25);
-  --gold-glow: rgba(197, 160, 89, 0.08);
-  --ivory-white: #FDFBF7;
-  --ivory-dim: #E8E5DF;
-  --ivory-muted: #8E9B90;
-  --crimson-alert: #B83335;
-  --crimson-bg: rgba(184, 51, 53, 0.12);
+  --bg-app: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-sidebar: #0f2e24;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-subtle: #e2e8f0;
+  --primary-green: #164e3d;
+  --primary-hover: #113c2f;
+  --primary-light: #e6f4ef;
 }
 
 /* ============================================================
-   GLOBAL RESETS & EDITORIAL FOUNDATIONS
+   GLOBAL FOUNDATIONS & CLEAN ENTERPRISE RESETS
    ============================================================ */
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
 html, body {
-  background-color: var(--bg-midnight);
-  color: var(--ivory-white);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  font-family: var(--font-sans);
   min-height: 100vh;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Headings */
-h1, h2, h3, .font-editorial {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+/* Clean, standard headings (no serif or ornate styling) */
+h1, h2, h3, h4, h5, h6, .font-editorial, .font-cinzel {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+/* ============================================================
+   CLEAN ENTERPRISE CARDS & CONTAINERS
+   ============================================================ */
+.enterprise-card, .royal-card, .royal-card-highlight {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.enterprise-card:hover, .royal-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================================
+   ENTERPRISE BUTTONS
+   ============================================================ */
+.btn-primary, .btn-royal-gold {
+  background-color: #164e3d;
+  color: #ffffff;
+  font-family: var(--font-sans);
   font-weight: 500;
-  letter-spacing: -0.015em;
-  color: var(--ivory-white);
+  font-size: 0.8125rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.font-cinzel {
-  font-family: 'Cinzel', Georgia, serif;
-  letter-spacing: 0.1em;
+.btn-primary:hover, .btn-royal-gold:hover {
+  background-color: #113c2f;
 }
 
-/* Subtle Royal Borders */
-.border-gold-subtle {
-  border-color: rgba(197, 160, 89, 0.22);
+.btn-secondary, .btn-royal-outline {
+  background-color: #ffffff;
+  color: #334155;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.border-forest-subtle {
-  border-color: rgba(255, 255, 255, 0.07);
+.btn-secondary:hover, .btn-royal-outline:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
 }
 
-/* Editorial Glass Card */
-.royal-card {
-  background: linear-gradient(135deg, rgba(10, 36, 29, 0.75) 0%, rgba(7, 28, 22, 0.9) 100%);
-  border: 1px solid rgba(197, 160, 89, 0.18);
-  backdrop-filter: blur(12px);
-  border-radius: 4px; /* Crisp, architectural tailoring */
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+/* ============================================================
+   STATUS BADGES & TAGS
+   ============================================================ */
+.badge-fact, .badge-royal-fact {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
 }
 
-.royal-card:hover {
-  border-color: rgba(197, 160, 89, 0.38);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 1px 1px rgba(197, 160, 89, 0.15);
+.badge-hypothesis, .badge-royal-hypothesis {
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
 }
 
-.royal-card-highlight {
-  background: linear-gradient(135deg, rgba(14, 48, 39, 0.85) 0%, rgba(6, 40, 30, 0.95) 100%);
-  border: 1px solid rgba(197, 160, 89, 0.35);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(224, 197, 136, 0.2);
+.badge-critical, .badge-royal-critical {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
 }
 
-/* Editorial Dividers */
-.gold-separator {
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(197, 160, 89, 0.5) 50%, transparent 100%);
-  margin: 1.5rem 0;
-  border: none;
+.badge-success {
+  background-color: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
 }
 
-.gold-separator-left {
-  height: 1px;
-  background: linear-gradient(90deg, rgba(197, 160, 89, 0.6) 0%, rgba(197, 160, 89, 0.1) 80%, transparent 100%);
-  margin: 1.5rem 0;
-  border: none;
+/* ============================================================
+   TABLE STYLING
+   ============================================================ */
+.enterprise-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.8125rem;
 }
 
-/* Custom Scrollbars */
+.enterprise-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.enterprise-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.enterprise-table tr:hover td {
+  background-color: #f8fafc;
+}
+
+/* ============================================================
+   CLEAN APP SCROLLBARS
+   ============================================================ */
 .app-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(197, 160, 89, 0.25) transparent;
+  scrollbar-color: #cbd5e1 transparent;
 }
 
 .app-scrollbar::-webkit-scrollbar {
@@ -142,107 +230,10 @@ h1, h2, h3, .font-editorial {
 }
 
 .app-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(197, 160, 89, 0.25);
+  background: #cbd5e1;
   border-radius: 9999px;
 }
 
 .app-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(197, 160, 89, 0.45);
-}
-
-/* Image Vignette & Editorial Framing */
-.cinematic-vignette {
-  position: relative;
-  overflow: hidden;
-}
-
-.cinematic-vignette::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(4, 20, 16, 0.1) 0%, rgba(4, 20, 16, 0.85) 100%);
-  pointer-events: none;
-}
-
-/* Custom Badges */
-.badge-royal-fact {
-  background: rgba(197, 160, 89, 0.12);
-  color: #E0C588;
-  border: 1px solid rgba(197, 160, 89, 0.3);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0.15rem 0.5rem;
-  border-radius: 2px;
-}
-
-.badge-royal-hypothesis {
-  background: rgba(142, 155, 144, 0.12);
-  color: #B8C4BA;
-  border: 1px solid rgba(142, 155, 144, 0.25);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0.15rem 0.5rem;
-  border-radius: 2px;
-}
-
-.badge-royal-critical {
-  background: rgba(158, 42, 43, 0.2);
-  color: #F87171;
-  border: 1px solid rgba(220, 38, 38, 0.4);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0.15rem 0.5rem;
-  border-radius: 2px;
-}
-
-/* Buttons */
-.btn-royal-gold {
-  background: linear-gradient(135deg, #C5A059 0%, #A8843E 100%);
-  color: #041410;
-  font-weight: 600;
-  font-size: 0.8125rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 0.625rem 1.25rem;
-  border-radius: 3px;
-  box-shadow: 0 4px 15px rgba(197, 160, 89, 0.25);
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.btn-royal-gold:hover {
-  background: linear-gradient(135deg, #D4B26F 0%, #B89248 100%);
-  box-shadow: 0 6px 20px rgba(197, 160, 89, 0.4);
-  transform: translateY(-1px);
-}
-
-.btn-royal-outline {
-  background: rgba(7, 28, 22, 0.6);
-  color: var(--ivory-white);
-  border: 1px solid rgba(197, 160, 89, 0.35);
-  font-weight: 500;
-  font-size: 0.8125rem;
-  letter-spacing: 0.04em;
-  padding: 0.625rem 1.25rem;
-  border-radius: 3px;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.btn-royal-outline:hover {
-  border-color: rgba(197, 160, 89, 0.7);
-  background: rgba(10, 36, 29, 0.9);
-  color: #E0C588;
+  background: #94a3b8;
 }

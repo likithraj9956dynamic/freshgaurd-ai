@@ -1,53 +1,53 @@
 // ============================================================
-// FreshGuard AI — Role-Adaptive Royal TopBar
+// FreshGuard AI — Enterprise Top Navigation Bar
 // ============================================================
 
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Search, Bell, RefreshCw, Sparkles, Key, LogOut } from 'lucide-react';
+import { Search, Bell, RefreshCw, Sparkles, Key, UserCheck } from 'lucide-react';
 import { useAIStore } from '../services/ai-store';
 import { useAuth } from '../context/AuthContext';
 import { AnnouncementsModal } from './announcements/AnnouncementsModal';
 
-const pageTitles: Record<string, { title: string; category: string }> = {
+const pageMeta: Record<string, { title: string; category: string }> = {
   // Main Manager
-  '/': { title: 'Network Command Centre', category: 'Executive Operations Briefing' },
-  '/manager': { title: 'Network Command Centre', category: 'Executive Operations Briefing' },
-  '/manager/network': { title: 'Network Constellation', category: '12 Stores · Inventory Balancing' },
-  '/manager/stores/1012': { title: 'Store 017 Investigation', category: 'Tacoma Downtown · Critical Priority' },
-  '/manager/investigations': { title: 'Investigation Room', category: 'Causal Graph & Evidence Breakdown' },
-  '/manager/decisions': { title: 'Decision Chamber', category: 'Operational Strategies & What-If' },
-  '/manager/actions': { title: 'Action Centre', category: 'Human Approval & Execution Governance' },
+  '/': { title: 'Operations Overview', category: 'Executive Briefing' },
+  '/manager': { title: 'Operations Overview', category: 'Network Briefing' },
+  '/manager/network': { title: 'Store Network', category: '12 Regional Branches' },
+  '/manager/stores/1012': { title: 'Store 017 Investigation', category: 'Tacoma Downtown Branch' },
+  '/manager/investigations': { title: 'AI Investigations', category: 'Causal Root Analysis' },
+  '/manager/decisions': { title: 'Decision Chamber', category: 'Strategy Simulation' },
+  '/manager/actions': { title: 'Action Governance', category: 'Approvals Ledger' },
   '/manager/product-lookup': { title: 'Product Registry', category: 'Open Food Facts Telemetry' },
-  '/manager/settings': { title: 'System Settings', category: 'Model Parameters & Keys' },
+  '/manager/settings': { title: 'System Settings', category: 'Configurations & Model Keys' },
 
   // Store Manager
-  '/store': { title: 'Store 017 Command Centre', category: 'Tacoma Downtown Branch Operations' },
-  '/store/tasks': { title: 'Daily Floor Directives', category: 'Floor Task Execution Ledger' },
-  '/store/inventory': { title: 'Store Inventory & Expiry', category: 'Low Stock, OOS & Shelf-Life Surveillance' },
-  '/store/alerts': { title: 'Wastage & Spoilage Log', category: 'Shrinkage Prevention & Alerts' },
-  '/store/deliveries': { title: 'Dock Receiving & Deliveries', category: 'Supplier PO Inbound Schedules' },
-  '/store/product-lookup': { title: 'Floor Barcode Scanner', category: 'Open Food Facts Registry' },
+  '/store': { title: 'Store Overview', category: 'Branch #017 (Tacoma)' },
+  '/store/tasks': { title: 'Daily Tasks Ledger', category: 'Floor Directives' },
+  '/store/inventory': { title: 'Inventory & Expiry', category: 'Shelf-Life Surveillance' },
+  '/store/alerts': { title: 'Wastage & Spoilage', category: 'Shrinkage Logs' },
+  '/store/deliveries': { title: 'Inbound Deliveries', category: 'Carrier Dock Receiving' },
+  '/store/product-lookup': { title: 'Product Registry', category: 'Barcode Audit' },
 
   // Supplier
-  '/supplier': { title: 'Supplier Dispatch Hub', category: 'Cascade Fresh Distributors Logistics' },
-  '/supplier/orders': { title: 'Purchase Orders Ledger', category: 'Active Order Lines & Confirmations' },
-  '/supplier/deliveries': { title: 'Delivery Fleet Schedules', category: 'Cold-Chain Telemetry & Dock ETAs' },
-  '/supplier/requests': { title: 'Emergency Stock Requests', category: 'Expedited Replenishment Orders' },
+  '/supplier': { title: 'Logistics Overview', category: 'Cascade Fresh Distributors' },
+  '/supplier/orders': { title: 'Purchase Orders', category: 'Order Reconciliation' },
+  '/supplier/deliveries': { title: 'Delivery Schedules', category: 'Fleet Schedules & Telemetry' },
+  '/supplier/requests': { title: 'Emergency Requests', category: 'Expedited Stock Directives' },
 };
 
 function getHeaderMeta(pathname: string) {
-  if (pageTitles[pathname]) return pageTitles[pathname];
-  for (const [key, meta] of Object.entries(pageTitles)) {
+  if (pageMeta[pathname]) return pageMeta[pathname];
+  for (const [key, meta] of Object.entries(pageMeta)) {
     if (key !== '/' && pathname.startsWith(key)) return meta;
   }
-  return { title: 'FreshGuard AI', category: 'Operations Intelligence' };
+  return { title: 'Retail Operations Platform', category: 'FreshGuard AI' };
 }
 
 export function TopBar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, role, logout, unreadAnnouncementsCount } = useAuth();
+  const { user, role, unreadAnnouncementsCount } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [isAnnouncementsOpen, setIsAnnouncementsOpen] = useState(false);
 
@@ -67,126 +67,103 @@ export function TopBar() {
   };
 
   const isLiveConnected = Boolean(config.apiKey?.trim());
-  const aiStatusLabel = isLiveConnected
-    ? `${config.provider === 'gemini' ? 'GEMINI' : 'OPENAI'} LIVE`
-    : 'CONFIGURE AI';
 
   return (
     <>
-      <header
-        className="flex items-center justify-between px-6 sm:px-8 flex-shrink-0 z-20"
-        style={{
-          height: '70px',
-          backgroundColor: '#041410',
-          borderBottom: '1px solid rgba(197, 160, 89, 0.15)',
-        }}
-      >
-        {/* Title & Editorial Breadcrumb */}
+      <header className="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between flex-shrink-0 z-20">
+        
+        {/* Page Title & Breadcrumb */}
         <div>
-          <span className="text-[10px] font-mono tracking-widest text-[#C5A059] uppercase block">
+          <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider block">
             {meta.category}
           </span>
-          <h1 className="text-xl font-editorial font-normal tracking-wide text-[#FDFBF7] mt-0.5">
+          <h1 className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">
             {meta.title}
           </h1>
         </div>
 
-        {/* Center Search & Actions */}
-        <div className="flex items-center gap-3 sm:gap-4">
-          <form onSubmit={handleSearchSubmit} className="relative hidden xl:block" style={{ width: '250px' }}>
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#C5A059]/70" />
+        {/* Right Actions */}
+        <div className="flex items-center gap-3">
+          
+          {/* Quick Search */}
+          <form onSubmit={handleSearchSubmit} className="relative hidden md:block w-56 lg:w-64">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              placeholder={role === 'supplier' ? 'Search PO # or SKU...' : 'Search barcode or SKU...'}
+              placeholder={role === 'supplier' ? 'Search PO # or item...' : 'Search barcode or SKU...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded text-xs pl-9 pr-3 py-2 bg-[#071C16] text-[#FDFBF7] border border-[#C5A059]/20 focus:border-[#C5A059]/60 focus:outline-none transition-colors placeholder:text-[#8E9B90]/60 font-sans"
+              className="w-full text-xs pl-9 pr-3 py-1.5 rounded-md bg-slate-50 text-slate-900 border border-slate-300 focus:bg-white focus:border-[#164e3d] focus:outline-none transition-colors"
             />
           </form>
 
-          {/* Emergency Announcements Trigger */}
+          {/* Announcements Alert Bell */}
           <button
             type="button"
             onClick={() => setIsAnnouncementsOpen(true)}
-            className="relative p-2 rounded border border-[#C5A059]/20 hover:border-[#C5A059]/50 text-[#8E9B90] hover:text-[#E0C588] transition-colors"
-            title="Emergency Announcements & Cold-Chain Bulletins"
+            className="relative p-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-colors"
+            title="Emergency Announcements & Operational Bulletins"
             aria-label="View announcements"
           >
             <Bell className="w-4 h-4" />
             {unreadAnnouncementsCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#9E2A2B] text-white text-[9px] font-mono font-bold flex items-center justify-center animate-pulse border border-[#041410]">
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center">
                 {unreadAnnouncementsCount}
               </span>
             )}
           </button>
 
-          {/* AI Controls for Main Manager */}
+          {/* AI Settings & Copilot (Clean enterprise buttons) */}
           {role === 'main_manager' && (
-            <>
+            <div className="hidden sm:flex items-center gap-2">
               <button
                 type="button"
                 onClick={openKeyModal}
-                className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded border transition-all ${
-                  isLiveConnected
-                    ? 'border-[#16A34A]/40 bg-[#16A34A]/10 text-[#4ADE80] hover:bg-[#16A34A]/20'
-                    : 'border-[#C5A059]/30 bg-[#0A241D]/60 text-[#E0C588] hover:border-[#C5A059]/60 hover:bg-[#0A241D]'
-                }`}
-                title="Configure AI Engine & API Key"
+                className="px-2.5 py-1.5 rounded-md text-xs font-medium border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 flex items-center gap-1.5 transition-colors"
+                title="Configure AI API Credentials"
               >
-                <span
-                  className={`w-2 h-2 rounded-full ${
-                    isLiveConnected ? 'bg-[#16A34A] animate-pulse' : 'bg-[#C5A059]'
-                  }`}
-                />
-                <span className="font-mono text-[11px] tracking-wider uppercase">{aiStatusLabel}</span>
-                <Key className="w-3 h-3 text-[#C5A059]/70 ml-0.5" />
+                <span className={`w-2 h-2 rounded-full ${isLiveConnected ? 'bg-emerald-600' : 'bg-slate-400'}`} />
+                <span className="hidden lg:inline">{isLiveConnected ? 'AI Live' : 'AI Config'}</span>
+                <Key className="w-3.5 h-3.5 text-slate-500" />
               </button>
 
               <button
                 type="button"
                 onClick={toggleCopilot}
-                className="btn-royal-gold text-xs px-3.5 py-1.5 flex items-center gap-1.5 shadow-md group"
-                title="Open FreshGuard Executive AI Copilot"
+                className="btn-primary text-xs px-3 py-1.5"
+                title="AI Operations Assistant"
               >
-                <Sparkles className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
-                <span className="hidden md:inline font-sans font-semibold">Ask Copilot</span>
+                <Sparkles className="w-3.5 h-3.5" />
+                <span className="hidden md:inline">Operations AI</span>
               </button>
-            </>
+            </div>
           )}
 
-          {/* Refresh Custom Trigger */}
+          {/* Data Refresh */}
           <button
-            className="p-2 rounded border border-[#C5A059]/20 hover:border-[#C5A059]/50 text-[#8E9B90] hover:text-[#E0C588] transition-colors"
+            className="p-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-colors"
             onClick={() => window.dispatchEvent(new CustomEvent('demo:refresh'))}
-            title="Refresh operational telemetry"
+            title="Refresh Operational Telemetry"
             aria-label="Refresh telemetry"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
 
-          {/* User Profile Badge & Quick Logout */}
-          <div className="flex items-center gap-2.5 pl-3 border-l border-white/10">
-            <div className="w-8 h-8 rounded border border-[#C5A059]/40 bg-[#0B3B2C] flex items-center justify-center text-xs font-cinzel text-[#C5A059] font-bold">
-              {user?.avatar || 'FB'}
+          {/* User Badge */}
+          <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
+            <div className="w-7 h-7 rounded-full bg-[#164e3d] text-white font-medium text-xs flex items-center justify-center">
+              {user?.avatar || 'U'}
             </div>
-            <div className="hidden lg:block text-left">
-              <p className="text-xs font-medium text-[#FDFBF7]">{user?.name || 'Operator'}</p>
-              <p className="text-[10px] text-[#8E9B90] truncate max-w-[150px]">{user?.title || 'Active'}</p>
+            <div className="hidden xl:block text-left">
+              <p className="text-xs font-medium text-slate-900 leading-tight">{user?.name}</p>
+              <p className="text-[11px] text-slate-500 leading-tight">{user?.title}</p>
             </div>
-            <button
-              type="button"
-              onClick={logout}
-              className="p-1.5 rounded hover:bg-white/5 text-[#8E9B90] hover:text-[#F87171] transition-colors ml-1"
-              title="Sign Out"
-              aria-label="Sign out"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-            </button>
           </div>
+
         </div>
       </header>
 
-      {/* Emergency Announcements Modal */}
+      {/* Announcements Modal */}
       <AnnouncementsModal
         isOpen={isAnnouncementsOpen}
         onClose={() => setIsAnnouncementsOpen(false)}

@@ -2,17 +2,13 @@
 // FreshGuard AI — Store Manager: Dock Receiving & Deliveries
 // ============================================================
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { STORE_17_PURCHASE_ORDER } from '../../mocks/purchase-orders';
 import {
   Truck,
   AlertTriangle,
   CheckCircle2,
-  Clock,
-  PackageCheck,
-  ShieldCheck,
-  Phone,
-  FileText
+  PackageCheck
 } from 'lucide-react';
 
 export function StoreDeliveriesPage() {
@@ -28,66 +24,64 @@ export function StoreDeliveriesPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       
       {/* Header */}
-      <section className="relative rounded border border-[#C5A059]/30 bg-gradient-to-br from-[#0B3B2C]/80 via-[#071C16] to-[#041410] p-6 sm:p-8 shadow-2xl">
-        <div className="space-y-3 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-[#C5A059]/30 bg-[#0B3B2C]/60 text-xs font-mono text-[#E0C588]">
-            <Truck className="w-3.5 h-3.5 text-[#C5A059]" />
-            <span>STORE 017 · CARRIER DOCK RECEIVING &amp; INBOUND LOGISTICS</span>
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl font-editorial font-normal text-[#FDFBF7]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             Inbound Deliveries &amp; PO Status
           </h1>
-
-          <p className="text-xs sm:text-sm text-[#8E9B90] leading-relaxed">
-            Surveillance of incoming carrier shipments, dock appointment windows, and cold-chain intake verification for Branch #017.
+          <p className="text-xs text-slate-500 mt-0.5">
+            Store #017 (Tacoma Downtown) · Carrier appointment windows and dock intake verification
           </p>
         </div>
-      </section>
+      </div>
 
       {feedback && (
-        <div className="p-4 rounded border border-[#16A34A]/40 bg-[#16A34A]/15 text-[#4ADE80] text-xs flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+        <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
           <span>{feedback}</span>
         </div>
       )}
 
-      {/* Active Inbound Purchase Order Card */}
-      <div className="royal-card p-6 sm:p-8 border-[#C5A059]/30 shadow-2xl space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
-          <div className="space-y-1">
-            <div className="flex items-center gap-3">
-              <span className="text-xl font-editorial text-[#FDFBF7] font-semibold">
-                Purchase Order {po.orderNumber}
+      {/* Active Purchase Order Card */}
+      <div className="bg-white rounded-lg border border-slate-200 shadow-xs p-5 sm:p-6 space-y-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-slate-200">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <span className="text-base font-bold text-slate-900">
+                Purchase Order #{po.orderNumber}
               </span>
-              <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded font-bold ${
-                dockSigned ? 'bg-[#16A34A]/20 text-[#4ADE80] border border-[#16A34A]/40' :
-                po.status === 'delayed' ? 'bg-[#9E2A2B]/20 text-[#F87171] border border-[#9E2A2B]/40' :
-                'bg-[#C5A059]/20 text-[#E0C588]'
-              }`}>
+              <span
+                className={`px-2 py-0.5 rounded text-[11px] font-semibold uppercase ${
+                  dockSigned
+                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                    : po.status === 'delayed'
+                    ? 'bg-red-100 text-red-800 border border-red-200'
+                    : 'bg-slate-100 text-slate-700 border border-slate-200'
+                }`}
+              >
                 {dockSigned ? 'DOCK RECEIVED ✓' : `STATUS: ${po.status.toUpperCase()}`}
               </span>
             </div>
-            <p className="text-xs text-[#8E9B90]">
-              Carrier: <strong className="text-[#FDFBF7]">{po.supplier}</strong> · Dedicated Regional Fleet
+            <p className="text-xs text-slate-500 mt-0.5">
+              Carrier: <strong className="text-slate-800">{po.supplier}</strong> · Dedicated Regional Fleet
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div>
             {!dockSigned ? (
               <button
                 type="button"
                 onClick={handleSignDock}
-                className="btn-royal-gold text-xs px-4 py-2.5 flex items-center gap-2"
+                className="btn-primary text-xs flex items-center gap-1.5"
               >
                 <PackageCheck className="w-4 h-4" />
                 <span>Sign Dock Intake Receipt</span>
               </button>
             ) : (
-              <span className="inline-flex items-center gap-1.5 text-xs text-[#16A34A] font-semibold px-3 py-1.5 rounded border border-[#16A34A]/30 bg-[#16A34A]/10">
+              <span className="inline-flex items-center gap-1 text-xs text-emerald-700 font-semibold px-2.5 py-1 rounded bg-emerald-50 border border-emerald-200">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Intake Verified &amp; Signed</span>
               </span>
@@ -95,66 +89,65 @@ export function StoreDeliveriesPage() {
           </div>
         </div>
 
-        {/* PO Telemetry Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-          <div className="p-3.5 rounded border border-white/5 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">ORDER DATE</span>
-            <span className="font-mono text-[#FDFBF7] mt-1 block">{po.orderDate}</span>
+        {/* PO Metrics */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div className="bg-slate-50 p-3 rounded-md border border-slate-200">
+            <span className="text-slate-500 block">Order Date</span>
+            <span className="font-mono text-slate-800 font-semibold mt-0.5 block">{po.orderDate}</span>
           </div>
-          <div className="p-3.5 rounded border border-white/5 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">REVISED ETA</span>
-            <span className="font-mono text-[#E0C588] mt-1 block">Today @ 15:00 PST</span>
+          <div className="bg-slate-50 p-3 rounded-md border border-slate-200">
+            <span className="text-slate-500 block">Revised ETA</span>
+            <span className="font-mono text-amber-700 font-semibold mt-0.5 block">15:00 Today</span>
           </div>
-          <div className="p-3.5 rounded border border-white/5 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">TOTAL UNITS</span>
-            <span className="font-mono text-[#FDFBF7] mt-1 block">{po.totalItems} Items</span>
+          <div className="bg-slate-50 p-3 rounded-md border border-slate-200">
+            <span className="text-slate-500 block">Total Units</span>
+            <span className="font-mono text-slate-800 font-semibold mt-0.5 block">{po.totalItems} Items</span>
           </div>
-          <div className="p-3.5 rounded border border-white/5 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">INVOICE VALUE</span>
-            <span className="font-mono text-[#16A34A] mt-1 block">${po.totalValue.toFixed(2)}</span>
+          <div className="bg-slate-50 p-3 rounded-md border border-slate-200">
+            <span className="text-slate-500 block">Invoice Value</span>
+            <span className="font-mono text-emerald-700 font-semibold mt-0.5 block">${po.totalValue.toFixed(2)}</span>
           </div>
         </div>
 
-        {/* Delay Reason Notice */}
+        {/* Delay Notice */}
         {po.status === 'delayed' && !dockSigned && (
-          <div className="p-4 rounded border border-[#9E2A2B]/40 bg-[#9E2A2B]/10 text-xs flex items-start gap-3">
-            <AlertTriangle className="w-4 h-4 text-[#F87171] flex-shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <span className="font-mono text-[10px] uppercase text-[#F87171] font-bold block">
-                CARRIER DELAY NOTICE · I-5 CORRIDOR
+          <div className="p-3.5 rounded-md bg-red-50 border border-red-200 text-xs flex items-start gap-2.5">
+            <AlertTriangle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="space-y-0.5">
+              <span className="font-semibold text-red-900 block">
+                Carrier Freight Delay Notice (I-5 Corridor)
               </span>
-              <p className="text-[#8E9B90] leading-relaxed">
-                Cascade Fresh Distributors dispatch notes that vehicle FLEET-TRUCK-07 was delayed in traffic.
-                Cold-chain sensor telemetry confirmed at 3.4°C. Unloading scheduled upon dock arrival.
+              <p className="text-red-700">
+                Cascade Fresh Distributors vehicle FLEET-TRUCK-07 is delayed due to highway congestion. Cold-chain probe temperature verified compliant at 3.4°C.
               </p>
             </div>
           </div>
         )}
 
-        {/* PO Line Items Table */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-mono text-[#C5A059] uppercase tracking-wider">
-            Manifest Line Items ({po.items.length})
+        {/* Line Items Table */}
+        <div className="space-y-2">
+          <h3 className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+            Order Line Items ({po.items.length})
           </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-[#071C16] text-[#8E9B90] font-mono uppercase text-[10px] border-b border-white/10">
+          <div className="overflow-x-auto border border-slate-200 rounded-md">
+            <table className="enterprise-table">
+              <thead>
                 <tr>
-                  <th className="p-3">Product Name</th>
-                  <th className="p-3 text-center">Ordered</th>
-                  <th className="p-3 text-center">Allocated</th>
-                  <th className="p-3 text-center">Remaining</th>
-                  <th className="p-3 text-right">Unit Price</th>
+                  <th>Product Name</th>
+                  <th className="text-center">Ordered</th>
+                  <th className="text-center">Allocated</th>
+                  <th className="text-center">Remaining</th>
+                  <th className="text-right">Unit Price</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-[#8E9B90]">
+              <tbody>
                 {po.items.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-white/[0.02]">
-                    <td className="p-3 font-medium text-[#FDFBF7]">{item.productName}</td>
-                    <td className="p-3 text-center font-mono">{item.quantity} {item.unit}</td>
-                    <td className="p-3 text-center font-mono text-[#16A34A]">{item.allocated} {item.unit}</td>
-                    <td className="p-3 text-center font-mono text-[#E0C588]">{item.remaining} {item.unit}</td>
-                    <td className="p-3 text-right font-mono">${item.unitPrice.toFixed(2)}</td>
+                  <tr key={idx}>
+                    <td className="font-medium text-slate-900">{item.productName}</td>
+                    <td className="text-center font-mono text-slate-700">{item.quantity} {item.unit}</td>
+                    <td className="text-center font-mono text-emerald-700">{item.allocated} {item.unit}</td>
+                    <td className="text-center font-mono text-amber-700">{item.remaining} {item.unit}</td>
+                    <td className="text-right font-mono text-slate-800">${item.unitPrice.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>

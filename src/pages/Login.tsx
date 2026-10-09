@@ -1,5 +1,5 @@
 // ============================================================
-// FreshGuard AI — Enterprise Role-Based Authentication Page
+// FreshGuard AI — Enterprise Login & Authentication
 // ============================================================
 
 import React, { useState } from 'react';
@@ -8,7 +8,6 @@ import { useAuth } from '../context/AuthContext';
 import { authService, ENTERPRISE_USERS } from '../services/auth';
 import type { UserRole } from '../types/auth';
 import {
-  Crown,
   Lock,
   Mail,
   Eye,
@@ -20,8 +19,6 @@ import {
   Truck,
   AlertCircle,
   CheckCircle2,
-  Info,
-  HelpCircle,
   X
 } from 'lucide-react';
 
@@ -39,13 +36,12 @@ export function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Forgot password modal
+  // Forgot password state
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [resetFeedback, setResetFeedback] = useState<{ success: boolean; message: string } | null>(null);
   const [isResetSubmitting, setIsResetSubmitting] = useState(false);
 
-  // If already authenticated, redirect automatically
   React.useEffect(() => {
     if (isAuthenticated && user) {
       redirectByRole(user.role);
@@ -86,12 +82,12 @@ export function LoginPage() {
   const validateForm = (): boolean => {
     setErrorMessage(null);
     if (!email.trim()) {
-      setErrorMessage('Please provide your enterprise directory email address.');
+      setErrorMessage('Please provide your corporate directory email address.');
       return false;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      setErrorMessage('Please enter a valid format email (e.g. name@freshbasket.com).');
+      setErrorMessage('Please enter a valid format email (e.g. executive@freshbasket.com).');
       return false;
     }
     if (!password) {
@@ -114,12 +110,12 @@ export function LoginPage() {
 
     try {
       const authenticatedUser = await login({ email, password });
-      setSuccessMessage(`Credentials verified. Welcome back, ${authenticatedUser.name}.`);
+      setSuccessMessage(`Credentials verified. Redirecting, ${authenticatedUser.name}...`);
       setTimeout(() => {
         redirectByRole(authenticatedUser.role);
       }, 400);
     } catch (err: any) {
-      setErrorMessage(err?.message || 'Authentication failed. Please check your credentials.');
+      setErrorMessage(err?.message || 'Authentication failed. Please verify your credentials.');
       setIsLoading(false);
     }
   };
@@ -137,83 +133,64 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#041410] flex flex-col justify-center items-center p-4 sm:p-6 lg:p-8 relative selection:bg-[#C5A059]/30 selection:text-[#FDFBF7]">
-      {/* Background Architectural Grid Lines */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-20"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle at 50% 20%, rgba(197, 160, 89, 0.15) 0%, transparent 60%), linear-gradient(rgba(197, 160, 89, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(197, 160, 89, 0.04) 1px, transparent 1px)',
-          backgroundSize: '100% 100%, 48px 48px, 48px 48px',
-        }}
-      />
-
-      <div className="w-full max-w-4xl relative z-10 space-y-8 my-auto">
-        {/* Brand Header */}
-        <div className="text-center space-y-3">
-          <div className="inline-flex items-center justify-center gap-2.5 px-4 py-1.5 rounded-full border border-[#C5A059]/30 bg-[#0B3B2C]/50 backdrop-blur-md shadow-lg">
-            <Crown className="w-4 h-4 text-[#C5A059]" />
-            <span className="font-cinzel text-xs font-semibold tracking-widest text-[#FDFBF7]">
-              FRESHGUARD AI
-            </span>
-            <span className="w-1 h-1 rounded-full bg-[#C5A059]" />
-            <span className="font-mono text-[10px] tracking-wider text-[#C5A059] uppercase">
-              ENTERPRISE PLATFORM
-            </span>
+    <div className="min-h-screen bg-slate-100 flex flex-col justify-center items-center p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-4xl space-y-6">
+        
+        {/* Simple Brand Header */}
+        <div className="text-center space-y-1">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#164e3d] text-xs font-semibold mb-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+            FreshGuard AI · Retail Operations Platform
           </div>
-
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-editorial font-normal text-[#FDFBF7] tracking-tight">
-            Role-Based Operational Gateway
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            Enterprise Single Sign-On
           </h1>
-          <p className="text-xs sm:text-sm text-[#8E9B90] max-w-xl mx-auto font-light leading-relaxed">
-            FreshBasket Supermarket Operations, Store Directives &amp; Supplier Cold-Chain Logistics Intelligence.
+          <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
+            Authorized portal for store managers, logistics suppliers, and operations directors.
           </p>
         </div>
 
         {/* Main Grid: Demonstration Presets + Login Card */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
           
-          {/* Left Column: Quick Role Presets (Phase 3 Requirement) */}
-          <div className="lg:col-span-5 royal-card p-6 flex flex-col justify-between border-[#C5A059]/20 shadow-xl space-y-6">
-            <div className="space-y-4">
+          {/* Left Column: Quick Role Presets */}
+          <div className="lg:col-span-5 bg-white p-5 sm:p-6 rounded-lg border border-slate-200 shadow-sm flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
               <div>
-                <span className="text-[10px] font-mono tracking-widest text-[#C5A059] uppercase block">
-                  DEMONSTRATION ACCESS
+                <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+                  Demonstration Access
                 </span>
-                <h2 className="text-xl font-editorial text-[#FDFBF7] mt-0.5">
-                  Verified Enterprise Roles
+                <h2 className="text-base font-semibold text-slate-900 mt-0.5">
+                  Select Stakeholder Role
                 </h2>
-                <p className="text-xs text-[#8E9B90] mt-1 leading-relaxed">
-                  Select a certified stakeholder profile below to review their dedicated application experience.
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Choose a verified role to automatically test their application experience:
                 </p>
               </div>
 
-              {/* Role Presets List */}
-              <div className="space-y-2.5">
+              {/* Role Presets */}
+              <div className="space-y-2">
                 {/* 1. Main Manager */}
                 <button
                   type="button"
                   onClick={() => handleSelectPreset('main_manager')}
-                  className={`w-full text-left p-3.5 rounded border transition-all flex items-start gap-3.5 ${
+                  className={`w-full text-left p-3 rounded-md border text-xs transition-colors flex items-start gap-3 ${
                     selectedRolePreset === 'main_manager'
-                      ? 'border-[#C5A059] bg-[#0B3B2C]/80 shadow-md ring-1 ring-[#C5A059]/40'
-                      : 'border-white/10 bg-[#071C16]/60 hover:border-[#C5A059]/40 hover:bg-[#071C16]'
+                      ? 'border-[#164e3d] bg-emerald-50/60 ring-1 ring-[#164e3d]'
+                      : 'border-slate-200 bg-white hover:bg-slate-50'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded border border-[#C5A059]/40 bg-[#0B3B2C] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Building2 className="w-4 h-4 text-[#C5A059]" />
+                  <div className="w-7 h-7 rounded-md bg-[#164e3d] text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Building2 className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-[#FDFBF7] tracking-wide">Main Manager</span>
-                      <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-[#C5A059]/20 text-[#E0C588]">
-                        Network HQ
+                      <span className="font-semibold text-slate-900">Main Manager</span>
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-700">
+                        12 Stores
                       </span>
                     </div>
-                    <p className="text-[11px] text-[#8E9B90] truncate mt-0.5">Eleanor Vance · 12 Stores</p>
-                    <p className="text-[10px] text-[#8E9B90]/70 mt-1 line-clamp-1">
-                      Network KPIs, AI investigations, action governance &amp; emergency announcements.
-                    </p>
+                    <p className="text-[11px] text-slate-600 mt-0.5">Eleanor Vance · Operations HQ</p>
                   </div>
                 </button>
 
@@ -221,26 +198,23 @@ export function LoginPage() {
                 <button
                   type="button"
                   onClick={() => handleSelectPreset('store_manager')}
-                  className={`w-full text-left p-3.5 rounded border transition-all flex items-start gap-3.5 ${
+                  className={`w-full text-left p-3 rounded-md border text-xs transition-colors flex items-start gap-3 ${
                     selectedRolePreset === 'store_manager'
-                      ? 'border-[#C5A059] bg-[#0B3B2C]/80 shadow-md ring-1 ring-[#C5A059]/40'
-                      : 'border-white/10 bg-[#071C16]/60 hover:border-[#C5A059]/40 hover:bg-[#071C16]'
+                      ? 'border-[#164e3d] bg-emerald-50/60 ring-1 ring-[#164e3d]'
+                      : 'border-slate-200 bg-white hover:bg-slate-50'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded border border-[#C5A059]/40 bg-[#0B3B2C] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Store className="w-4 h-4 text-[#C5A059]" />
+                  <div className="w-7 h-7 rounded-md bg-[#164e3d] text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Store className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-[#FDFBF7] tracking-wide">Store Manager</span>
-                      <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-[#16A34A]/20 text-[#4ADE80]">
+                      <span className="font-semibold text-slate-900">Store Manager</span>
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
                         Store #017
                       </span>
                     </div>
-                    <p className="text-[11px] text-[#8E9B90] truncate mt-0.5">Marcus Brody · Tacoma Branch</p>
-                    <p className="text-[10px] text-[#8E9B90]/70 mt-1 line-clamp-1">
-                      Daily floor tasks, low-stock &amp; expiry, wastage logging, incoming POs.
-                    </p>
+                    <p className="text-[11px] text-slate-600 mt-0.5">Marcus Brody · Tacoma Downtown</p>
                   </div>
                 </button>
 
@@ -248,111 +222,82 @@ export function LoginPage() {
                 <button
                   type="button"
                   onClick={() => handleSelectPreset('supplier')}
-                  className={`w-full text-left p-3.5 rounded border transition-all flex items-start gap-3.5 ${
+                  className={`w-full text-left p-3 rounded-md border text-xs transition-colors flex items-start gap-3 ${
                     selectedRolePreset === 'supplier'
-                      ? 'border-[#C5A059] bg-[#0B3B2C]/80 shadow-md ring-1 ring-[#C5A059]/40'
-                      : 'border-white/10 bg-[#071C16]/60 hover:border-[#C5A059]/40 hover:bg-[#071C16]'
+                      ? 'border-[#164e3d] bg-emerald-50/60 ring-1 ring-[#164e3d]'
+                      : 'border-slate-200 bg-white hover:bg-slate-50'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded border border-[#C5A059]/40 bg-[#0B3B2C] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Truck className="w-4 h-4 text-[#C5A059]" />
+                  <div className="w-7 h-7 rounded-md bg-[#164e3d] text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Truck className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-[#FDFBF7] tracking-wide">Supplier Partner</span>
-                      <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-[#3B82F6]/20 text-[#60A5FA]">
+                      <span className="font-semibold text-slate-900">Supplier Partner</span>
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">
                         Logistics
                       </span>
                     </div>
-                    <p className="text-[11px] text-[#8E9B90] truncate mt-0.5">Elena Rostova · Cascade Fresh</p>
-                    <p className="text-[10px] text-[#8E9B90]/70 mt-1 line-clamp-1">
-                      Assigned purchase orders, delivery statuses, emergency supply orders.
-                    </p>
+                    <p className="text-[11px] text-slate-600 mt-0.5">Elena Rostova · Cascade Fresh</p>
                   </div>
                 </button>
               </div>
             </div>
 
-            {/* Security Notice */}
-            <div className="p-3.5 rounded border border-[#C5A059]/20 bg-[#041410]/90 text-[11px] text-[#8E9B90] space-y-1.5">
-              <div className="flex items-center gap-1.5 text-[#E0C588] font-mono text-[10px] uppercase font-bold">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A]" />
-                <span>Zero-Trust Authorization</span>
-              </div>
-              <p className="leading-relaxed text-[#8E9B90]/90">
-                Preset selection automatically supplies valid credentials. User roles and data permissions are authenticated strictly through verified server tokens.
-              </p>
+            <div className="p-3 rounded-md bg-slate-50 border border-slate-200 text-[11px] text-slate-600 flex items-start gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+              <span>Role authorization is enforced on all protected endpoints and routing boundaries.</span>
             </div>
           </div>
 
-          {/* Right Column: Standard Authentication Form */}
-          <div className="lg:col-span-7 royal-card p-6 sm:p-8 flex flex-col justify-between border-[#C5A059]/30 shadow-2xl relative">
-            <div className="space-y-6">
-              <div className="border-b border-white/5 pb-4">
-                <span className="text-[10px] font-mono tracking-widest text-[#C5A059] uppercase block">
-                  SECURE SIGN IN
-                </span>
-                <h2 className="text-2xl font-editorial text-[#FDFBF7] mt-0.5">
-                  FreshGuard Directory Credentials
-                </h2>
-                <p className="text-xs text-[#8E9B90] mt-1">
-                  Authenticate with your FreshBasket single sign-on or vendor credentials.
+          {/* Right Column: Standard Form */}
+          <div className="lg:col-span-7 bg-white p-5 sm:p-6 rounded-lg border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+            <div className="space-y-4">
+              <div className="border-b border-slate-200 pb-3">
+                <h2 className="text-base font-semibold text-slate-900">Sign In to Your Workspace</h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Enter your credentials below or use one of the verified demo presets.
                 </p>
               </div>
 
               {/* Feedback Alerts */}
               {errorMessage && (
-                <div
-                  role="alert"
-                  className="p-3.5 rounded border border-[#9E2A2B]/50 bg-[#9E2A2B]/15 text-[#F87171] text-xs flex items-start gap-2.5 animate-in fade-in duration-200"
-                >
-                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#F87171]" />
-                  <span className="leading-relaxed">{errorMessage}</span>
+                <div role="alert" className="p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <span>{errorMessage}</span>
                 </div>
               )}
 
               {successMessage && (
-                <div
-                  role="alert"
-                  className="p-3.5 rounded border border-[#16A34A]/40 bg-[#16A34A]/15 text-[#4ADE80] text-xs flex items-start gap-2.5 animate-in fade-in duration-200"
-                >
-                  <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#4ADE80]" />
-                  <span className="leading-relaxed">{successMessage}</span>
+                <div role="alert" className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <span>{successMessage}</span>
                 </div>
               )}
 
-              {/* Login Form */}
-              <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-                {/* Email Field */}
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="login-email"
-                    className="text-[11px] font-mono text-[#C5A059] uppercase tracking-wider block"
-                  >
-                    Directory Email Address
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+                <div>
+                  <label htmlFor="login-email" className="text-xs font-medium text-slate-700 block mb-1">
+                    Corporate Email
                   </label>
                   <div className="relative">
-                    <Mail className="w-4 h-4 text-[#C5A059]/70 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       id="login-email"
                       type="email"
-                      autoComplete="email"
                       required
                       placeholder="e.g. executive@freshbasket.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full rounded text-xs pl-10 pr-4 py-3 bg-[#071C16] text-[#FDFBF7] border border-[#C5A059]/30 focus:border-[#C5A059] focus:outline-none transition-colors placeholder:text-[#8E9B90]/40 font-sans"
+                      className="w-full text-xs pl-9 pr-3 py-2 rounded-md border border-slate-300 bg-white text-slate-900 focus:border-[#164e3d] focus:outline-none"
                     />
                   </div>
                 </div>
 
-                {/* Password Field */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <label
-                      htmlFor="login-password"
-                      className="text-[11px] font-mono text-[#C5A059] uppercase tracking-wider block"
-                    >
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label htmlFor="login-password" className="text-xs font-medium text-slate-700 block">
                       Password
                     </label>
                     <button
@@ -362,50 +307,45 @@ export function LoginPage() {
                         setResetEmail(email);
                         setIsResetModalOpen(true);
                       }}
-                      className="text-[11px] text-[#E0C588] hover:underline font-mono"
+                      className="text-xs text-[#164e3d] hover:underline"
                     >
-                      Forgot Password?
+                      Forgot password?
                     </button>
                   </div>
                   <div className="relative">
-                    <Lock className="w-4 h-4 text-[#C5A059]/70 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       id="login-password"
                       type={showPassword ? 'text' : 'password'}
-                      autoComplete="current-password"
                       required
                       placeholder="••••••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full rounded text-xs pl-10 pr-11 py-3 bg-[#071C16] text-[#FDFBF7] border border-[#C5A059]/30 focus:border-[#C5A059] focus:outline-none transition-colors placeholder:text-[#8E9B90]/40 font-sans"
+                      className="w-full text-xs pl-9 pr-10 py-2 rounded-md border border-slate-300 bg-white text-slate-900 focus:border-[#164e3d] focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#8E9B90] hover:text-[#FDFBF7] transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
 
-                {/* Submit Button */}
-                <div className="pt-2">
+                <div className="pt-1">
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full btn-royal-gold text-xs py-3.5 shadow-lg group flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+                    className="w-full btn-primary text-xs py-2.5 flex items-center justify-center gap-2"
                   >
                     {isLoading ? (
-                      <>
-                        <span className="w-4 h-4 border-2 border-[#041410] border-t-transparent rounded-full animate-spin" />
-                        <span>Verifying Security Token...</span>
-                      </>
+                      <span>Verifying credentials...</span>
                     ) : (
                       <>
-                        <span>Authenticate &amp; Launch Workspace</span>
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        <span>Sign In</span>
+                        <ArrowRight className="w-4 h-4" />
                       </>
                     )}
                   </button>
@@ -413,13 +353,9 @@ export function LoginPage() {
               </form>
             </div>
 
-            {/* Footer Metadata */}
-            <div className="pt-6 mt-6 border-t border-white/5 flex flex-wrap items-center justify-between text-[11px] text-[#8E9B90]">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#16A34A]" />
-                Session Encrypted · TLS 1.3
-              </span>
-              <span className="font-mono text-[#C5A059]">FreshBasket Network v2.4</span>
+            <div className="pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+              <span>FreshBasket Single Sign-On</span>
+              <span className="font-mono">v2.4 Enterprise</span>
             </div>
           </div>
 
@@ -428,66 +364,63 @@ export function LoginPage() {
 
       {/* Forgot Password Modal */}
       {isResetModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="max-w-md w-full royal-card p-6 border-[#C5A059]/40 space-y-4 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-white p-5 rounded-lg border border-slate-300 shadow-xl space-y-4 relative">
             <button
               onClick={() => setIsResetModalOpen(false)}
-              className="absolute top-4 right-4 text-[#8E9B90] hover:text-[#FDFBF7]"
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
               aria-label="Close dialog"
             >
               <X className="w-4 h-4" />
             </button>
 
-            <div className="space-y-1">
-              <span className="text-[10px] font-mono tracking-widest text-[#C5A059] uppercase block">
-                CREDENTIAL RECOVERY
-              </span>
-              <h3 className="text-xl font-editorial text-[#FDFBF7]">Reset Directory Password</h3>
-              <p className="text-xs text-[#8E9B90]">
-                Enter your registered enterprise email. A secure time-limited token will be issued.
+            <div>
+              <h3 className="text-sm font-semibold text-slate-900">Reset Password</h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Enter your directory email to receive a password reset link.
               </p>
             </div>
 
             {resetFeedback && (
               <div
-                className={`p-3 rounded border text-xs flex items-start gap-2 ${
+                className={`p-3 rounded-md text-xs flex items-start gap-2 ${
                   resetFeedback.success
-                    ? 'border-[#16A34A]/40 bg-[#16A34A]/15 text-[#4ADE80]'
-                    : 'border-[#9E2A2B]/40 bg-[#9E2A2B]/15 text-[#F87171]'
+                    ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+                    : 'bg-red-50 border border-red-200 text-red-800'
                 }`}
               >
                 {resetFeedback.success ? (
-                  <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5 text-emerald-600" />
                 ) : (
-                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-red-600" />
                 )}
                 <span>{resetFeedback.message}</span>
               </div>
             )}
 
-            <form onSubmit={handlePasswordReset} className="space-y-3 pt-1">
+            <form onSubmit={handlePasswordReset} className="space-y-3">
               <input
                 type="email"
                 required
                 placeholder="registered@freshbasket.com"
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
-                className="w-full rounded text-xs pl-3 pr-3 py-2.5 bg-[#071C16] text-[#FDFBF7] border border-[#C5A059]/30 focus:border-[#C5A059] focus:outline-none"
+                className="w-full text-xs px-3 py-2 rounded-md border border-slate-300 bg-white"
               />
-              <div className="flex items-center justify-end gap-2 pt-2">
+              <div className="flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setIsResetModalOpen(false)}
-                  className="btn-royal-outline text-xs px-3 py-2"
+                  className="btn-secondary text-xs px-3 py-1.5"
                 >
                   Close
                 </button>
                 <button
                   type="submit"
                   disabled={isResetSubmitting}
-                  className="btn-royal-gold text-xs px-4 py-2"
+                  className="btn-primary text-xs px-3 py-1.5"
                 >
-                  {isResetSubmitting ? 'Sending...' : 'Transmit Reset Link'}
+                  {isResetSubmitting ? 'Sending...' : 'Send Reset Link'}
                 </button>
               </div>
             </form>

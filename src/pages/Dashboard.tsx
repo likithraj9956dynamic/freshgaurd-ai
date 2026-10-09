@@ -1,351 +1,422 @@
 // ============================================================
-// FreshGuard AI — Royal Command Centre (Home)
+// FreshGuard AI — Main Manager: Operations Overview
 // ============================================================
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Flame,
-  ClipboardList,
-  Activity,
-  ChevronRight,
-  Sparkles,
-} from 'lucide-react';
 import { useDemos } from '../hooks/useDemos';
 import { LoadingState, EmptyState } from '../components/state';
-import { Photo } from '../components/Photo';
-import { Reveal } from '../components/Reveal';
-import { SeverityBadge, StatusBadge } from '../components/badges';
-import { IMAGERY } from '../lib/imagery';
-import { useAIStore } from '../services/ai-store';
 import type { Store, DetectedIssue, Investigation, DecisionOption, Action } from '../types';
-
-const STORE_17_ID = '1012';
+import {
+  AlertTriangle,
+  Store as StoreIcon,
+  Search,
+  Scale,
+  CheckCircle2,
+  Sliders,
+  ArrowRight,
+  TrendingDown,
+  Layers,
+  Flame,
+  Truck,
+  Check,
+  X,
+  Megaphone,
+  ScanBarcode,
+  Clock,
+  ShieldAlert
+} from 'lucide-react';
 
 export function DashboardPage() {
   const { data, isLoading } = useDemos();
   const navigate = useNavigate();
 
-  if (isLoading) return <CommandLoading />;
-  if (!data) return <EmptyState title="Unable to load" description="The operational briefing could not be loaded." />;
+  // Local state for actions approval demo
+  const [actionList, setActionList] = useState<Action[]>([]);
+  const [approvalFeedback, setApprovalFeedback] = useState<string | null>(null);
 
-  const stores: Store[] = data.stores;
-  const issues: DetectedIssue[] = data.issues;
-  const investigations: Investigation[] = data.investigations;
-  const decisions: DecisionOption[] = data.decisions;
-  const actions: Action[] = data.actions;
+  React.useEffect(() => {
+    if (data?.actions) {
+      setActionList(data.actions);
+    }
+  }, [data]);
 
-  // --- Derived network briefing (data-driven) ---
-  const totalRevenue = stores.reduce((sum, s) => sum + s.revenueActual, 0);
-  const totalTarget = stores.reduce((sum, s) => sum + s.revenueTarget, 0);
-  const attainment = totalTarget > 0 ? Math.round((totalRevenue / totalTarget) * 100) : 0;
-  const criticalCount = stores.filter((s) => s.status === 'critical').length;
-  const watchCount = stores.filter((s) => s.status === 'at-risk' || s.status === 'warning').length;
-  const healthyCount = stores.length - criticalCount - watchCount;
+  if (isLoading) {
+    return <LoadingState message="Loading network operations telemetry..." />;
+  }
 
-  const featuredStore = stores.find((s) => s.id === STORE_17_ID) ?? stores[0];
-  const featuredIssue =
-    issues.find((i) => i.id === 'issue-001') ??
-    [...issues].sort((a, b) => b.urgencyScore - a.urgencyScore)[0];
+  if (!data) {
+    return <EmptyState title="Unavailable" description="Network operational data could not be loaded." />;
+  }
 
-  const priorityInvestigations = [...investigations]
-    .sort((a, b) => severityRank(b.severity) - severityRank(a.severity))
-    .slice(0, 3);
+  const stores: Store[] = data.stores || [];
+  const issues: DetectedIssue[] = data.issues || [];
+  const decisions: DecisionOption[] = data.decisions || [];
 
-  const pendingDecisions = decisions.slice(0, 3);
-  const recentActivity = [...actions]
-    .sort((a, b) => new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime())
-    .slice(0, 4);
+  // Operational metrics
+  const attentionStores = stores.filter((s) => s.status === 'critical' || s.status === 'at-risk');
+  const criticalIssues = issues.filter((i) => i.severity === 'critical');
+  const pendingActions = actionList.filter((a) => a.status === 'pending-approval');
 
-  const briefing = featuredStore && featuredIssue
-    ? `Your network of ${stores.length} stores is holding steady at ${attainment}% of target, but ${featuredStore.name} requires attention — revenue is down ${Math.abs(featuredIssue.salesChangePercent)}% this period.`
-    : `Your network of ${stores.length} stores is operating at ${attainment}% of target.`;
+  const handleApproveAction = (actionId: string, title: string) => {
+    setActionList((prev) =>
+      prev.map((a) => (a.id === actionId ? { ...a, status: 'approved' as const } : a))
+    );
+    setApprovalFeedback(`Action "${title}" approved. Dispatched to store execution ledger.`);
+    setTimeout(() => setApprovalFeedback(null), 4000);
+  };
+
+  const handleRejectAction = (actionId: string, title: string) => {
+    setActionList((prev) =>
+      prev.map((a) => (a.id === actionId ? { ...a, status: 'rejected' as const } : a))
+    );
+    setApprovalFeedback(`Action "${title}" rejected by Main Operations Manager.`);
+    setTimeout(() => setApprovalFeedback(null), 4000);
+  };
 
   return (
-    <div className="min-h-screen">
-      {/* ============ HERO — Royal Command Centre ============ */}
-      <section className="relative">
-        <Photo
-          src={IMAGERY.groceryInterior}
-          alt="FreshBasket grocery interior"
-          ratio="aspect-[21/9] sm:aspect-[21/8] lg:aspect-[21/7]"
-          fallbackLabel="FreshGuard AI"
-          eager
-          className="absolute inset-0 h-full w-full"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-midnight-950/85 via-midnight-950/70 to-midnight-950/40" />
-
-        <div className="relative mx-auto flex min-h-[70vh] max-w-6xl flex-col justify-center px-6 py-20 sm:px-10">
-          <Reveal>
-            <p className="eyebrow mb-5">FreshGuard AI · Retail Operations Intelligence</p>
-          </Reveal>
-          <Reveal delay={120}>
-            <h1 className="display max-w-3xl text-5xl text-ivory sm:text-6xl lg:text-7xl">
-              Intelligence for<br />Every Store.
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+      
+      {/* 1. Header & Period Context */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+              Operations Overview
             </h1>
-          </Reveal>
-          <Reveal delay={240}>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-champagne sm:text-lg">
-              See what is changing. Understand why. Decide what happens next.
-            </p>
-          </Reveal>
-          <Reveal delay={340}>
-            <p className="mt-8 max-w-xl text-sm leading-relaxed text-ivory/80">
-              {briefing}
-            </p>
-          </Reveal>
-
-          {/* Primary priority + action */}
-          {featuredIssue && featuredStore && (
-            <Reveal delay={440} className="mt-10">
-              <div className="inline-flex flex-col gap-4 sm:flex-row sm:items-center">
-                <Link
-                  to={`/investigations/${featuredIssue.id}`}
-                  className="group inline-flex items-center gap-4 rounded-sm border border-gold-500/40 bg-midnight-900/70 px-5 py-4 backdrop-blur-sm transition-all hover:border-gold-400 hover:bg-midnight-900"
-                >
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-crimson-500/15">
-                    <Flame className="h-5 w-5 text-gold-300" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-gold-400">
-                      Priority · {featuredStore.name}
-                    </p>
-                    <p className="mt-0.5 font-serif text-lg text-ivory">
-                      {featuredIssue.title}
-                    </p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-gold-400 transition-transform group-hover:translate-x-1" />
-                </Link>
-                <Link
-                  to={`/investigations/${featuredIssue.id}`}
-                  className="btn-gold btn"
-                >
-                  Investigate now
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const store = useAIStore.getState();
-                    store.openCopilot();
-                    store.sendCopilotMessage(
-                      'Provide an executive operational summary of the entire FreshBasket store network and prioritize the top 3 action items for today.'
-                    );
-                  }}
-                  className="btn-royal-outline text-xs flex items-center gap-2 py-3 px-5 backdrop-blur-sm shadow-md"
-                >
-                  <Sparkles className="h-4 w-4 text-[#C5A059]" />
-                  <span>Executive AI Briefing</span>
-                </button>
-              </div>
-            </Reveal>
-          )}
-        </div>
-
-        {/* Thin gold rule at hero base */}
-        <div className="gold-rule absolute bottom-0 left-0 right-0" />
-      </section>
-
-      {/* ============ Progressive sections ============ */}
-      <div className="mx-auto max-w-6xl space-y-16 px-6 py-16 sm:px-10">
-        {/* Network health — a few facts, not a card grid */}
-        <Reveal>
-          <section>
-            <div className="mb-6 flex items-end justify-between">
-              <div>
-                <p className="eyebrow mb-2">Network Health</p>
-                <h2 className="section-title text-3xl sm:text-4xl">
-                  {healthyCount} of {stores.length} stores healthy
-                </h2>
-              </div>
-              <Link to="/network" className="btn-ghost btn">
-                View network <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            </div>
-            <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Combined revenue of <span className="font-semibold text-navy">${totalRevenue.toLocaleString()}</span> against a target of ${totalTarget.toLocaleString()} — {attainment}% attainment. {criticalCount} store{criticalCount === 1 ? '' : 's'} in critical condition, {watchCount} on watch.
-            </p>
-
-            <div className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-sm border border-border bg-border sm:grid-cols-4">
-              <NetworkStat label="Stores" value={String(stores.length)} />
-              <NetworkStat label="Healthy" value={String(healthyCount)} tone="sage" />
-              <NetworkStat label="On watch" value={String(watchCount)} tone="gold" />
-              <NetworkStat label="Critical" value={String(criticalCount)} tone="crimson" />
-            </div>
-          </section>
-        </Reveal>
-
-        {/* Priority investigations */}
-        <Reveal>
-          <section>
-            <div className="mb-6 flex items-end justify-between">
-              <div>
-                <p className="eyebrow mb-2">Priority Investigations</p>
-                <h2 className="section-title text-3xl sm:text-4xl">Open cases</h2>
-              </div>
-              <Link to={`/investigations/${priorityInvestigations[0]?.id ?? 'issue-001'}`} className="btn-ghost btn">
-                All investigations <ChevronRight className="h-4 w-4" />
-              </Link>
-            </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              {priorityInvestigations.map((inv) => (
-                <InvestigationCard key={inv.id} investigation={inv} onOpen={() => navigate(`/investigations/${inv.id}`)} />
-              ))}
-            </div>
-          </section>
-        </Reveal>
-
-        {/* Pending decisions */}
-        <Reveal>
-          <section>
-            <div className="mb-6 flex items-end justify-between">
-              <div>
-                <p className="eyebrow mb-2">Pending Decisions</p>
-                <h2 className="section-title text-3xl sm:text-4xl">Awaiting your judgement</h2>
-              </div>
-              <Link to={`/decisions/${pendingDecisions[0]?.id ?? 'dec-1'}`} className="btn-ghost btn">
-                Decision chamber <ClipboardList className="h-4 w-4" />
-              </Link>
-            </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              {pendingDecisions.map((d) => (
-                <DecisionCard key={d.id} decision={d} onOpen={() => navigate(`/decisions/${d.id}`)} />
-              ))}
-            </div>
-          </section>
-        </Reveal>
-
-        {/* Recent activity */}
-        <Reveal>
-          <section>
-            <div className="mb-6">
-              <p className="eyebrow mb-2">Recent Activity</p>
-              <h2 className="section-title text-3xl sm:text-4xl">Latest actions</h2>
-            </div>
-            <div className="card overflow-hidden">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Action</th>
-                    <th>Store</th>
-                    <th>Type</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentActivity.map((a) => (
-                    <tr key={a.id} className="cursor-pointer" onClick={() => navigate('/actions')}>
-                      <td className="font-medium">{a.title}</td>
-                      <td className="text-muted-foreground">{a.storeName}</td>
-                      <td className="capitalize text-muted-foreground">{a.type}</td>
-                      <td><StatusBadge status={a.status} /></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </Reveal>
-
-        {/* Footer note */}
-        <Reveal>
-          <div className="flex items-center gap-4 py-6">
-            <div className="gold-rule flex-1" />
-            <p className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Activity className="h-3.5 w-3.5 text-gold-600" />
-              FreshGuard AI · Demonstration data · {new Date().getFullYear()}
-            </p>
-            <div className="gold-rule flex-1" />
+            <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-100 text-slate-600 border border-slate-200">
+              DEMO DATA
+            </span>
           </div>
-        </Reveal>
-      </div>
-    </div>
-  );
-}
+          <p className="text-xs text-slate-500 mt-0.5">
+            Network Operations · FreshBasket Retail Pacific Northwest · Reporting Period: Today, Oct 10, 2026
+          </p>
+        </div>
 
-/* ---------- Sub-components ---------- */
-
-function NetworkStat({ label, value, tone }: { label: string; value: string; tone?: 'sage' | 'gold' | 'crimson' }) {
-  const toneClass =
-    tone === 'sage' ? 'text-sage-600' :
-    tone === 'gold' ? 'text-gold-600' :
-    tone === 'crimson' ? 'text-crimson-600' : 'text-navy';
-  return (
-    <div className="bg-surface px-5 py-6">
-      <p className={`stat-value text-4xl ${toneClass}`}>{value}</p>
-      <p className="mt-2 text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
-    </div>
-  );
-}
-
-function InvestigationCard({ investigation, onOpen }: { investigation: Investigation; onOpen: () => void }) {
-  return (
-    <button
-      onClick={onOpen}
-      className="card group flex flex-col p-6 text-left transition-all hover:-translate-y-0.5 hover:shadow-lift"
-    >
-      <div className="mb-4 flex items-center justify-between">
-        <SeverityBadge severity={investigation.severity} />
-        <span className="text-xs text-muted-foreground">{investigation.confidence}% confidence</span>
-      </div>
-      <h3 className="font-serif text-xl font-semibold text-navy">{investigation.title}</h3>
-      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-        {investigation.evidenceSummary}
-      </p>
-      <p className="mt-auto flex items-center gap-1 pt-4 text-sm font-medium text-accent">
-        Open case <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-      </p>
-    </button>
-  );
-}
-
-function DecisionCard({ decision, onOpen }: { decision: DecisionOption; onOpen: () => void }) {
-  return (
-    <button
-      onClick={onOpen}
-      className="card group flex flex-col p-6 text-left transition-all hover:-translate-y-0.5 hover:shadow-lift"
-    >
-      <div className="mb-4 flex items-center justify-between">
-        <span className="badge bg-gold-50 text-gold-700">{decision.type}</span>
-        <span className={`text-xs font-medium ${decision.riskLevel === 'low' ? 'text-sage-600' : decision.riskLevel === 'medium' ? 'text-gold-600' : 'text-crimson-600'}`}>
-          {decision.riskLevel} risk
-        </span>
-      </div>
-      <h3 className="font-serif text-xl font-semibold text-navy">{decision.title}</h3>
-      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{decision.description}</p>
-      <div className="mt-auto flex items-center justify-between pt-4">
-        <p className="text-sm">
-          <span className="text-muted-foreground">Est. benefit </span>
-          <span className="font-semibold text-sage-600">${decision.estimatedBenefit.toLocaleString()}</span>
-        </p>
-        <p className="flex items-center gap-1 text-sm font-medium text-accent">
-          Review <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-        </p>
-      </div>
-    </button>
-  );
-}
-
-function CommandLoading() {
-  return (
-    <div className="min-h-screen">
-      <div className="shimmer aspect-[21/9] w-full" />
-      <div className="mx-auto max-w-6xl space-y-6 px-6 py-16 sm:px-10">
-        <div className="shimmer h-4 w-40 rounded" />
-        <div className="shimmer h-10 w-2/3 rounded" />
-        <div className="shimmer h-4 w-1/2 rounded" />
-        <div className="grid gap-4 pt-8 sm:grid-cols-4">
-          {[0, 1, 2, 3].map((i) => <div key={i} className="shimmer h-32 rounded-sm" />)}
+        <div className="flex items-center gap-2">
+          <Link
+            to="/manager/stores/1012"
+            className="btn-primary text-xs flex items-center gap-1.5"
+          >
+            <ShieldAlert className="w-3.5 h-3.5" />
+            <span>Inspect Store 017 (Critical)</span>
+          </Link>
         </div>
       </div>
-      <div className="sr-only">
-        <LoadingState message="Preparing your command centre…" />
+
+      {/* 2. Operational Summary Banner */}
+      <div className="p-4 rounded-lg border border-amber-200 bg-amber-50/70 text-slate-800 text-xs flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs">
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <span className="font-semibold text-slate-900 block">
+              Operational Priority Alert: 2 of 12 Stores Require Intervention
+            </span>
+            <p className="text-slate-600 leading-relaxed">
+              Store 017 (Tacoma Downtown) has 12 out-of-stock products, delayed supplier delivery CF-10482, and a -17.95% sales decline. Store 003 (Southcenter) shows abnormal dairy shrinkage.
+            </p>
+          </div>
+        </div>
+
+        <Link
+          to="/manager/investigations"
+          className="btn-secondary text-xs px-3 py-1.5 flex items-center gap-1 flex-shrink-0 whitespace-nowrap"
+        >
+          <span>View AI Root Cause Analysis</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
+
+      {approvalFeedback && (
+        <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+          <span>{approvalFeedback}</span>
+        </div>
+      )}
+
+      {/* 3. Essential Metrics Summary Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        {/* Metric 1 */}
+        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-xs space-y-1">
+          <div className="flex items-center justify-between text-xs text-slate-500">
+            <span className="font-medium">Stores Requiring Attention</span>
+            <span className="text-red-700 font-semibold text-[11px] bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
+              {attentionStores.length} Stores
+            </span>
+          </div>
+          <div className="text-2xl font-bold text-slate-900">
+            {attentionStores.length} <span className="text-xs font-normal text-slate-500">/ {stores.length} total</span>
+          </div>
+          <p className="text-[11px] text-slate-500">
+            Store 017 (Critical) &amp; Store 003 (At-Risk)
+          </p>
+        </div>
+
+        {/* Metric 2 */}
+        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-xs space-y-1">
+          <div className="flex items-center justify-between text-xs text-slate-500">
+            <span className="font-medium">Products Below Par (OOS)</span>
+            <span className="text-amber-700 font-semibold text-[11px] bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+              18 SKUs
+            </span>
+          </div>
+          <div className="text-2xl font-bold text-slate-900">
+            18 <span className="text-xs font-normal text-slate-500">SKUs network-wide</span>
+          </div>
+          <p className="text-[11px] text-slate-500">
+            12 concentrated in produce &amp; poultry at Store 017
+          </p>
+        </div>
+
+        {/* Metric 3 */}
+        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-xs space-y-1">
+          <div className="flex items-center justify-between text-xs text-slate-500">
+            <span className="font-medium">High-Priority Alerts</span>
+            <span className="text-red-700 font-semibold text-[11px] bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
+              {criticalIssues.length} Critical
+            </span>
+          </div>
+          <div className="text-2xl font-bold text-slate-900">
+            {criticalIssues.length} <span className="text-xs font-normal text-slate-500">Active</span>
+          </div>
+          <p className="text-[11px] text-slate-500">
+            Stockout surge, carrier delay &amp; wastage spike
+          </p>
+        </div>
+
+        {/* Metric 4 */}
+        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-xs space-y-1">
+          <div className="flex items-center justify-between text-xs text-slate-500">
+            <span className="font-medium">Fresh-Food Wastage Trend</span>
+            <span className="text-slate-600 font-semibold text-[11px] bg-slate-100 px-1.5 py-0.5 rounded">
+              Weekly
+            </span>
+          </div>
+          <div className="text-2xl font-bold text-slate-900 flex items-baseline gap-1">
+            +4.2% <span className="text-xs font-normal text-slate-500">vs target</span>
+          </div>
+          <p className="text-[11px] text-slate-500">
+            +28% localized increase at Tacoma branch
+          </p>
+        </div>
+
+      </div>
+
+      {/* 4. Priority Issues Table Section */}
+      <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
+        <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+          <div>
+            <h2 className="text-sm font-semibold text-slate-900">
+              Priority Operational Issues
+            </h2>
+            <p className="text-xs text-slate-500">
+              Ranked exceptions requiring manager intervention across the 12-store network
+            </p>
+          </div>
+          <span className="text-xs text-slate-500 font-mono">
+            {issues.length} Recorded Issues
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="enterprise-table">
+            <thead>
+              <tr>
+                <th>Store</th>
+                <th>Issue Summary</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Recommended Next Step</th>
+                <th className="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {issues.map((issue) => {
+                const isCrit = issue.severity === 'critical';
+                const isWarn = issue.severity === 'warning';
+                const storeObj = stores.find((s) => s.id === issue.storeId);
+
+                return (
+                  <tr key={issue.id}>
+                    <td className="font-medium text-slate-900">
+                      <div>{storeObj?.name || `Store #${issue.storeId}`}</div>
+                      <div className="text-[11px] text-slate-500">{storeObj?.location.city}, {storeObj?.location.state}</div>
+                    </td>
+                    <td>
+                      <div className="font-medium text-slate-800">{issue.title}</div>
+                      <div className="text-xs text-slate-500">{issue.description}</div>
+                    </td>
+                    <td>
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded text-[11px] font-semibold uppercase ${
+                          isCrit
+                            ? 'bg-red-100 text-red-800 border border-red-200'
+                            : isWarn
+                            ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                            : 'bg-slate-100 text-slate-700 border border-slate-200'
+                        }`}
+                      >
+                        {issue.severity}
+                      </span>
+                    </td>
+                    <td>
+                      <span className="text-xs text-slate-600 capitalize">
+                        {issue.status}
+                      </span>
+                    </td>
+                    <td className="text-slate-700">
+                      {issue.recommendedNextStep || 'Review store inventory and contact supplier.'}
+                    </td>
+                    <td className="text-right">
+                      <Link
+                        to={`/manager/stores/${issue.storeId}`}
+                        className="text-xs text-[#164e3d] hover:underline font-medium"
+                      >
+                        Inspect Store →
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* 5. Pending Operational Approvals (Governance) */}
+      <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
+        <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+          <div>
+            <h2 className="text-sm font-semibold text-slate-900">
+              Operational Approvals Required ({pendingActions.length})
+            </h2>
+            <p className="text-xs text-slate-500">
+              Actions proposed by AI intelligence engine awaiting human manager authorization
+            </p>
+          </div>
+          <Link to="/manager/actions" className="text-xs text-[#164e3d] hover:underline font-medium">
+            Full Governance Ledger →
+          </Link>
+        </div>
+
+        <div className="p-4 divide-y divide-slate-100">
+          {actionList.slice(0, 3).map((act) => {
+            const isPending = act.status === 'pending-approval';
+            return (
+              <div key={act.id} className="py-3.5 first:pt-0 last:pb-0 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+                <div className="space-y-1 max-w-2xl">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-slate-900">{act.title}</span>
+                    <span className="text-slate-500">· {act.storeName}</span>
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono uppercase ${
+                      act.status === 'approved' ? 'bg-emerald-100 text-emerald-800' :
+                      act.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                      'bg-amber-100 text-amber-800'
+                    }`}>
+                      {act.status}
+                    </span>
+                  </div>
+                  <p className="text-slate-600">{act.description}</p>
+                  <p className="text-[11px] text-slate-500">
+                    <strong>Evidence:</strong> {act.evidenceSummary} · <strong>Expected Savings:</strong> ${act.estimatedSavings}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {isPending ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => handleApproveAction(act.id, act.title)}
+                        className="btn-primary text-xs px-3 py-1.5 flex items-center gap-1"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Approve</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRejectAction(act.id, act.title)}
+                        className="btn-secondary text-xs px-3 py-1.5 flex items-center gap-1 text-red-700 hover:text-red-800"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                        <span>Reject</span>
+                      </button>
+                    </>
+                  ) : (
+                    <span className="text-slate-500 font-mono text-[11px]">
+                      Decision Logged
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 6. Quick Access Navigation Modules */}
+      <div>
+        <h3 className="text-xs font-semibold uppercase text-slate-500 tracking-wider mb-3">
+          Operations Modules
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <Link
+            to="/manager/network"
+            className="p-3.5 rounded-lg border border-slate-200 bg-white hover:border-[#164e3d] hover:bg-slate-50 transition-colors text-center group"
+          >
+            <StoreIcon className="w-5 h-5 mx-auto text-slate-600 group-hover:text-[#164e3d] mb-1.5" />
+            <span className="text-xs font-medium text-slate-800 block">Store Network</span>
+            <span className="text-[10px] text-slate-500 block">12 Branches</span>
+          </Link>
+
+          <Link
+            to="/manager/investigations"
+            className="p-3.5 rounded-lg border border-slate-200 bg-white hover:border-[#164e3d] hover:bg-slate-50 transition-colors text-center group"
+          >
+            <Search className="w-5 h-5 mx-auto text-slate-600 group-hover:text-[#164e3d] mb-1.5" />
+            <span className="text-xs font-medium text-slate-800 block">AI Investigations</span>
+            <span className="text-[10px] text-slate-500 block">Causal Graph</span>
+          </Link>
+
+          <Link
+            to="/manager/decisions"
+            className="p-3.5 rounded-lg border border-slate-200 bg-white hover:border-[#164e3d] hover:bg-slate-50 transition-colors text-center group"
+          >
+            <Scale className="w-5 h-5 mx-auto text-slate-600 group-hover:text-[#164e3d] mb-1.5" />
+            <span className="text-xs font-medium text-slate-800 block">Decision Chamber</span>
+            <span className="text-[10px] text-slate-500 block">Simulations</span>
+          </Link>
+
+          <Link
+            to="/manager/actions"
+            className="p-3.5 rounded-lg border border-slate-200 bg-white hover:border-[#164e3d] hover:bg-slate-50 transition-colors text-center group"
+          >
+            <CheckCircle2 className="w-5 h-5 mx-auto text-slate-600 group-hover:text-[#164e3d] mb-1.5" />
+            <span className="text-xs font-medium text-slate-800 block">Action Center</span>
+            <span className="text-[10px] text-slate-500 block">Approvals</span>
+          </Link>
+
+          <Link
+            to="/manager/product-lookup"
+            className="p-3.5 rounded-lg border border-slate-200 bg-white hover:border-[#164e3d] hover:bg-slate-50 transition-colors text-center group"
+          >
+            <ScanBarcode className="w-5 h-5 mx-auto text-slate-600 group-hover:text-[#164e3d] mb-1.5" />
+            <span className="text-xs font-medium text-slate-800 block">Product Registry</span>
+            <span className="text-[10px] text-slate-500 block">Barcodes</span>
+          </Link>
+
+          <Link
+            to="/manager/settings"
+            className="p-3.5 rounded-lg border border-slate-200 bg-white hover:border-[#164e3d] hover:bg-slate-50 transition-colors text-center group"
+          >
+            <Sliders className="w-5 h-5 mx-auto text-slate-600 group-hover:text-[#164e3d] mb-1.5" />
+            <span className="text-xs font-medium text-slate-800 block">Settings</span>
+            <span className="text-[10px] text-slate-500 block">Configuration</span>
+          </Link>
+        </div>
+      </div>
+
     </div>
   );
-}
-
-function severityRank(sev: 'info' | 'warning' | 'critical') {
-  return sev === 'critical' ? 3 : sev === 'warning' ? 2 : 1;
 }

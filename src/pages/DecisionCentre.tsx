@@ -1,5 +1,6 @@
 // ============================================================
-// FreshGuard AI — Page: The Decision Chamber
+// FreshGuard AI — Page: Strategy Evaluation & Decision Chamber
+// Enterprise Operational Decision Modeling & Simulation
 // ============================================================
 
 import React, { useState } from 'react';
@@ -7,7 +8,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDemos } from '../hooks/useDemos';
 import { LoadingState, EmptyState } from '../components/state';
 import { WhatIfSimulator } from '../components/WhatIfSimulator';
-import { EDITORIAL_IMAGES } from '../assets/images';
 import { useAIStore } from '../services/ai-store';
 import {
   Scale,
@@ -39,7 +39,7 @@ export function DecisionCentrePage() {
   const [isApproved, setIsApproved] = useState<boolean>(false);
   const [isSimulated, setIsSimulated] = useState<boolean>(false);
 
-  if (isLoading) return <LoadingState message="Summoning decision chamber models..." />;
+  if (isLoading) return <LoadingState message="Accessing decision modeling algorithms..." />;
 
   const decisions = data?.decisions || [];
   const currentDecision = decisions.find((d) => d.id === selectedStrategyId) || decisions[0];
@@ -61,31 +61,27 @@ export function DecisionCentrePage() {
   };
 
   return (
-    <div className="space-y-12 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16">
       
-      {/* ============================================================
-          HEADER: THE ROYAL DECISION CHAMBER
-          ============================================================ */}
-      <section className="relative rounded border border-[#C5A059]/30 bg-gradient-to-br from-[#0B3B2C]/80 to-[#041410] p-8 sm:p-10 shadow-2xl">
-        <div className="max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-[#C5A059]/30 bg-[#0B3B2C]/50">
-            <Scale className="w-3.5 h-3.5 text-[#C5A059]" />
-            <span className="text-[11px] font-mono tracking-widest text-[#E0C588] uppercase">
-              EXECUTIVE GOVERNANCE & INTERVENTION CHAMBER
-            </span>
+      {/* Enterprise Header */}
+      <section className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+        <div className="max-w-3xl space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+            <Scale className="w-3.5 h-3.5 text-emerald-700" />
+            <span>Executive Governance &amp; Intervention Chamber</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-editorial font-normal text-[#FDFBF7]">
-            Strategy Evaluation & Simulation
+          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
+            Strategy Evaluation &amp; Simulation
           </h1>
 
-          <p className="text-sm sm:text-base text-[#8E9B90] font-light leading-relaxed">
-            Compare 3 targeted operational strategies for Store 017. Weigh projected benefit, fleet logistics costs,
-            and uncertainty. Human sign-off is mandatory prior to simulating automated execution.
+          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+            Compare 3 targeted operational strategies for Store 017. Weigh projected margin benefit, fleet logistics costs,
+            and uncertainty. Explicit human sign-off is mandatory prior to simulating automated execution.
           </p>
 
-          <div className="p-3 rounded border border-[#C5A059]/20 bg-[#071C16]/60 text-xs text-[#E0C588] flex items-center gap-2">
-            <Lock className="w-4 h-4 text-[#C5A059] flex-shrink-0" />
+          <div className="p-3 rounded bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-center gap-2 mt-2">
+            <Lock className="w-4 h-4 text-emerald-700 flex-shrink-0" />
             <span>Governance Rule: Simulated actions do not alter physical store inventories or trigger real supplier purchase orders.</span>
           </div>
 
@@ -99,29 +95,27 @@ export function DecisionCentrePage() {
                   `Evaluate the operational intervention strategies for Store 017: Option A (Dynamic Markdown Flash Sale), Option B (Inter-store stock transfer from Bellevue #1014), and Option C (Expedited Supplier Purchase Order re-delivery). Which option optimizes margin recovery while minimizing spoilage?`
                 );
               }}
-              className="btn-royal-gold text-xs px-4 py-2 flex items-center gap-2 shadow-md"
+              className="btn-primary text-xs px-3.5 py-2 flex items-center gap-2"
             >
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-3.5 h-3.5" />
               <span>AI Strategic Tradeoff Analysis</span>
             </button>
           </div>
         </div>
       </section>
 
-      {/* ============================================================
-          SECTION 1: COMPARISON OF 3 OPERATIONAL STRATEGIES
-          ============================================================ */}
-      <section className="space-y-4">
+      {/* Comparative Strategy Matrix */}
+      <section className="space-y-3">
         <div>
-          <span className="text-[11px] font-mono tracking-widest text-[#C5A059] uppercase block">
-            COMPARATIVE STRATEGY MATRIX
-          </span>
-          <h2 className="text-2xl font-editorial text-[#FDFBF7]">
+          <h2 className="text-base font-semibold text-slate-900">
             Select Strategic Intervention
           </h2>
+          <p className="text-xs text-slate-500">
+            Evaluate cost/benefit tradeoffs and risk classifications
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {decisions.slice(0, 3).map((opt) => {
             const isSelected = opt.id === selectedStrategyId;
             return (
@@ -132,51 +126,53 @@ export function DecisionCentrePage() {
                   setIsApproved(false);
                   setIsSimulated(false);
                 }}
-                className={`royal-card p-6 cursor-pointer flex flex-col justify-between space-y-4 transition-all relative ${
-                  isSelected ? 'royal-card-highlight ring-1 ring-[#C5A059]' : 'opacity-80 hover:opacity-100'
+                className={`bg-white rounded-lg p-5 border cursor-pointer flex flex-col justify-between space-y-4 transition-all relative shadow-sm ${
+                  isSelected ? 'border-emerald-600 ring-2 ring-emerald-600/20' : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
                 {isSelected && (
                   <div className="absolute top-3 right-3">
-                    <span className="badge-royal-fact">SELECTED</span>
+                    <span className="inline-flex items-center text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      SELECTED
+                    </span>
                   </div>
                 )}
 
                 <div className="space-y-2">
-                  <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded ${
-                    opt.riskLevel === 'low' ? 'bg-[#16A34A]/20 text-[#16A34A] border border-[#16A34A]/30' :
-                    opt.riskLevel === 'medium' ? 'bg-[#C5A059]/20 text-[#E0C588] border border-[#C5A059]/30' :
-                    'bg-[#9E2A2B]/20 text-[#F87171] border border-[#9E2A2B]/30'
+                  <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded border inline-block ${
+                    opt.riskLevel === 'low' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                    opt.riskLevel === 'medium' ? 'bg-amber-50 text-amber-800 border-amber-200' :
+                    'bg-rose-50 text-rose-700 border-rose-200'
                   }`}>
                     {opt.riskLevel} RISK PROFILE
                   </span>
 
-                  <h3 className="text-lg font-editorial text-[#FDFBF7] pt-1">
+                  <h3 className="text-base font-semibold text-slate-900 pt-1">
                     {opt.title}
                   </h3>
 
-                  <p className="text-xs text-[#8E9B90] leading-relaxed">
+                  <p className="text-xs text-slate-600 leading-relaxed">
                     {opt.description}
                   </p>
                 </div>
 
                 {/* Strategy ROI Bar */}
-                <div className="pt-3 border-t border-white/5 space-y-2 text-xs">
+                <div className="pt-3 border-t border-slate-100 space-y-2 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-[#8E9B90]">Est. Gross Benefit</span>
-                    <span className="text-[#16A34A] font-semibold font-mono">+${opt.estimatedBenefit.toLocaleString()}</span>
+                    <span className="text-slate-500">Est. Gross Benefit</span>
+                    <span className="text-emerald-700 font-semibold font-mono">+${opt.estimatedBenefit.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#8E9B90]">Estimated Cost</span>
-                    <span className="text-[#F87171] font-semibold font-mono">-${opt.estimatedCost.toLocaleString()}</span>
+                    <span className="text-slate-500">Estimated Cost</span>
+                    <span className="text-rose-700 font-semibold font-mono">-${opt.estimatedCost.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#8E9B90]">Execution Timeline</span>
-                    <span className="text-[#FDFBF7] font-mono">{opt.timeline}</span>
+                    <span className="text-slate-500">Execution Timeline</span>
+                    <span className="text-slate-800 font-mono font-medium">{opt.timeline}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#8E9B90]">Model Confidence</span>
-                    <span className="text-[#E0C588] font-mono">{opt.confidence}%</span>
+                    <span className="text-slate-500">Model Confidence</span>
+                    <span className="text-slate-800 font-mono font-medium">{opt.confidence}%</span>
                   </div>
                 </div>
 
@@ -186,20 +182,18 @@ export function DecisionCentrePage() {
         </div>
       </section>
 
-      {/* ============================================================
-          SECTION 2: DEEP DIVE & WHAT-IF SIMULATOR FOR SELECTED STRATEGY
-          ============================================================ */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {/* Sensitivity Analysis & Human Sign-off */}
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Left: What-If Parameter Simulator */}
-        <div className="lg:col-span-7 space-y-4">
+        <div className="lg:col-span-7 space-y-3">
           <div>
-            <span className="text-[11px] font-mono tracking-widest text-[#C5A059] uppercase block">
-              SENSITIVITY ANALYSIS
-            </span>
-            <h3 className="text-xl font-editorial text-[#FDFBF7]">
-              What-If Parameter Modeling
+            <h3 className="text-base font-semibold text-slate-900">
+              Sensitivity &amp; Parameter Modeling
             </h3>
+            <p className="text-xs text-slate-500">
+              Simulate price markdown sensitivity on inventory velocities
+            </p>
           </div>
 
           <WhatIfSimulator
@@ -211,36 +205,36 @@ export function DecisionCentrePage() {
         </div>
 
         {/* Right: Human Governance & Simulated Execution */}
-        <div className="lg:col-span-5 space-y-4">
+        <div className="lg:col-span-5 space-y-3">
           <div>
-            <span className="text-[11px] font-mono tracking-widest text-[#C5A059] uppercase block">
-              MANDATORY SIGN-OFF
-            </span>
-            <h3 className="text-xl font-editorial text-[#FDFBF7]">
-              Human Approval Protocol
+            <h3 className="text-base font-semibold text-slate-900">
+              Human Sign-Off Protocol
             </h3>
+            <p className="text-xs text-slate-500">
+              Mandatory supervisory authorization before dispatch simulation
+            </p>
           </div>
 
-          <div className="royal-card p-6 space-y-5">
-            <div className="space-y-2">
-              <h4 className="text-base font-editorial text-[#FDFBF7]">
-                Executive Sign-off Required
+          <div className="bg-white rounded-lg p-5 border border-slate-200 shadow-sm space-y-4">
+            <div className="space-y-1.5">
+              <h4 className="text-sm font-semibold text-slate-900">
+                Executive Authorization Required
               </h4>
-              <p className="text-xs text-[#8E9B90] leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 By ticking below, you acknowledge having reviewed the supporting telemetry for Store 017
-                and authorize simulated dispatch of strategy <strong className="text-[#E0C588]">"{currentDecision.title}"</strong>.
+                and authorize simulated dispatch of strategy <strong className="text-slate-900 font-medium">"{currentDecision.title}"</strong>.
               </p>
             </div>
 
             {/* Checkbox */}
-            <label className="flex items-start gap-3 p-3.5 rounded border border-[#C5A059]/20 bg-[#071C16] cursor-pointer hover:border-[#C5A059]/50 transition-colors">
+            <label className="flex items-start gap-3 p-3.5 rounded bg-slate-50 border border-slate-200 cursor-pointer hover:border-slate-300 transition-colors">
               <input
                 type="checkbox"
                 checked={isApproved}
                 onChange={(e) => setIsApproved(e.target.checked)}
-                className="mt-0.5 accent-[#C5A059] w-4 h-4 rounded cursor-pointer"
+                className="mt-0.5 accent-emerald-700 w-4 h-4 rounded cursor-pointer"
               />
-              <span className="text-xs text-[#FDFBF7] leading-relaxed">
+              <span className="text-xs text-slate-800 leading-relaxed font-medium">
                 I formally confirm executive approval for this simulated intervention.
               </span>
             </label>
@@ -248,12 +242,13 @@ export function DecisionCentrePage() {
             {/* Execution Trigger */}
             <div className="space-y-3">
               <button
+                type="button"
                 disabled={!isApproved}
                 onClick={handleSimulateExecution}
-                className={`w-full py-3 px-4 rounded text-xs font-semibold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                className={`w-full py-2.5 px-4 rounded text-xs font-semibold tracking-wider transition-all flex items-center justify-center gap-2 ${
                   isApproved
-                    ? 'btn-royal-gold'
-                    : 'bg-white/5 border border-white/10 text-[#8E9B90]/50 cursor-not-allowed'
+                    ? 'btn-primary'
+                    : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
                 }`}
               >
                 <FileCheck2 className="w-4 h-4" />
@@ -261,12 +256,12 @@ export function DecisionCentrePage() {
               </button>
 
               {isSimulated && (
-                <div className="p-4 rounded border border-[#16A34A]/40 bg-[#16A34A]/10 text-xs text-[#16A34A] space-y-1">
+                <div className="p-3.5 rounded bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 space-y-1">
                   <div className="flex items-center gap-1.5 font-semibold">
-                    <CheckCircle2 className="w-4 h-4" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                     <span>SIMULATION COMPLETED SUCCESSFULLY</span>
                   </div>
-                  <p className="text-[#8E9B90] leading-relaxed pt-1">
+                  <p className="text-xs text-slate-600 leading-relaxed pt-1">
                     Virtual dispatch confirmed. Expected stock balance recovery within 6 hours. Telemetry tracked under
                     governance audit trail #SIM-2026-X81.
                   </p>
@@ -274,8 +269,8 @@ export function DecisionCentrePage() {
               )}
             </div>
 
-            <div className="pt-3 border-t border-white/5 text-[11px] text-[#8E9B90]">
-              <span className="font-mono text-[#C5A059]">AUDIT LOGGED TO:</span> HEAD OFFICE OPERATIONS
+            <div className="pt-3 border-t border-slate-100 text-[11px] text-slate-500 font-mono">
+              AUDIT LOGGED TO: HEAD OFFICE OPERATIONS
             </div>
           </div>
         </div>

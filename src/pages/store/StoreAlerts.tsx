@@ -1,19 +1,14 @@
 // ============================================================
-// FreshGuard AI — Store Manager: Wastage & Spoilage Alerts Log
+// FreshGuard AI — Store Manager: Wastage & Spoilage Log
 // ============================================================
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { STORE_17_WASTAGE } from '../../mocks/sales-wastage';
 import type { WastageRecord } from '../../types';
 import {
   Flame,
-  AlertTriangle,
   Plus,
   CheckCircle2,
-  TrendingUp,
-  DollarSign,
-  Package,
-  Calendar,
   X
 } from 'lucide-react';
 
@@ -22,7 +17,7 @@ export function StoreAlertsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
-  // New incident form state
+  // New incident state
   const [productName, setProductName] = useState('');
   const [department, setDepartment] = useState('Produce');
   const [weight, setWeight] = useState('');
@@ -56,161 +51,147 @@ export function StoreAlertsPage() {
     setProductName('');
     setWeight('');
     setCost('');
-    setFeedback(`Wastage record for "${productName}" successfully logged into network compliance database.`);
-    setTimeout(() => setFeedback(null), 4000);
+    setFeedback(`Wastage record for "${productName}" committed to compliance database.`);
+    setTimeout(() => setFeedback(null), 3500);
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       
       {/* Header */}
-      <section className="relative rounded border border-[#C5A059]/30 bg-gradient-to-br from-[#0B3B2C]/80 via-[#071C16] to-[#041410] p-6 sm:p-8 shadow-2xl">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-3 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-[#C5A059]/30 bg-[#0B3B2C]/60 text-xs font-mono text-[#E0C588]">
-              <Flame className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span>STORE 017 · PERISHABLE SHRINKAGE &amp; WASTAGE AUDIT</span>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl font-editorial font-normal text-[#FDFBF7]">
-              Wastage &amp; Spoilage Surveillance
-            </h1>
-
-            <p className="text-xs sm:text-sm text-[#8E9B90] leading-relaxed">
-              Auditing of discard logs, rotational FIFO breaches, and damaged merchandise. Spoilage at Store 017 is tracking +28% this week, concentrated in produce and fresh meats.
-            </p>
-          </div>
-
-          <div>
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(true)}
-              className="btn-royal-gold text-xs px-4 py-2.5 flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Log Spoilage Incident</span>
-            </button>
-          </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+            Wastage &amp; Spoilage Log
+          </h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Store #017 (Tacoma Downtown) · Perishable shrinkage audit and discard tracking
+          </p>
         </div>
 
-        {/* Wastage Summary KPI */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 max-w-lg">
-          <div className="p-3.5 rounded border border-white/5 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">LOGGED INCIDENTS</span>
-            <span className="text-xl font-editorial text-[#FDFBF7]">{wastageList.length} Records</span>
-          </div>
-          <div className="p-3.5 rounded border border-[#9E2A2B]/40 bg-[#9E2A2B]/15">
-            <span className="text-[10px] font-mono text-[#F87171] block">TOTAL NET SHRINKAGE</span>
-            <span className="text-xl font-editorial text-[#F87171]">${totalCost.toFixed(2)}</span>
-          </div>
-          <div className="p-3.5 rounded border border-white/5 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">DISCARD WEIGHT</span>
-            <span className="text-xl font-editorial text-[#E0C588]">{totalWeight.toFixed(1)} lbs</span>
-          </div>
+        <div>
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="btn-primary text-xs flex items-center gap-1.5"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Log Spoilage Incident</span>
+          </button>
         </div>
-      </section>
+      </div>
 
       {feedback && (
-        <div className="p-4 rounded border border-[#16A34A]/40 bg-[#16A34A]/15 text-[#4ADE80] text-xs flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+        <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
           <span>{feedback}</span>
         </div>
       )}
 
-      {/* Spoilage Records Ledger */}
-      <div className="royal-card p-6 space-y-4 border-[#C5A059]/20 shadow-xl">
-        <div className="flex items-center justify-between pb-3 border-b border-white/5">
-          <span className="text-xs font-mono text-[#C5A059] uppercase tracking-wider">
-            Verified Floor Discard History
-          </span>
-          <span className="text-xs text-[#8E9B90] font-mono">
-            BENCHMARK TOLERANCE: &lt; 2.5% OF MERCHANDISE
+      {/* Summary Matrix */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-lg">
+        <div className="bg-white p-3 rounded-md border border-slate-200 shadow-xs">
+          <span className="text-[11px] text-slate-500 block">Logged Incidents</span>
+          <span className="text-xl font-bold text-slate-900">{wastageList.length} Records</span>
+        </div>
+        <div className="bg-white p-3 rounded-md border border-slate-200 shadow-xs">
+          <span className="text-[11px] text-slate-500 block">Total Net Shrinkage</span>
+          <span className="text-xl font-bold text-red-700">${totalCost.toFixed(2)}</span>
+        </div>
+        <div className="bg-white p-3 rounded-md border border-slate-200 shadow-xs">
+          <span className="text-[11px] text-slate-500 block">Discard Weight</span>
+          <span className="text-xl font-bold text-slate-800">{totalWeight.toFixed(1)} lbs</span>
+        </div>
+      </div>
+
+      {/* Spoilage Table */}
+      <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
+        <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-slate-900">
+            Recorded Discard History
+          </h2>
+          <span className="text-xs text-slate-500 font-mono">
+            TOLERANCE THRESHOLD: &lt; 2.5%
           </span>
         </div>
 
-        <div className="space-y-3">
-          {wastageList.map((item) => (
-            <div
-              key={item.id}
-              className="p-5 rounded border border-white/10 bg-[#071C16] flex flex-col md:flex-row md:items-center justify-between gap-4"
-            >
-              <div className="space-y-1.5 max-w-2xl">
-                <div className="flex items-center gap-2.5">
-                  <span className="px-2 py-0.5 rounded bg-white/5 text-[10px] font-mono text-[#E0C588] uppercase">
-                    {item.department}
-                  </span>
-                  <span className="text-sm font-semibold text-[#FDFBF7]">{item.productName}</span>
-                  <span className="text-xs font-mono text-[#8E9B90]">({item.date})</span>
-                </div>
-
-                <p className="text-xs text-[#8E9B90]">
-                  <strong className="text-[#FDFBF7]">Reason:</strong> {item.wastageReason}
-                </p>
-
-                {item.recommendedAction && (
-                  <p className="text-xs text-[#C5A059] font-mono">
-                    ✦ Operational Directive: {item.recommendedAction}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex-shrink-0 text-left md:text-right space-y-1">
-                <div className="text-base font-editorial text-[#F87171] font-semibold">
-                  -${item.cost.toFixed(2)}
-                </div>
-                <div className="text-xs font-mono text-[#8E9B90]">
-                  Weight: {item.wastageWeight} lbs
-                </div>
-                <span className="inline-block text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-[#16A34A]/20 text-[#4ADE80]">
-                  {item.status}
-                </span>
-              </div>
-            </div>
-          ))}
+        <div className="overflow-x-auto">
+          <table className="enterprise-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Department</th>
+                <th>Product</th>
+                <th>Reason</th>
+                <th>Weight</th>
+                <th className="text-right">Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              {wastageList.map((item) => (
+                <tr key={item.id}>
+                  <td className="text-slate-600 font-mono text-xs">{item.date}</td>
+                  <td>
+                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-xs font-medium">
+                      {item.department}
+                    </span>
+                  </td>
+                  <td className="font-medium text-slate-900">{item.productName}</td>
+                  <td className="text-slate-600 text-xs">
+                    <div>{item.wastageReason}</div>
+                    {item.recommendedAction && (
+                      <div className="text-[11px] text-amber-700 mt-0.5">Directive: {item.recommendedAction}</div>
+                    )}
+                  </td>
+                  <td className="font-mono text-slate-700 text-xs">{item.wastageWeight} lbs</td>
+                  <td className="text-right font-mono text-red-700 font-semibold text-xs">
+                    -${item.cost.toFixed(2)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
       {/* Log Incident Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="max-w-md w-full royal-card p-6 border-[#C5A059]/40 space-y-4 shadow-2xl relative animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-white p-5 rounded-lg border border-slate-300 shadow-xl space-y-4 relative">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-[#8E9B90] hover:text-[#FDFBF7]"
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
             >
               <X className="w-4 h-4" />
             </button>
 
-            <div className="space-y-1">
-              <span className="text-[10px] font-mono tracking-widest text-[#C5A059] uppercase block">
-                COMPLIANCE LOG
-              </span>
-              <h3 className="text-xl font-editorial text-[#FDFBF7]">Record Spoilage Incident</h3>
-              <p className="text-xs text-[#8E9B90]">
-                File discarded perishable merchandise to update store inventory reconciliation.
+            <div>
+              <h3 className="text-sm font-semibold text-slate-900">Record Spoilage Incident</h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Log discarded merchandise to reconcile store inventory.
               </p>
             </div>
 
-            <form onSubmit={handleAddIncident} className="space-y-3.5 pt-2">
-              <div className="space-y-1">
-                <label className="text-[11px] font-mono text-[#C5A059] uppercase block">Product Name</label>
+            <form onSubmit={handleAddIncident} className="space-y-3 pt-1">
+              <div>
+                <label className="text-xs font-medium text-slate-700 block mb-1">Product Name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Organic Baby Spinach 5oz"
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
-                  className="w-full rounded text-xs px-3 py-2 bg-[#041410] text-[#FDFBF7] border border-[#C5A059]/30"
+                  className="w-full text-xs px-3 py-2 rounded-md border border-slate-300 bg-white"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-[11px] font-mono text-[#C5A059] uppercase block">Department</label>
+                <div>
+                  <label className="text-xs font-medium text-slate-700 block mb-1">Department</label>
                   <select
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full rounded text-xs px-3 py-2 bg-[#041410] text-[#FDFBF7] border border-[#C5A059]/30"
+                    className="w-full text-xs px-2.5 py-1.5 rounded-md border border-slate-300 bg-white"
                   >
                     <option value="Produce">Produce</option>
                     <option value="Meat">Meat</option>
@@ -219,36 +200,36 @@ export function StoreAlertsPage() {
                   </select>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-[11px] font-mono text-[#C5A059] uppercase block">Weight (lbs)</label>
+                <div>
+                  <label className="text-xs font-medium text-slate-700 block mb-1">Weight (lbs)</label>
                   <input
                     type="number"
                     step="0.1"
                     required
-                    placeholder="e.g. 8.5"
+                    placeholder="e.g. 6.5"
                     value={weight}
                     onChange={(e) => setWeight(e.target.value)}
-                    className="w-full rounded text-xs px-3 py-2 bg-[#041410] text-[#FDFBF7] border border-[#C5A059]/30"
+                    className="w-full text-xs px-3 py-2 rounded-md border border-slate-300 bg-white"
                   />
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[11px] font-mono text-[#C5A059] uppercase block">Discard Reason</label>
+              <div>
+                <label className="text-xs font-medium text-slate-700 block mb-1">Discard Reason</label>
                 <select
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  className="w-full rounded text-xs px-3 py-2 bg-[#041410] text-[#FDFBF7] border border-[#C5A059]/30"
+                  className="w-full text-xs px-2.5 py-1.5 rounded-md border border-slate-300 bg-white"
                 >
                   <option value="Spoilage - expired before sale">Spoilage - expired before sale</option>
                   <option value="Spoilage - overstock">Spoilage - overstock</option>
-                  <option value="Damaged packaging in handling">Damaged packaging in handling</option>
-                  <option value="Cold chain temperature fluctuation">Cold chain temperature fluctuation</option>
+                  <option value="Damaged packaging in transit">Damaged packaging in transit</option>
+                  <option value="Cold chain temperature anomaly">Cold chain temperature anomaly</option>
                 </select>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[11px] font-mono text-[#C5A059] uppercase block">Estimated Value ($)</label>
+              <div>
+                <label className="text-xs font-medium text-slate-700 block mb-1">Estimated Cost ($)</label>
                 <input
                   type="number"
                   step="0.01"
@@ -256,7 +237,7 @@ export function StoreAlertsPage() {
                   placeholder="e.g. 14.50"
                   value={cost}
                   onChange={(e) => setCost(e.target.value)}
-                  className="w-full rounded text-xs px-3 py-2 bg-[#041410] text-[#FDFBF7] border border-[#C5A059]/30"
+                  className="w-full text-xs px-3 py-2 rounded-md border border-slate-300 bg-white"
                 />
               </div>
 
@@ -264,15 +245,15 @@ export function StoreAlertsPage() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="btn-royal-outline text-xs px-3 py-2"
+                  className="btn-secondary text-xs px-3 py-1.5"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="btn-royal-gold text-xs px-4 py-2"
+                  className="btn-primary text-xs px-3.5 py-1.5"
                 >
-                  Commit Log Entry
+                  Commit Log
                 </button>
               </div>
             </form>

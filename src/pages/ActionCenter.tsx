@@ -1,5 +1,6 @@
 // ============================================================
 // FreshGuard AI — Page: Action Centre (Governance & Approvals)
+// Human-in-the-Loop Operational Directives Sign-Off Ledger
 // ============================================================
 
 import React, { useState } from 'react';
@@ -41,46 +42,45 @@ export function ActionCenterPage() {
   };
 
   return (
-    <div className="space-y-12 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16">
       
-      {/* Header */}
-      <section className="relative rounded border border-[#C5A059]/30 bg-gradient-to-br from-[#0B3B2C]/70 to-[#041410] p-8 sm:p-10 shadow-2xl">
-        <div className="max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-[#C5A059]/30 bg-[#0B3B2C]/50">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#C5A059]" />
-            <span className="text-[11px] font-mono tracking-widest text-[#E0C588] uppercase">
-              HUMAN-IN-THE-LOOP GOVERNANCE LEDGER
-            </span>
+      {/* Enterprise Header */}
+      <section className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+            <span>Human-in-the-Loop Governance Ledger</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-editorial font-normal text-[#FDFBF7]">
-            Action Centre & Sign-Offs
+          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
+            Action Centre &amp; Operational Sign-Offs
           </h1>
 
-          <p className="text-sm sm:text-base text-[#8E9B90] font-light leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-3xl">
             Every AI-generated recommendation requires explicit human sign-off before executing or assigning
-            directives to store teams. Review financial models, projected impacts, and supporting evidence.
+            directives to store teams. Review financial models, projected impacts, and supporting evidence below.
           </p>
         </div>
       </section>
 
       {/* Filter and Count Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div>
-          <span className="text-[11px] font-mono tracking-widest text-[#C5A059] uppercase block">
-            INTERVENTION QUEUE
-          </span>
-          <h2 className="text-2xl font-editorial text-[#FDFBF7]">
+          <h2 className="text-base font-semibold text-slate-900">
             Proposed Directives ({filtered.length})
           </h2>
+          <span className="text-xs text-slate-500">
+            Pending authorization or archived decision history
+          </span>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-xs font-mono text-[#8E9B90]">STATUS FILTER:</span>
+          <label htmlFor="action-filter-select" className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Status Filter:</label>
           <select
+            id="action-filter-select"
             value={filter}
             onChange={(e) => setFilter(e.target.value as any)}
-            className="rounded bg-[#071C16] text-[#FDFBF7] text-xs px-3 py-1.5 border border-[#C5A059]/30 focus:outline-none"
+            className="rounded bg-slate-50 text-slate-800 text-xs px-3 py-1.5 border border-slate-300 focus:outline-none focus:ring-1 focus:ring-emerald-600"
           >
             <option value="all">All Directives</option>
             <option value="pending-approval">Pending Approval</option>
@@ -92,60 +92,63 @@ export function ActionCenterPage() {
       </div>
 
       {/* Action Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {filtered.map((action) => (
-          <div key={action.id} className="royal-card p-6 flex flex-col justify-between space-y-4">
+          <div key={action.id} className="bg-white rounded-lg p-5 border border-slate-200 shadow-sm flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded ${
-                  action.status === 'pending-approval' ? 'bg-[#D97706]/20 text-[#F59E0B] border border-[#D97706]/30' :
-                  action.status === 'approved' ? 'bg-[#16A34A]/20 text-[#16A34A] border border-[#16A34A]/30' :
-                  action.status === 'rejected' ? 'bg-[#9E2A2B]/20 text-[#F87171] border border-[#9E2A2B]/30' :
-                  'bg-[#3B82F6]/20 text-[#60A5FA] border border-[#3B82F6]/30'
+                <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded border ${
+                  action.status === 'pending-approval' ? 'bg-amber-50 text-amber-800 border-amber-200' :
+                  action.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                  action.status === 'rejected' ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                  'bg-blue-50 text-blue-700 border-blue-200'
                 }`}>
                   {action.status.replace('-', ' ')}
                 </span>
-                <span className="text-xs font-mono text-[#C5A059] uppercase">{action.priority} PRIORITY</span>
+                <span className="text-xs font-mono font-medium text-slate-500 uppercase">
+                  {action.priority} PRIORITY
+                </span>
               </div>
 
-              <h3 className="text-lg font-editorial text-[#FDFBF7]">
+              <h3 className="text-base font-semibold text-slate-900">
                 {action.title}
               </h3>
-              <p className="text-xs text-[#8E9B90] leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 {action.description}
               </p>
 
               {/* Details Matrix */}
-              <div className="grid grid-cols-2 gap-2 text-xs pt-2">
-                <div className="p-2.5 rounded border border-white/5 bg-[#071C16]">
-                  <span className="text-[10px] font-mono text-[#8E9B90] block">TARGET STORE</span>
-                  <span className="font-semibold text-[#FDFBF7]">{action.storeName}</span>
+              <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                <div className="p-2.5 rounded bg-slate-50 border border-slate-200">
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide block">Target Store</span>
+                  <span className="font-semibold text-slate-800">{action.storeName}</span>
                 </div>
-                <div className="p-2.5 rounded border border-white/5 bg-[#071C16]">
-                  <span className="text-[10px] font-mono text-[#8E9B90] block">TRANSFER/ORDER</span>
-                  <span className="font-semibold text-[#FDFBF7]">{action.proposedQuantity} {action.unit}</span>
+                <div className="p-2.5 rounded bg-slate-50 border border-slate-200">
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide block">Transfer / Order</span>
+                  <span className="font-semibold text-slate-800">{action.proposedQuantity} {action.unit}</span>
                 </div>
-                <div className="p-2.5 rounded border border-white/5 bg-[#071C16]">
-                  <span className="text-[10px] font-mono text-[#8E9B90] block">EST. EXPENSE</span>
-                  <span className="font-mono text-[#F87171]">-${action.estimatedCost.toLocaleString()}</span>
+                <div className="p-2.5 rounded bg-slate-50 border border-slate-200">
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide block">Est. Expense</span>
+                  <span className="font-mono font-semibold text-rose-700">-${action.estimatedCost.toLocaleString()}</span>
                 </div>
-                <div className="p-2.5 rounded border border-white/5 bg-[#071C16]">
-                  <span className="text-[10px] font-mono text-[#8E9B90] block">EST. REVENUE RECOVERY</span>
-                  <span className="font-mono text-[#16A34A]">+{action.estimatedSavings.toLocaleString()}</span>
+                <div className="p-2.5 rounded bg-slate-50 border border-slate-200">
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide block">Est. Margin Recovery</span>
+                  <span className="font-mono font-semibold text-emerald-700">+${action.estimatedSavings.toLocaleString()}</span>
                 </div>
               </div>
 
               {/* Expected Impact Callout */}
-              <div className="p-3 rounded border border-[#C5A059]/20 bg-[#0B3B2C]/40 text-xs text-[#E0C588]">
-                <strong>Expected Impact:</strong> {action.expectedImpact}
+              <div className="p-3 rounded bg-emerald-50 border border-emerald-200 text-xs text-emerald-800">
+                <strong className="font-semibold">Expected Impact:</strong> {action.expectedImpact}
               </div>
             </div>
 
             {/* Governance Sign-Off Buttons */}
-            <div className="pt-3 border-t border-white/5 flex items-center justify-between">
+            <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
               <button
+                type="button"
                 onClick={() => setSelected(action)}
-                className="text-xs font-mono text-[#C5A059] hover:underline"
+                className="text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline"
               >
                 Inspect Telemetry Evidence →
               </button>
@@ -153,16 +156,18 @@ export function ActionCenterPage() {
               {action.status === 'pending-approval' && (
                 <div className="flex gap-2">
                   <button
+                    type="button"
                     onClick={() => updateStatus(action.id, 'rejected')}
-                    className="px-3 py-1.5 rounded border border-[#9E2A2B]/40 text-xs text-[#F87171] hover:bg-[#9E2A2B]/20"
+                    className="px-3 py-1.5 rounded border border-rose-300 text-xs text-rose-700 hover:bg-rose-50 font-medium"
                   >
                     Reject
                   </button>
                   <button
+                    type="button"
                     onClick={() => updateStatus(action.id, 'approved')}
-                    className="btn-royal-gold py-1.5 px-3 text-xs"
+                    className="btn-primary py-1.5 px-3 text-xs"
                   >
-                    Approve Action
+                    Approve Directive
                   </button>
                 </div>
               )}

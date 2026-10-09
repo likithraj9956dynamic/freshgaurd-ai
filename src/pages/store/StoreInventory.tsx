@@ -2,34 +2,30 @@
 // FreshGuard AI — Store Manager: Inventory & Expiry Surveillance
 // ============================================================
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { STORE_17_INVENTORY } from '../../mocks/inventory';
 import type { InventoryItem } from '../../types';
 import {
   Layers,
-  AlertTriangle,
-  Clock,
   Search,
-  Filter,
   CheckCircle2,
-  Package,
-  ArrowUpDown,
-  RefreshCw
+  AlertTriangle
 } from 'lucide-react';
 
 export function StoreInventoryPage() {
-  const [inventory, setInventory] = useState<InventoryItem[]>(STORE_17_INVENTORY);
+  const [inventory] = useState<InventoryItem[]>(STORE_17_INVENTORY);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<'all' | 'out-of-stock' | 'low' | 'expiry'>('all');
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const handleRequestRestock = (itemName: string) => {
-    setFeedback(`Expedited restock directive triggered for "${itemName}". Notified procurement.`);
+    setFeedback(`Expedited restock directive logged for "${itemName}". Notified procurement.`);
     setTimeout(() => setFeedback(null), 3500);
   };
 
   const filteredItems = inventory.filter((item) => {
-    const matchesSearch = item.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch =
+      item.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.product.sku.toLowerCase().includes(searchTerm.toLowerCase());
     if (!matchesSearch) return false;
 
@@ -44,72 +40,68 @@ export function StoreInventoryPage() {
   const expiryCount = inventory.filter((i) => i.daysOfSupply <= 3).length;
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       
       {/* Header */}
-      <section className="relative rounded border border-[#C5A059]/30 bg-gradient-to-br from-[#0B3B2C]/80 via-[#071C16] to-[#041410] p-6 sm:p-8 shadow-2xl">
-        <div className="space-y-3 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-[#C5A059]/30 bg-[#0B3B2C]/60 text-xs font-mono text-[#E0C588]">
-            <Layers className="w-3.5 h-3.5 text-[#C5A059]" />
-            <span>STORE 017 · SHELF INVENTORY &amp; EXPIRY TELEMETRY</span>
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl font-editorial font-normal text-[#FDFBF7]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             Inventory &amp; Shelf-Life Ledger
           </h1>
-
-          <p className="text-xs sm:text-sm text-[#8E9B90] leading-relaxed">
-            Surveillance of on-hand quantities, allocation, and perishable expiry windows. Products with under 3 days of supply represent immediate stockout risk.
+          <p className="text-xs text-slate-500 mt-0.5">
+            Store #017 (Tacoma Downtown) · Surveillance of on-hand quantities, days of supply, and perishable expiry
           </p>
         </div>
-
-        {/* Counter Matrix */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 max-w-2xl">
-          <div className="p-3.5 rounded border border-white/5 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">MONITORED SKUS</span>
-            <span className="text-xl font-editorial text-[#FDFBF7]">{inventory.length}</span>
-          </div>
-          <div className="p-3.5 rounded border border-[#9E2A2B]/40 bg-[#9E2A2B]/15">
-            <span className="text-[10px] font-mono text-[#F87171] block">OUT OF STOCK</span>
-            <span className="text-xl font-editorial text-[#F87171]">{oosCount} SKUs</span>
-          </div>
-          <div className="p-3.5 rounded border border-[#C5A059]/30 bg-[#0B3B2C]/50">
-            <span className="text-[10px] font-mono text-[#E0C588] block">LOW STOCK</span>
-            <span className="text-xl font-editorial text-[#E0C588]">{lowCount} SKUs</span>
-          </div>
-          <div className="p-3.5 rounded border border-white/10 bg-[#071C16]">
-            <span className="text-[10px] font-mono text-[#8E9B90] block">EXPIRY RISK (&lt;3D)</span>
-            <span className="text-xl font-editorial text-[#FDFBF7]">{expiryCount} Items</span>
-          </div>
-        </div>
-      </section>
+      </div>
 
       {feedback && (
-        <div className="p-4 rounded border border-[#16A34A]/40 bg-[#16A34A]/15 text-[#4ADE80] text-xs flex items-center gap-2.5">
-          <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+        <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
           <span>{feedback}</span>
         </div>
       )}
 
+      {/* Summary Matrix */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
+        <div className="bg-white p-3 rounded-md border border-slate-200 shadow-xs">
+          <span className="text-[11px] text-slate-500 block">Monitored SKUs</span>
+          <span className="text-xl font-bold text-slate-900">{inventory.length}</span>
+        </div>
+        <div className="bg-white p-3 rounded-md border border-slate-200 shadow-xs">
+          <span className="text-[11px] text-slate-500 block">Out of Stock</span>
+          <span className="text-xl font-bold text-red-700">{oosCount} SKUs</span>
+        </div>
+        <div className="bg-white p-3 rounded-md border border-slate-200 shadow-xs">
+          <span className="text-[11px] text-slate-500 block">Low Stock</span>
+          <span className="text-xl font-bold text-amber-700">{lowCount} SKUs</span>
+        </div>
+        <div className="bg-white p-3 rounded-md border border-slate-200 shadow-xs">
+          <span className="text-[11px] text-slate-500 block">Expiry Risk (&lt;3D)</span>
+          <span className="text-xl font-bold text-slate-800">{expiryCount} SKUs</span>
+        </div>
+      </div>
+
       {/* Controls: Search & Filter Tabs */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 pb-3">
         <div className="relative max-w-sm w-full">
-          <Search className="w-4 h-4 text-[#C5A059]/70 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             placeholder="Filter product name or SKU..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded text-xs pl-9 pr-3 py-2 bg-[#071C16] text-[#FDFBF7] border border-[#C5A059]/30 focus:border-[#C5A059] focus:outline-none"
+            className="w-full text-xs pl-9 pr-3 py-1.5 rounded-md border border-slate-300 bg-white focus:border-[#164e3d] focus:outline-none"
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           <button
             type="button"
             onClick={() => setFilter('all')}
-            className={`text-xs px-3 py-1.5 rounded font-mono ${
-              filter === 'all' ? 'bg-[#C5A059] text-[#041410] font-semibold' : 'text-[#8E9B90] hover:bg-white/5'
+            className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors ${
+              filter === 'all'
+                ? 'bg-[#164e3d] text-white'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
             All ({inventory.length})
@@ -117,8 +109,10 @@ export function StoreInventoryPage() {
           <button
             type="button"
             onClick={() => setFilter('out-of-stock')}
-            className={`text-xs px-3 py-1.5 rounded font-mono ${
-              filter === 'out-of-stock' ? 'bg-[#9E2A2B] text-white font-semibold' : 'text-[#8E9B90] hover:bg-white/5'
+            className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors ${
+              filter === 'out-of-stock'
+                ? 'bg-[#164e3d] text-white'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
             Out of Stock ({oosCount})
@@ -126,8 +120,10 @@ export function StoreInventoryPage() {
           <button
             type="button"
             onClick={() => setFilter('low')}
-            className={`text-xs px-3 py-1.5 rounded font-mono ${
-              filter === 'low' ? 'bg-[#C5A059] text-[#041410] font-semibold' : 'text-[#8E9B90] hover:bg-white/5'
+            className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors ${
+              filter === 'low'
+                ? 'bg-[#164e3d] text-white'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
             Low Stock ({lowCount})
@@ -135,8 +131,10 @@ export function StoreInventoryPage() {
           <button
             type="button"
             onClick={() => setFilter('expiry')}
-            className={`text-xs px-3 py-1.5 rounded font-mono ${
-              filter === 'expiry' ? 'bg-[#C5A059] text-[#041410] font-semibold' : 'text-[#8E9B90] hover:bg-white/5'
+            className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors ${
+              filter === 'expiry'
+                ? 'bg-[#164e3d] text-white'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
             Near Expiry ({expiryCount})
@@ -145,70 +143,79 @@ export function StoreInventoryPage() {
       </div>
 
       {/* Inventory Table */}
-      <div className="royal-card overflow-hidden border-[#C5A059]/20 shadow-xl">
+      <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-[#071C16] text-[#C5A059] font-mono uppercase text-[10px] tracking-wider border-b border-white/10">
+          <table className="enterprise-table">
+            <thead>
               <tr>
-                <th className="p-4">Product &amp; SKU</th>
-                <th className="p-4">Department</th>
-                <th className="p-4 text-center">On Hand</th>
-                <th className="p-4 text-center">On Order</th>
-                <th className="p-4 text-center">Days of Supply</th>
-                <th className="p-4 text-center">Status</th>
-                <th className="p-4 text-right">Floor Action</th>
+                <th>Product &amp; SKU</th>
+                <th>Category</th>
+                <th className="text-center">On Hand</th>
+                <th className="text-center">On Order</th>
+                <th className="text-center">Days Supply</th>
+                <th className="text-center">Status</th>
+                <th className="text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 text-[#8E9B90]">
+            <tbody>
               {filteredItems.map((item) => {
                 const isCritical = item.status === 'out-of-stock';
                 const isLow = item.status === 'low';
+
                 return (
-                  <tr key={item.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="p-4">
-                      <div className="font-medium text-[#FDFBF7] text-xs">{item.product.name}</div>
-                      <div className="font-mono text-[10px] text-[#C5A059]">{item.product.sku} · Loc: {item.locationId}</div>
+                  <tr key={item.id}>
+                    <td>
+                      <div className="font-medium text-slate-900">{item.product.name}</div>
+                      <div className="text-[11px] text-slate-500 font-mono">{item.product.sku} · Location: {item.locationId}</div>
                     </td>
-                    <td className="p-4">
-                      <span className="px-2 py-0.5 rounded bg-white/5 text-[#8E9B90] text-[11px]">
+                    <td>
+                      <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs">
                         {item.product.category}
                       </span>
                     </td>
-                    <td className="p-4 text-center font-mono text-[#FDFBF7]">
+                    <td className="text-center font-mono font-medium text-slate-800">
                       {item.onHand} {item.unit}
                     </td>
-                    <td className="p-4 text-center font-mono text-[#E0C588]">
+                    <td className="text-center font-mono text-slate-600">
                       +{item.onOrder} {item.unit}
                     </td>
-                    <td className="p-4 text-center font-mono">
-                      <span className={`px-2 py-0.5 rounded text-[11px] ${
-                        item.daysOfSupply <= 2 ? 'text-[#F87171] font-bold bg-[#9E2A2B]/20' :
-                        item.daysOfSupply <= 5 ? 'text-[#E0C588] bg-[#C5A059]/10' :
-                        'text-[#16A34A]'
-                      }`}>
+                    <td className="text-center font-mono">
+                      <span
+                        className={`px-1.5 py-0.5 rounded text-xs font-semibold ${
+                          item.daysOfSupply <= 2
+                            ? 'bg-red-100 text-red-800'
+                            : item.daysOfSupply <= 5
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-emerald-100 text-emerald-800'
+                        }`}
+                      >
                         {item.daysOfSupply} Days
                       </span>
                     </td>
-                    <td className="p-4 text-center font-mono">
-                      <span className={`text-[10px] uppercase px-2 py-0.5 rounded font-bold ${
-                        isCritical ? 'bg-[#9E2A2B]/30 text-[#F87171] border border-[#9E2A2B]/50' :
-                        isLow ? 'bg-[#C5A059]/20 text-[#E0C588] border border-[#C5A059]/40' :
-                        'bg-[#16A34A]/20 text-[#4ADE80] border border-[#16A34A]/30'
-                      }`}>
-                        {item.status}
+                    <td className="text-center">
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
+                          isCritical
+                            ? 'bg-red-100 text-red-800 border border-red-200'
+                            : isLow
+                            ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                            : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                        }`}
+                      >
+                        {item.status.replace('-', ' ')}
                       </span>
                     </td>
-                    <td className="p-4 text-right">
+                    <td className="text-right">
                       {isCritical || isLow ? (
                         <button
                           type="button"
                           onClick={() => handleRequestRestock(item.product.name)}
-                          className="btn-royal-outline text-[11px] px-3 py-1 hover:border-[#C5A059]"
+                          className="btn-secondary text-xs px-2.5 py-1"
                         >
                           Request Restock
                         </button>
                       ) : (
-                        <span className="text-[11px] text-[#16A34A] font-mono">Adequate Par</span>
+                        <span className="text-xs text-slate-400">Normal</span>
                       )}
                     </td>
                   </tr>

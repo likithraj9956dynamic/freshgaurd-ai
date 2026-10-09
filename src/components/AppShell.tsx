@@ -1,7 +1,8 @@
 // ============================================================
-// FreshGuard AI — Layout: AppShell
+// FreshGuard AI — Enterprise Application Shell
 // ============================================================
 
+import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
@@ -19,23 +20,22 @@ export function AppShell({
 
   return (
     <div
-      className={`flex bg-[#041410] text-[#FDFBF7] ${className}`}
+      className={`flex bg-slate-50 text-slate-900 ${className}`}
       style={{ height: '100vh', overflow: 'hidden' }}
     >
       <Sidebar location={location} />
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col flex-1 overflow-hidden min-w-0">
         <TopBar />
         <main
-          className="app-scrollbar flex-1 overflow-y-auto"
-          style={{ backgroundColor: '#041410' }}
+          className="app-scrollbar flex-1 overflow-y-auto bg-slate-50"
         >
-          <div className="w-full max-w-[1440px] mx-auto p-6 md:p-8 lg:p-10">
+          <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
             {children ?? <Outlet />}
           </div>
         </main>
       </div>
 
-      {/* Global AI Modals & Drawers */}
+      {/* Enterprise AI Configuration & Intelligence Modals */}
       <AIKeyModal />
       <AICopilotDrawer />
     </div>

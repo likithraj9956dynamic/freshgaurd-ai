@@ -1,5 +1,6 @@
 // ============================================================
 // FreshGuard AI — Investigation Room: Evidence Panel
+// Enterprise Audited Telemetry Sources Panel
 // ============================================================
 
 import React from 'react';
@@ -7,28 +8,32 @@ import type { Investigation } from '../types';
 
 export function EvidencePanel({ investigation }: { investigation: Investigation }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-editorial text-[#FDFBF7]">Cross-Referenced Evidence</h3>
-        <span className="text-[10px] font-mono text-[#C5A059]">{investigation.evidenceSources.length} SOURCES</span>
+        <h3 className="text-sm font-semibold text-slate-900">Cross-Referenced Telemetry Evidence</h3>
+        <span className="text-[10px] font-mono font-medium text-slate-500">{investigation.evidenceSources.length} SOURCES AUDITED</span>
       </div>
 
       <div className="space-y-2.5 max-h-[380px] overflow-y-auto app-scrollbar pr-1">
         {investigation.evidenceSources.map((ev) => (
           <div
             key={ev.id}
-            className="p-3.5 rounded border border-white/5 bg-[#071C16] hover:border-[#C5A059]/30 transition-colors"
+            className="p-3 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100/60 transition-colors"
           >
             <div className="flex items-center justify-between mb-1">
-              <span className={ev.isFact ? 'badge-royal-fact' : 'badge-royal-hypothesis'}>
+              <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded border ${
+                ev.isFact ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                ev.isDerived ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                'bg-amber-50 text-amber-800 border-amber-200'
+              }`}>
                 {ev.isFact ? 'VERIFIED FACT' : ev.isDerived ? 'DERIVED SIGNAL' : 'HYPOTHESIS'}
               </span>
-              <span className="text-[10px] font-mono text-[#8E9B90]">{ev.source}</span>
+              <span className="text-[10px] font-mono text-slate-500">{ev.source}</span>
             </div>
-            <p className="text-xs font-semibold text-[#FDFBF7] mt-1.5">
-              {ev.label}: <span className="text-[#E0C588] font-mono">{ev.value}</span>
+            <p className="text-xs font-semibold text-slate-900 mt-1">
+              {ev.label}: <span className="font-mono text-emerald-800 font-bold">{ev.value}</span>
             </p>
-            <p className="text-[11px] text-[#8E9B90] mt-0.5 leading-relaxed">
+            <p className="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
               {ev.detail}
             </p>
           </div>
