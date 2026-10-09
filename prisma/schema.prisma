@@ -1,0 +1,534 @@
+// FreshGuard AI - Prisma Schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Store {
+  id                     String                  @id
+  name                   String
+  location               String?
+  state                  String?
+  country                String?                 @default("US")
+  storeFormat            String?                 @map("store_format")
+  status                 String                  @default("active")
+  createdAt              DateTime                @default(now()) @map("created_at")
+  storeAssignments       StoreAssignment[]
+  dailySales             DailySale[]
+  inventory              Inventory[]
+  purchaseOrders         PurchaseOrder[]
+  wastageRecords         WastageRecord[]
+  storeHealthSnapshots   StoreHealthSnapshot[]
+  detectedIssues         DetectedIssue[]
+  investigations         Investigation[]
+  decisions              Decision[]
+  actions                Action[]
+  storeTasks             StoreTask[]
+  briefings              Briefing[]
+  assistantConversations AssistantConversation[]
+
+  @@map("stores")
+}
+
+model Product {
+  id                 String              @id
+  name               String?
+  category           String?
+  subcategory        String?
+  brand              String?
+  barcode            String?
+  unitPrice          Decimal?            @map("unit_price") @db.Decimal(12, 2)
+  unitCost           Decimal?            @map("unit_cost") @db.Decimal(12, 2)
+  perishable         Boolean             @default(false)
+  shelfLifeDays      Int?                @map("shelf_life_days")
+  dataSource         String?             @map("data_source")
+  externalProductId  String?             @map("external_product_id")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  dailySales         DailySale[]
+  inventory          Inventory[]
+  purchaseOrderItems PurchaseOrderItem[]
+  wastageRecords     WastageRecord[]
+
+  @@map("products")
+}
+
+model DailySale {
+  id         BigInt   @id @default(autoincrement())
+  storeId    String   @map("store_id")
+  productId  String   @map("product_id")
+  saleDate   DateTime @map("sale_date") @db.Date
+  unitsSold  Int      @map("units_sold")
+  unitPrice  Decimal? @map("unit_price") @db.Decimal(12, 2)
+  revenue    Decimal? @map("revenue") @db.Decimal(14, 2)
+  dataSource String?  @map("data_source")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  store   Store   @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([storeId, productId, saleDate], name: "uq_daily_sales")
+  @@index([storeId, saleDate])
+  @@index([productId, saleDate])
+  @@map("daily_sales")
+}
+
+model Inventory {
+  id           BigInt   @id @default(autoincrement())
+  storeId      String   @map("store_id")
+  productId    String   @map("product_id")
+  currentStock Int      @map("current_stock")
+  reorderLevel Int      @map("reorder_level")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+  dataSource   String?  @map("data_source")
+
+  store   Store   @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([storeId, productId], name: "uq_inventory")
+  @@index([storeId])
+  @@index([productId])
+  @@map("inventory")
+}
+
+model PurchaseOrder {
+  id               String    @id @default(uuid())
+  storeId          String    @map("store_id")
+  supplierName     String    @map("supplier_name")
+  orderDate        DateTime  @map("order_date") @db.Date
+  expectedDelivery DateTime? @map("expected_delivery") @db.Date
+  actualDelivery   DateTime? @map("actual_delivery") @db.Date
+  status           String    @default("pending")
+  dataSource       String?   @map("data_source")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  store Store               @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  items PurchaseOrderItem[]
+
+  @@index([storeId])
+  @@index([status])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id               BigInt @id @default(autoincrement())
+  purchaseOrderId  String @map("purchase_order_id")
+  productId        String @map("product_id")
+  quantityOrdered  Int    @map("quantity_ordered")
+  quantityReceived Int?   @map("quantity_received")
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([purchaseOrderId])
+  @@index([productId])
+  @@map("purchase_order_items")
+}
+
+model WastageRecord {
+  id         BigInt   @id @default(autoincrement())
+  storeId    String   @map("store_id")
+  productId  String   @map("product_id")
+  quantity   Int
+  reason     String?
+  recordedAt DateTime @default(now()) @map("recorded_at")
+  dataSource String?  @map("data_source")
+
+  store   Store   @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([storeId])
+  @@index([productId])
+  @@map("wastage_records")
+}
+
+model AnalysisRun {
+  id                   String                @id @default(uuid())
+  runType              String                @default("full_network") @map("run_type")
+  status               String                @default("completed")
+  startedAt            DateTime              @default(now()) @map("started_at")
+  completedAt          DateTime?             @map("completed_at")
+  parameters           Json?                 @default("{}")
+  summary              Json?                 @default("{}")
+  triggeredBy          String?               @default("system") @map("triggered_by")
+  storeHealthSnapshots StoreHealthSnapshot[]
+  detectedIssues       DetectedIssue[]
+
+  @@map("analysis_runs")
+}
+
+model StoreHealthSnapshot {
+  id                     String   @id @default(uuid())
+  storeId                String   @map("store_id")
+  analysisRunId          String?  @map("analysis_run_id")
+  snapshotDate           DateTime @default(now()) @map("snapshot_date")
+  revenueChangePct       Float    @default(0) @map("revenue_change_pct")
+  footfallChangePct      Float    @default(0) @map("footfall_change_pct")
+  wastageRatePct         Float    @default(0) @map("wastage_rate_pct")
+  stockoutRatePct        Float    @default(0) @map("stockout_rate_pct")
+  customerComplaintScore Float    @default(0) @map("customer_complaint_score")
+  urgencyScore           Float    @default(0) @map("urgency_score")
+  healthStatus           String   @default("healthy") @map("health_status")
+  isCriticalOverride     Boolean  @default(false) @map("is_critical_override")
+  riskDrivers            Json?    @default("{}") @map("risk_drivers")
+  metrics                Json?    @default("{}")
+  createdAt              DateTime @default(now()) @map("created_at")
+
+  store       Store        @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  analysisRun AnalysisRun? @relation(fields: [analysisRunId], references: [id], onDelete: SetNull)
+
+  @@index([storeId])
+  @@index([urgencyScore])
+  @@index([healthStatus])
+  @@map("store_health_snapshots")
+}
+
+model DetectedIssue {
+  id             String          @id @default(uuid())
+  storeId        String          @map("store_id")
+  analysisRunId  String?         @map("analysis_run_id")
+  issueType      String          @map("issue_type")
+  severity       String          @default("medium")
+  title          String
+  description    String?
+  evidence       Json?           @default("{}")
+  confidence     Decimal?        @db.Decimal(3, 2)
+  status         String          @default("open")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @default(now()) @updatedAt @map("updated_at")
+  investigations Investigation[]
+  decisions      Decision[]
+  actions        Action[]
+
+  store       Store        @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  analysisRun AnalysisRun? @relation(fields: [analysisRunId], references: [id], onDelete: SetNull)
+
+  @@index([storeId])
+  @@index([severity])
+  @@index([status])
+  @@map("detected_issues")
+}
+
+model Investigation {
+  id            String              @id @default(uuid())
+  storeId       String              @map("store_id")
+  issueId       String?             @map("issue_id")
+  title         String
+  status        String              @default("active")
+  hypothesis    String?
+  findings      Json?               @default("{}")
+  confidence    Decimal?            @default(0.95) @db.Decimal(3, 2)
+  aiExplanation Json?               @default("{}") @map("ai_explanation")
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @default(now()) @updatedAt @map("updated_at")
+  nodes         InvestigationNode[]
+  edges         InvestigationEdge[]
+  evidence      EvidenceRecord[]
+
+  store Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  issue DetectedIssue? @relation(fields: [issueId], references: [id], onDelete: SetNull)
+
+  @@index([storeId])
+  @@index([issueId])
+  @@map("investigations")
+}
+
+model InvestigationNode {
+  id              String   @id @default(uuid())
+  investigationId String   @map("investigation_id")
+  entityType      String   @map("entity_type")
+  entityId        String   @map("entity_id")
+  label           String
+  nodeType        String   @map("node_type")
+  data            Json?    @default("{}")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  investigation Investigation       @relation(fields: [investigationId], references: [id], onDelete: Cascade)
+  outgoingEdges InvestigationEdge[] @relation("SourceNode")
+  incomingEdges InvestigationEdge[] @relation("TargetNode")
+
+  @@index([investigationId])
+  @@map("investigation_nodes")
+}
+
+model InvestigationEdge {
+  id               String   @id @default(uuid())
+  investigationId  String   @map("investigation_id")
+  sourceNodeId     String   @map("source_node_id")
+  targetNodeId     String   @map("target_node_id")
+  relationshipType String   @map("relationship_type")
+  confidence       Decimal? @default(0.95) @db.Decimal(3, 2)
+  evidence         Json?    @default("{}")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  investigation Investigation     @relation(fields: [investigationId], references: [id], onDelete: Cascade)
+  sourceNode    InvestigationNode @relation("SourceNode", fields: [sourceNodeId], references: [id], onDelete: Cascade)
+  targetNode    InvestigationNode @relation("TargetNode", fields: [targetNodeId], references: [id], onDelete: Cascade)
+
+  @@index([investigationId])
+  @@map("investigation_edges")
+}
+
+model EvidenceRecord {
+  id              String   @id @default(uuid())
+  investigationId String   @map("investigation_id")
+  source          String
+  evidenceType    String   @map("evidence_type")
+  data            Json     @default("{}")
+  confidence      Decimal? @default(0.95) @db.Decimal(3, 2)
+  verified        Boolean  @default(true)
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  investigation Investigation @relation(fields: [investigationId], references: [id], onDelete: Cascade)
+
+  @@index([investigationId])
+  @@map("evidence_records")
+}
+
+model Decision {
+  id                      String               @id @default(uuid())
+  storeId                 String               @map("store_id")
+  issueId                 String?              @map("issue_id")
+  title                   String
+  problemSummary          String               @map("problem_summary")
+  status                  String               @default("proposed")
+  primaryRecommendationId String?              @map("primary_recommendation_id")
+  createdAt               DateTime             @default(now()) @map("created_at")
+  updatedAt               DateTime             @default(now()) @updatedAt @map("updated_at")
+  options                 DecisionOption[]
+  simulations             DecisionSimulation[]
+
+  store Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  issue DetectedIssue? @relation(fields: [issueId], references: [id], onDelete: SetNull)
+
+  @@index([storeId])
+  @@index([status])
+  @@map("decisions")
+}
+
+model DecisionOption {
+  id               String               @id @default(uuid())
+  decisionId       String               @map("decision_id")
+  actionType       String               @map("action_type")
+  title            String
+  description      String
+  parameters       Json?                @default("{}")
+  estimatedCost    Decimal              @map("estimated_cost") @db.Decimal(12, 2)
+  estimatedBenefit Decimal              @map("estimated_benefit") @db.Decimal(12, 2)
+  roi              Float                @default(0)
+  riskLevel        String               @default("medium") @map("risk_level")
+  feasibilityScore Float                @default(0.9) @map("feasibility_score")
+  isRecommended    Boolean              @default(false) @map("is_recommended")
+  createdAt        DateTime             @default(now()) @map("created_at")
+  simulations      DecisionSimulation[]
+
+  decision Decision @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+
+  @@index([decisionId])
+  @@map("decision_options")
+}
+
+model DecisionSimulation {
+  id                    String   @id @default(uuid())
+  decisionId            String   @map("decision_id")
+  optionId              String?  @map("option_id")
+  simulationName        String   @map("simulation_name")
+  inputParameters       Json?    @default("{}") @map("input_parameters")
+  projectedOutcomes     Json?    @default("{}") @map("projected_outcomes")
+  revenueImpact         Decimal  @map("revenue_impact") @db.Decimal(12, 2)
+  wastageReductionPct   Float    @default(0) @map("wastage_reduction_pct")
+  stockoutRecoveryHours Int      @default(24) @map("stockout_recovery_hours")
+  netFinancialImpact    Decimal  @map("net_financial_impact") @db.Decimal(12, 2)
+  simulationLog         Json?    @default("{}") @map("simulation_log")
+  isReadOnly            Boolean  @default(true) @map("is_read_only")
+  createdAt             DateTime @default(now()) @map("created_at")
+
+  decision Decision        @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+  option   DecisionOption? @relation(fields: [optionId], references: [id], onDelete: SetNull)
+
+  @@index([decisionId])
+  @@map("decision_simulations")
+}
+
+model Action {
+  id               String                  @id @default(uuid())
+  storeId          String                  @map("store_id")
+  issueId          String?                 @map("issue_id")
+  actionType       String                  @map("action_type")
+  title            String
+  proposal         Json?                   @default("{}")
+  estimatedImpact  Json?                   @default("{}") @map("estimated_impact")
+  status           String                  @default("proposed")
+  createdBy        String?                 @map("created_by")
+  createdAt        DateTime                @default(now()) @map("created_at")
+  executedAt       DateTime?               @map("executed_at")
+  approvals        ActionApproval[]
+  executionResults ActionExecutionResult[]
+  storeTasks       StoreTask[]
+
+  store Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  issue DetectedIssue? @relation(fields: [issueId], references: [id], onDelete: SetNull)
+
+  @@index([storeId])
+  @@index([status])
+  @@map("actions")
+}
+
+model ActionApproval {
+  id        BigInt   @id @default(autoincrement())
+  actionId  String   @map("action_id")
+  decision  String
+  approver  String
+  reason    String?
+  decidedAt DateTime @default(now()) @map("decided_at")
+
+  action Action @relation(fields: [actionId], references: [id], onDelete: Cascade)
+
+  @@index([actionId])
+  @@map("action_approvals")
+}
+
+model ActionExecutionResult {
+  id               String   @id @default(uuid())
+  actionId         String   @map("action_id")
+  executionType    String   @default("simulated_execution") @map("execution_type")
+  executionStatus  String   @default("success") @map("execution_status")
+  executedBy       String   @map("executed_by")
+  executedAt       DateTime @default(now()) @map("executed_at")
+  executionDetails Json?    @default("{}") @map("execution_details")
+  generatedTasks   Json?    @default("[]") @map("generated_tasks")
+  auditSummary     String?  @map("audit_summary")
+
+  action Action @relation(fields: [actionId], references: [id], onDelete: Cascade)
+
+  @@index([actionId])
+  @@map("action_execution_results")
+}
+
+model StoreTask {
+  id           String    @id @default(uuid())
+  storeId      String    @map("store_id")
+  actionId     String?   @map("action_id")
+  title        String
+  instructions String?
+  priority     String    @default("medium")
+  status       String    @default("pending")
+  assignedTo   String?   @map("assigned_to")
+  dueDate      DateTime? @map("due_date") @db.Date
+  createdAt    DateTime  @default(now()) @map("created_at")
+  completedAt  DateTime? @map("completed_at")
+
+  store  Store   @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  action Action? @relation(fields: [actionId], references: [id], onDelete: SetNull)
+
+  @@index([storeId])
+  @@index([status])
+  @@map("store_tasks")
+}
+
+model AuditLog {
+  id        BigInt   @id @default(autoincrement())
+  actionId  String?  @map("action_id")
+  actor     String
+  eventType String   @map("event_type")
+  details   Json?    @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([actionId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model Briefing {
+  id              String    @id @default(uuid())
+  storeId         String?   @map("store_id")
+  scope           String    @default("network_overview") // network_overview, store_specific
+  scriptText      String    @map("script_text") @db.Text
+  audioUrl        String?   @map("audio_url")
+  audioHash       String    @map("audio_hash")
+  durationSeconds Int?      @default(65) @map("duration_seconds")
+  generatedAt     DateTime  @default(now()) @map("generated_at")
+  expiresAt       DateTime? @map("expires_at")
+  metadata        Json?     @default("{}")
+
+  store Store? @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([storeId])
+  @@index([audioHash])
+  @@map("briefings")
+}
+
+model AssistantConversation {
+  id           String   @id @default(uuid())
+  userId       String?  @map("user_id")
+  storeId      String?  @map("store_id")
+  sessionTitle String   @default("Operations Assistant Session") @map("session_title")
+  messages     Json     @default("[]") // Array of { id, role, content, evidenceSources, timestamp }
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  store Store? @relation(fields: [storeId], references: [id], onDelete: SetNull)
+
+  @@index([storeId])
+  @@map("assistant_conversations")
+}
+
+model AiGenerationJob {
+  id           String    @id @default(uuid())
+  jobType      String    @map("job_type") // briefing_script, tts_audio, grounded_query
+  status       String    @default("completed") // pending, processing, completed, failed
+  inputPayload Json?     @default("{}") @map("input_payload")
+  outputResult Json?     @default("{}") @map("output_result")
+  error        String?
+  createdAt    DateTime  @default(now()) @map("created_at")
+  completedAt  DateTime? @map("completed_at")
+
+  @@map("ai_generation_jobs")
+}
+
+model DataImportRun {
+  id              BigInt    @id @default(autoincrement())
+  datasetName     String    @map("dataset_name")
+  source          String?
+  startedAt       DateTime  @default(now()) @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+  status          String    @default("running")
+  recordsRead     Int       @default(0) @map("records_read")
+  recordsInserted Int       @default(0) @map("records_inserted")
+  recordsUpdated  Int       @default(0) @map("records_updated")
+  recordsRejected Int       @default(0) @map("records_rejected")
+  errorSummary    String?   @map("error_summary")
+
+  @@map("data_import_runs")
+}
+
+model User {
+  id               String            @id @default(uuid())
+  email            String            @unique
+  passwordHash     String            @map("password_hash")
+  fullName         String            @map("full_name")
+  role             String            @default("operator")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  storeAssignments StoreAssignment[]
+
+  @@map("users")
+}
+
+model StoreAssignment {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  storeId   String   @map("store_id")
+  role      String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, storeId], name: "uq_user_store")
+  @@map("store_assignments")
+}
