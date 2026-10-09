@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "prisma generate && tsc",
-    "build:client": "npm run build --prefix client",
-    "vercel-build": "prisma generate && npm install --prefix client && npm run build --prefix client",
+    "build:client": "cd client && npm install && npm run build",
+    "vercel-build": "prisma generate",
     "postinstall": "prisma generate",
     "seed": "tsx src/database/seed.ts",
     "start": "node dist/server.js",
@@ -34,6 +34,7 @@
     "@types/jsonwebtoken": "^9.0.7",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.17.6",
+    "@vercel/node": "^23.0.1",
     "prisma": "^5.22.0",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3"
