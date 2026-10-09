@@ -6,7 +6,6 @@ import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
-import { AIKeyModal } from './ui/ai-key-modal';
 import { AICopilotDrawer } from './ui/ai-copilot-drawer';
 
 export function AppShell({
@@ -35,8 +34,7 @@ export function AppShell({
         </main>
       </div>
 
-      {/* Enterprise AI Configuration & Intelligence Modals */}
-      <AIKeyModal />
+      {/* Enterprise AI Intelligence Copilot */}
       <AICopilotDrawer />
     </div>
   );

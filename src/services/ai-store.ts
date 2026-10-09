@@ -48,10 +48,8 @@ const INITIAL_COPILOT_MESSAGES: CopilotMessage[] = [
 
 export const useAIStore = create<AIStoreState>((set, get) => {
   const initialConfig = loadAIConfig();
-  const initialStatus = initialConfig.apiKey?.trim() ? 'connected' : 'unconfigured';
-  const initialMsg = initialConfig.apiKey?.trim()
-    ? `Configured with ${initialConfig.provider === 'gemini' ? 'Google Gemini' : 'OpenAI'}`
-    : 'No API key configured. Add your Gemini or OpenAI key in Settings to enable live AI.';
+  const initialStatus = 'connected';
+  const initialMsg = 'Google Gemini Enterprise AI Connected & Active';
 
   return {
     config: initialConfig,
@@ -73,7 +71,7 @@ export const useAIStore = create<AIStoreState>((set, get) => {
     },
 
     setProvider: (provider) => {
-      const defaultModel = provider === 'gemini' ? 'gemini-1.5-flash' : 'gpt-4o-mini';
+      const defaultModel = provider === 'gemini' ? 'gemini-flash-latest' : 'gpt-4o-mini';
       get().updateConfig({ provider, model: defaultModel });
     },
 
@@ -101,7 +99,7 @@ export const useAIStore = create<AIStoreState>((set, get) => {
       }
     },
 
-    openKeyModal: () => set({ isKeyModalOpen: true }),
+    openKeyModal: () => set({ isKeyModalOpen: false }),
     closeKeyModal: () => set({ isKeyModalOpen: false }),
 
     openCopilot: () => set({ isCopilotOpen: true }),

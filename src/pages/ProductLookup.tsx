@@ -543,17 +543,6 @@ export function ProductLookupPage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2.5">
-                  {!config.apiKey && (
-                    <button
-                      type="button"
-                      onClick={openKeyModal}
-                      className="text-xs font-mono text-[#E0C588] hover:underline flex items-center gap-1.5 px-2.5 py-1.5 rounded border border-[#C5A059]/30 bg-[#071C16]"
-                      title="Add Gemini or OpenAI API Key"
-                    >
-                      <Key className="w-3.5 h-3.5 text-[#C5A059]" />
-                      <span>Configure API Key</span>
-                    </button>
-                  )}
 
                   <button
                     type="button"

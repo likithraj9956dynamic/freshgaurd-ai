@@ -113,31 +113,18 @@ export function TopBar() {
             )}
           </button>
 
-          {/* AI Settings & Copilot (Clean enterprise buttons) */}
-          {role === 'main_manager' && (
-            <div className="hidden sm:flex items-center gap-2">
-              <button
-                type="button"
-                onClick={openKeyModal}
-                className="px-2.5 py-1.5 rounded-md text-xs font-medium border border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 flex items-center gap-1.5 transition-colors"
-                title="Configure AI API Credentials"
-              >
-                <span className={`w-2 h-2 rounded-full ${isLiveConnected ? 'bg-emerald-600' : 'bg-slate-400'}`} />
-                <span className="hidden lg:inline">{isLiveConnected ? 'AI Live' : 'AI Config'}</span>
-                <Key className="w-3.5 h-3.5 text-slate-500" />
-              </button>
-
-              <button
-                type="button"
-                onClick={toggleCopilot}
-                className="btn-primary text-xs px-3 py-1.5"
-                title="AI Operations Assistant"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">Operations AI</span>
-              </button>
-            </div>
-          )}
+          {/* Operations AI Copilot Button */}
+          <div className="hidden sm:flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleCopilot}
+              className="btn-primary text-xs px-3 py-1.5 flex items-center gap-1.5"
+              title="AI Operations Assistant"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Operations AI</span>
+            </button>
+          </div>
 
           {/* Data Refresh */}
           <button
