@@ -5,6 +5,8 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
+import { AIKeyModal } from './ui/ai-key-modal';
+import { AICopilotDrawer } from './ui/ai-copilot-drawer';
 
 export function AppShell({
   className = '',
@@ -32,6 +34,10 @@ export function AppShell({
           </div>
         </main>
       </div>
+
+      {/* Global AI Modals & Drawers */}
+      <AIKeyModal />
+      <AICopilotDrawer />
     </div>
   );
 }

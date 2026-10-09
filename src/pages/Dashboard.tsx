@@ -11,6 +11,7 @@ import {
   ClipboardList,
   Activity,
   ChevronRight,
+  Sparkles,
 } from 'lucide-react';
 import { useDemos } from '../hooks/useDemos';
 import { LoadingState, EmptyState } from '../components/state';
@@ -18,6 +19,7 @@ import { Photo } from '../components/Photo';
 import { Reveal } from '../components/Reveal';
 import { SeverityBadge, StatusBadge } from '../components/badges';
 import { IMAGERY } from '../lib/imagery';
+import { useAIStore } from '../services/ai-store';
 import type { Store, DetectedIssue, Investigation, DecisionOption, Action } from '../types';
 
 const STORE_17_ID = '1012';
@@ -122,6 +124,20 @@ export function DashboardPage() {
                 >
                   Investigate now
                 </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const store = useAIStore.getState();
+                    store.openCopilot();
+                    store.sendCopilotMessage(
+                      'Provide an executive operational summary of the entire FreshBasket store network and prioritize the top 3 action items for today.'
+                    );
+                  }}
+                  className="btn-royal-outline text-xs flex items-center gap-2 py-3 px-5 backdrop-blur-sm shadow-md"
+                >
+                  <Sparkles className="h-4 w-4 text-[#C5A059]" />
+                  <span>Executive AI Briefing</span>
+                </button>
               </div>
             </Reveal>
           )}

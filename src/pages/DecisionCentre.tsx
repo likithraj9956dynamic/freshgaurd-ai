@@ -8,6 +8,7 @@ import { useDemos } from '../hooks/useDemos';
 import { LoadingState, EmptyState } from '../components/state';
 import { WhatIfSimulator } from '../components/WhatIfSimulator';
 import { EDITORIAL_IMAGES } from '../assets/images';
+import { useAIStore } from '../services/ai-store';
 import {
   Scale,
   ShieldCheck,
@@ -86,6 +87,23 @@ export function DecisionCentrePage() {
           <div className="p-3 rounded border border-[#C5A059]/20 bg-[#071C16]/60 text-xs text-[#E0C588] flex items-center gap-2">
             <Lock className="w-4 h-4 text-[#C5A059] flex-shrink-0" />
             <span>Governance Rule: Simulated actions do not alter physical store inventories or trigger real supplier purchase orders.</span>
+          </div>
+
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={() => {
+                const store = useAIStore.getState();
+                store.openCopilot();
+                store.sendCopilotMessage(
+                  `Evaluate the operational intervention strategies for Store 017: Option A (Dynamic Markdown Flash Sale), Option B (Inter-store stock transfer from Bellevue #1014), and Option C (Expedited Supplier Purchase Order re-delivery). Which option optimizes margin recovery while minimizing spoilage?`
+                );
+              }}
+              className="btn-royal-gold text-xs px-4 py-2 flex items-center gap-2 shadow-md"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>AI Strategic Tradeoff Analysis</span>
+            </button>
           </div>
         </div>
       </section>

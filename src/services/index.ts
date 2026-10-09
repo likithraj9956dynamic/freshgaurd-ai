@@ -63,3 +63,7 @@ export { DEMO_DATA_INFO } from '../mocks';
 // --- Open Food Facts API Service ---
 export * from './openfoodfacts';
 
+// --- AI Intelligence & API Connector ---
+export * from './ai';
+export * from './ai-store';
+

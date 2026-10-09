@@ -3,8 +3,9 @@
 // ============================================================
 
 import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, Navigate } from 'react-router-dom';
 import { useDemos } from '../hooks/useDemos';
+import { useAuth } from '../context/AuthContext';
 import { LoadingState, EmptyState } from '../components/state';
 import { EDITORIAL_IMAGES } from '../assets/images';
 import { SalesChart } from './StoreOverviewSalesChart';
@@ -29,6 +30,7 @@ export function StoreOverviewPage() {
   const { storeId } = useParams<{ storeId: string }>();
   const navigate = useNavigate();
   const { data, isLoading } = useDemos();
+  const { user, canAccessStore } = useAuth();
 
   // Investigation progression stage state (1: What happened?, 2: Evidence, 3: Explanation, 4: Action)
   const [activeStage, setActiveStage] = useState<number>(1);
@@ -36,6 +38,11 @@ export function StoreOverviewPage() {
   if (isLoading) return <LoadingState message="Accessing secure store archives..." />;
 
   const currentStoreId = storeId || '1012';
+
+  // Data isolation guard: Store Manager can only view their assigned store; Supplier cannot view store dossiers
+  if (user && !canAccessStore(currentStoreId)) {
+    return <Navigate to="/unauthorized" state={{ attemptedPath: `/stores/${currentStoreId}` }} replace />;
+  }
   const store = data?.stores?.find((s) => s.id === currentStoreId);
   const issues = data?.issues?.filter((i) => i.storeId === currentStoreId) || [];
   const wastage = currentStoreId === '1012' ? data?.wastage || [] : [];

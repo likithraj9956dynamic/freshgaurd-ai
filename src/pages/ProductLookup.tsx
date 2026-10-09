@@ -20,14 +20,23 @@ import {
   Flame,
   Apple,
   X,
-  ArrowRight
+  ArrowRight,
+  Thermometer,
+  Clock,
+  TrendingDown,
+  Key,
+  ListChecks,
 } from 'lucide-react';
 import {
   fetchOpenFoodFactsProduct,
   BarcodeValidationError,
   ProductNotFoundError,
-  OpenFoodFactsNetworkError
-} from '../services/openfoodfacts';
+  OpenFoodFactsNetworkError,
+  analyzeProductWithAI,
+  useAIStore,
+  type AIProductAnalysis,
+} from '../services';
+import { Badge } from '../components/ui/badge';
 import type { ValidatedOpenFoodFactsProduct } from '../types/openfoodfacts';
 
 // Sample verified barcodes from the Open Food Facts catalog for testing
@@ -50,12 +59,19 @@ export function ProductLookupPage() {
   const [errorType, setErrorType] = useState<'validation' | 'not-found' | 'network' | null>(null);
   const [searchedBarcode, setSearchedBarcode] = useState<string>('');
 
+  // AI Freshness & Merchandising State
+  const [aiAnalysis, setAiAnalysis] = useState<AIProductAnalysis | null>(null);
+  const [isAiAnalyzing, setIsAiAnalyzing] = useState<boolean>(false);
+
+  const { config, openKeyModal, toggleCopilot, sendCopilotMessage } = useAIStore();
+
   const executeLookup = useCallback(async (codeToLookup: string) => {
     const trimmed = codeToLookup.trim();
     if (!trimmed) {
       setErrorMessage('Please enter a barcode number to look up.');
       setErrorType('validation');
       setProduct(null);
+      setAiAnalysis(null);
       return;
     }
 
@@ -63,12 +79,27 @@ export function ProductLookupPage() {
     setErrorMessage(null);
     setErrorType(null);
     setProduct(null);
+    setAiAnalysis(null);
     setSearchedBarcode(trimmed);
 
     try {
       const result = await fetchOpenFoodFactsProduct(trimmed);
       setProduct(result);
       setSearchParams({ barcode: result.barcode });
+
+      // Automatically trigger AI Perishability & Merchandising Intelligence
+      setIsAiAnalyzing(true);
+      analyzeProductWithAI(result)
+        .then((analysis) => {
+          setAiAnalysis(analysis);
+        })
+        .catch((err) => {
+          console.warn('[FreshGuard AI] Automatic product analysis error:', err);
+        })
+        .finally(() => {
+          setIsAiAnalyzing(false);
+        });
+
     } catch (err: unknown) {
       if (err instanceof BarcodeValidationError) {
         setErrorMessage(err.message);
@@ -109,6 +140,7 @@ export function ProductLookupPage() {
   const handleClear = () => {
     setInputBarcode('');
     setProduct(null);
+    setAiAnalysis(null);
     setErrorMessage(null);
     setErrorType(null);
     setSearchedBarcode('');
@@ -485,6 +517,274 @@ export function ProductLookupPage() {
                 </div>
 
               </div>
+            </div>
+
+            {/* ============================================================
+                AI FRESHNESS & DYNAMIC MARKDOWN INTELLIGENCE
+                ============================================================ */}
+            <div className="pt-6 border-t border-[#C5A059]/20 space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded border border-[#C5A059]/40 bg-[#0B3B2C] flex items-center justify-center shadow-inner">
+                    <Sparkles className="w-5 h-5 text-[#C5A059]" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-mono tracking-wider text-[#C5A059] uppercase block">
+                        FRESHGUARD AI™ TELEMETRY SYNTHESIS
+                      </span>
+                      {aiAnalysis && (
+                        <Badge variant="success">
+                          <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+                          {aiAnalysis.source === 'gemini'
+                            ? 'Gemini Live AI'
+                            : 'OpenAI Live'}
+                        </Badge>
+                      )}
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-editorial text-[#FDFBF7]">
+                      Perishability Index & Dynamic Markdown Matrix
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2.5">
+                  {!config.apiKey && (
+                    <button
+                      type="button"
+                      onClick={openKeyModal}
+                      className="text-xs font-mono text-[#E0C588] hover:underline flex items-center gap-1.5 px-2.5 py-1.5 rounded border border-[#C5A059]/30 bg-[#071C16]"
+                      title="Add Gemini or OpenAI API Key"
+                    >
+                      <Key className="w-3.5 h-3.5 text-[#C5A059]" />
+                      <span>Configure API Key</span>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!product) return;
+                      setIsAiAnalyzing(true);
+                      analyzeProductWithAI(product)
+                        .then(setAiAnalysis)
+                        .finally(() => setIsAiAnalyzing(false));
+                    }}
+                    disabled={isAiAnalyzing}
+                    className="btn-royal-outline text-xs flex items-center gap-1.5 py-2 px-3.5 disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isAiAnalyzing ? 'animate-spin' : ''}`} />
+                    <span>{isAiAnalyzing ? 'Analyzing SKU...' : 'Re-run AI Audit'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      toggleCopilot();
+                      sendCopilotMessage(
+                        `Provide an operational merchandising and waste-prevention strategy for ${
+                          product.productName || 'barcode ' + product.barcode
+                        } by ${product.brands || 'the manufacturer'}. Include optimal display placement and markdown triggers.`
+                      );
+                    }}
+                    className="btn-royal-gold text-xs flex items-center gap-1.5 py-2 px-3.5 shadow-md"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Ask Copilot</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Loading AI State */}
+              {isAiAnalyzing && !aiAnalysis && (
+                <div className="p-8 rounded border border-[#C5A059]/20 bg-[#071C16] text-center space-y-3">
+                  <div className="w-10 h-10 mx-auto rounded border border-[#C5A059]/40 bg-[#0B3B2C] flex items-center justify-center animate-spin">
+                    <RefreshCw className="w-5 h-5 text-[#C5A059]" />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-editorial text-[#FDFBF7]">Synthesizing AI Intelligence</h4>
+                    <p className="text-xs text-[#8E9B90] mt-1 font-mono">
+                      Evaluating ingredient formulation, temperature resilience, and shrinkage risk...
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* AI Intelligence Dossier */}
+              {aiAnalysis && (
+                <div className="space-y-4 animate-in fade-in duration-300">
+                  {/* Executive Summary Banner */}
+                  <div className="p-4 rounded border border-[#C5A059]/30 bg-gradient-to-r from-[#0B3B2C]/70 via-[#071C16] to-[#041410] flex items-start gap-3">
+                    <Sparkles className="w-5 h-5 text-[#C5A059] flex-shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-mono tracking-wider text-[#E0C588] uppercase block font-semibold">
+                        EXECUTIVE MERCHANDISING SYNTHESIS
+                      </span>
+                      <p className="text-xs sm:text-sm text-[#FDFBF7] leading-relaxed">
+                        {aiAnalysis.executiveSummary}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 3 Core Metric Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {/* Perishability Risk Meter */}
+                    <div className="p-4 rounded border border-white/5 bg-[#071C16] space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono text-[#8E9B90] uppercase">
+                          PERISHABILITY RISK
+                        </span>
+                        <span
+                          className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
+                            aiAnalysis.freshnessRiskScore > 65
+                              ? 'bg-[#9E2A2B]/20 text-[#F87171] border border-[#9E2A2B]/40'
+                              : aiAnalysis.freshnessRiskScore > 35
+                              ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                              : 'bg-[#16A34A]/20 text-[#4ADE80] border border-[#16A34A]/30'
+                          }`}
+                        >
+                          {aiAnalysis.freshnessRiskLevel.toUpperCase()} ({aiAnalysis.freshnessRiskScore}/100)
+                        </span>
+                      </div>
+
+                      {/* Visual Progress Bar */}
+                      <div className="w-full h-2 rounded-full bg-black/40 overflow-hidden border border-white/5">
+                        <div
+                          className={`h-full transition-all duration-500 ${
+                            aiAnalysis.freshnessRiskScore > 65
+                              ? 'bg-gradient-to-r from-amber-500 to-[#EF4444]'
+                              : aiAnalysis.freshnessRiskScore > 35
+                              ? 'bg-gradient-to-r from-[#16A34A] to-amber-400'
+                              : 'bg-gradient-to-r from-emerald-600 to-[#16A34A]'
+                          }`}
+                          style={{ width: `${aiAnalysis.freshnessRiskScore}%` }}
+                        />
+                      </div>
+
+                      <p className="text-[11px] text-[#8E9B90] leading-snug">
+                        {aiAnalysis.freshnessRiskScore > 65
+                          ? 'High turnover velocity required. Susceptible to rapid degradation.'
+                          : 'Stable inventory velocity with controlled shrinkage risk profile.'}
+                      </p>
+                    </div>
+
+                    {/* Cold Chain & Temperature */}
+                    <div className="p-4 rounded border border-white/5 bg-[#071C16] space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono text-[#8E9B90] uppercase">
+                          STORAGE TEMPERATURE
+                        </span>
+                        <Thermometer className="w-3.5 h-3.5 text-[#C5A059]" />
+                      </div>
+                      <div className="text-xl font-editorial font-bold text-[#E0C588]">
+                        {aiAnalysis.temperatureTarget}
+                      </div>
+                      <p className="text-[11px] text-[#8E9B90] leading-snug">
+                        {aiAnalysis.storageRecommendation}
+                      </p>
+                    </div>
+
+                    {/* Shelf Life Projection */}
+                    <div className="p-4 rounded border border-white/5 bg-[#071C16] space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono text-[#8E9B90] uppercase">
+                          ESTIMATED SHELF LIFE
+                        </span>
+                        <Clock className="w-3.5 h-3.5 text-[#C5A059]" />
+                      </div>
+                      <div className="text-xl font-editorial font-bold text-[#FDFBF7]">
+                        {aiAnalysis.shelfLifeEstimate}
+                      </div>
+                      <p className="text-[11px] text-[#8E9B90] leading-snug">
+                        Calculated from formulation matrix and standard retail humidity parameters.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Dynamic Markdown Strategy Table */}
+                  {aiAnalysis.markdownStrategy.length > 0 && (
+                    <div className="p-5 rounded border border-[#C5A059]/20 bg-[#071C16] space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <TrendingDown className="w-4 h-4 text-[#C5A059]" />
+                          <h4 className="text-sm font-editorial text-[#FDFBF7] font-medium">
+                            Automated Dynamic Markdown Strategy
+                          </h4>
+                        </div>
+                        <span className="text-[10px] font-mono text-[#8E9B90] uppercase">
+                          Margin Recovery Schedule
+                        </span>
+                      </div>
+
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs border-collapse">
+                          <thead>
+                            <tr className="border-b border-white/10 text-[#8E9B90] font-mono uppercase text-[10px]">
+                              <th className="py-2 px-3">Days to Expiration</th>
+                              <th className="py-2 px-3 text-center">Suggested Markdown</th>
+                              <th className="py-2 px-3">Operational Directive</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-white/5 font-sans">
+                            {aiAnalysis.markdownStrategy.map((step, idx) => (
+                              <tr key={idx} className="hover:bg-white/[0.02]">
+                                <td className="py-2.5 px-3 font-mono text-[#E0C588]">
+                                  {step.daysRemaining}
+                                </td>
+                                <td className="py-2.5 px-3 text-center">
+                                  <span className="px-2 py-0.5 rounded font-mono font-bold text-[11px] bg-[#C5A059]/15 text-[#E0C588] border border-[#C5A059]/30">
+                                    {step.discountPct}
+                                  </span>
+                                </td>
+                                <td className="py-2.5 px-3 text-[#FDFBF7]/90 text-xs">
+                                  {step.action}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Merchandising & QC Directives */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {/* Store Merchandising Directives */}
+                    {aiAnalysis.merchandisingDirectives.length > 0 && (
+                      <div className="p-4 rounded border border-white/5 bg-[#071C16] space-y-2.5">
+                        <span className="text-[10px] font-mono text-[#C5A059] uppercase block font-semibold">
+                          STORE MERCHANDISING DIRECTIVES
+                        </span>
+                        <ul className="space-y-2 text-xs text-[#D0CDC5]">
+                          {aiAnalysis.merchandisingDirectives.map((item, idx) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#C5A059] mt-1.5 flex-shrink-0" />
+                              <span className="leading-relaxed">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Quality Control Audit Checklist */}
+                    {aiAnalysis.qualityControlAudit.length > 0 && (
+                      <div className="p-4 rounded border border-white/5 bg-[#071C16] space-y-2.5">
+                        <span className="text-[10px] font-mono text-[#16A34A] uppercase block font-semibold">
+                          STAFF QUALITY CONTROL INSPECTION
+                        </span>
+                        <ul className="space-y-2 text-xs text-[#D0CDC5]">
+                          {aiAnalysis.qualityControlAudit.map((item, idx) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] mt-1.5 flex-shrink-0" />
+                              <span className="leading-relaxed">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* ============================================================

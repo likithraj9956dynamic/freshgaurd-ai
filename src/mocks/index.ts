@@ -14,4 +14,5 @@ export * from './decisions';
 export * from './actions';
 export * from './tasks';
 export * from './network';
+export * from './supplier';
 export * from './demo-info';

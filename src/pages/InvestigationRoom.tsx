@@ -10,6 +10,7 @@ import type { Investigation } from '../types';
 import { InvestigationGraphSection } from './InvestigationRoomGraph';
 import { EvidencePanel } from './InvestigationRoomEvidence';
 import { ChallengeThisPanel } from './InvestigationRoomChallenge';
+import { useAIStore } from '../services/ai-store';
 import {
   Search,
   Sparkles,
@@ -54,13 +55,30 @@ export function InvestigationRoomPage() {
             {investigation.evidenceSummary}
           </p>
 
-          <div className="flex flex-wrap items-center gap-4 pt-2">
-            <span className="badge-royal-critical">
-              {investigation.severity.toUpperCase()} PRIORITY
-            </span>
-            <span className="text-xs font-mono text-[#E0C588]">
-              MODEL CONFIDENCE: {investigation.confidence}% ({investigation.confidenceLevel})
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+            <div className="flex flex-wrap items-center gap-4">
+              <span className="badge-royal-critical">
+                {investigation.severity.toUpperCase()} PRIORITY
+              </span>
+              <span className="text-xs font-mono text-[#E0C588]">
+                MODEL CONFIDENCE: {investigation.confidence}% ({investigation.confidenceLevel})
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                const store = useAIStore.getState();
+                store.openCopilot();
+                store.sendCopilotMessage(
+                  `Perform an operational root-cause breakdown of "${investigation.title}" at ${investigation.affectedStore}. Differentiate hard telemetry facts from speculative hypotheses, and provide 3 immediate corrective directives.`
+                );
+              }}
+              className="btn-royal-gold text-xs px-3.5 py-1.5 flex items-center gap-1.5 shadow-md"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>AI Causal Breakdown</span>
+            </button>
           </div>
         </div>
       </section>
