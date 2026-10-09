@@ -1,0 +1,248 @@
+/* ============================================================
+   FreshGuard AI — Royal Editorial Design System
+   Aesthetic: Luxurious, Cinematic, Royal, Editorial Operations
+   ============================================================ */
+
+@import "tailwindcss";
+
+@theme {
+  /* Royal Palette */
+  --color-emerald-deep: #06281e;
+  --color-emerald-royal: #0B3B2C;
+  --color-emerald-light: #125440;
+  
+  --color-forest-midnight: #041410;
+  --color-forest-dark: #071C16;
+  --color-forest-card: #0A241D;
+  --color-forest-elevated: #0E3027;
+
+  --color-gold-antique: #C5A059;
+  --color-gold-light: #E0C588;
+  --color-gold-dark: #8C6F32;
+  --color-gold-glow: rgba(197, 160, 89, 0.15);
+
+  --color-ivory: #FDFBF7;
+  --color-ivory-dim: #E8E5DF;
+  --color-ivory-muted: #B8B5AD;
+  --color-sage-muted: #8E9B90;
+
+  --color-crimson-restrained: #9E2A2B;
+  --color-crimson-soft: rgba(158, 42, 43, 0.18);
+  --color-crimson-glow: rgba(158, 42, 43, 0.35);
+
+  /* Typography */
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-cinzel: 'Cinzel', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+:root {
+  --bg-midnight: #041410;
+  --bg-forest: #071C16;
+  --bg-card: #0A241D;
+  --bg-elevated: #0E3027;
+  --gold-primary: #C5A059;
+  --gold-subtle: rgba(197, 160, 89, 0.25);
+  --gold-glow: rgba(197, 160, 89, 0.08);
+  --ivory-white: #FDFBF7;
+  --ivory-dim: #E8E5DF;
+  --ivory-muted: #8E9B90;
+  --crimson-alert: #B83335;
+  --crimson-bg: rgba(184, 51, 53, 0.12);
+}
+
+/* ============================================================
+   GLOBAL RESETS & EDITORIAL FOUNDATIONS
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: var(--bg-midnight);
+  color: var(--ivory-white);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Headings */
+h1, h2, h3, .font-editorial {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--ivory-white);
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', Georgia, serif;
+  letter-spacing: 0.1em;
+}
+
+/* Subtle Royal Borders */
+.border-gold-subtle {
+  border-color: rgba(197, 160, 89, 0.22);
+}
+
+.border-forest-subtle {
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+/* Editorial Glass Card */
+.royal-card {
+  background: linear-gradient(135deg, rgba(10, 36, 29, 0.75) 0%, rgba(7, 28, 22, 0.9) 100%);
+  border: 1px solid rgba(197, 160, 89, 0.18);
+  backdrop-filter: blur(12px);
+  border-radius: 4px; /* Crisp, architectural tailoring */
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.royal-card:hover {
+  border-color: rgba(197, 160, 89, 0.38);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 1px 1px rgba(197, 160, 89, 0.15);
+}
+
+.royal-card-highlight {
+  background: linear-gradient(135deg, rgba(14, 48, 39, 0.85) 0%, rgba(6, 40, 30, 0.95) 100%);
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(224, 197, 136, 0.2);
+}
+
+/* Editorial Dividers */
+.gold-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(197, 160, 89, 0.5) 50%, transparent 100%);
+  margin: 1.5rem 0;
+  border: none;
+}
+
+.gold-separator-left {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(197, 160, 89, 0.6) 0%, rgba(197, 160, 89, 0.1) 80%, transparent 100%);
+  margin: 1.5rem 0;
+  border: none;
+}
+
+/* Custom Scrollbars */
+.app-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(197, 160, 89, 0.25) transparent;
+}
+
+.app-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.app-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(197, 160, 89, 0.25);
+  border-radius: 9999px;
+}
+
+.app-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(197, 160, 89, 0.45);
+}
+
+/* Image Vignette & Editorial Framing */
+.cinematic-vignette {
+  position: relative;
+  overflow: hidden;
+}
+
+.cinematic-vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(4, 20, 16, 0.1) 0%, rgba(4, 20, 16, 0.85) 100%);
+  pointer-events: none;
+}
+
+/* Custom Badges */
+.badge-royal-fact {
+  background: rgba(197, 160, 89, 0.12);
+  color: #E0C588;
+  border: 1px solid rgba(197, 160, 89, 0.3);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 2px;
+}
+
+.badge-royal-hypothesis {
+  background: rgba(142, 155, 144, 0.12);
+  color: #B8C4BA;
+  border: 1px solid rgba(142, 155, 144, 0.25);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 2px;
+}
+
+.badge-royal-critical {
+  background: rgba(158, 42, 43, 0.2);
+  color: #F87171;
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 2px;
+}
+
+/* Buttons */
+.btn-royal-gold {
+  background: linear-gradient(135deg, #C5A059 0%, #A8843E 100%);
+  color: #041410;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.625rem 1.25rem;
+  border-radius: 3px;
+  box-shadow: 0 4px 15px rgba(197, 160, 89, 0.25);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-royal-gold:hover {
+  background: linear-gradient(135deg, #D4B26F 0%, #B89248 100%);
+  box-shadow: 0 6px 20px rgba(197, 160, 89, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-royal-outline {
+  background: rgba(7, 28, 22, 0.6);
+  color: var(--ivory-white);
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  padding: 0.625rem 1.25rem;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-royal-outline:hover {
+  border-color: rgba(197, 160, 89, 0.7);
+  background: rgba(10, 36, 29, 0.9);
+  color: #E0C588;
+}
