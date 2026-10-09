@@ -59,3 +59,7 @@ export const useDemoStore = create<DemoState>((set) => ({
 
 // --- Demo Data Info ---
 export { DEMO_DATA_INFO } from '../mocks';
+
+// --- Open Food Facts API Service ---
+export * from './openfoodfacts';
+

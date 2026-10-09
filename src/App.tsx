@@ -13,6 +13,7 @@ import { DecisionCentrePage } from './pages/DecisionCentre';
 import { NetworkPage } from './pages/Network';
 import { ActionCenterPage } from './pages/ActionCenter';
 import { StoreManagerPage } from './pages/StoreManager';
+import { ProductLookupPage } from './pages/ProductLookup';
 import { SettingsPage } from './pages/Settings';
 
 const queryClient = new QueryClient({
@@ -33,11 +34,14 @@ export default function App() {
             <Route element={<AppShell />}>
               <Route path="/" element={<DashboardPage />} />
               <Route path="/stores/:storeId" element={<StoreOverviewPage />} />
+              <Route path="/investigations" element={<InvestigationRoomPage />} />
               <Route path="/investigations/:issueId" element={<InvestigationRoomPage />} />
+              <Route path="/decisions" element={<DecisionCentrePage />} />
               <Route path="/decisions/:decisionId" element={<DecisionCentrePage />} />
               <Route path="/network" element={<NetworkPage />} />
               <Route path="/actions" element={<ActionCenterPage />} />
               <Route path="/store-manager" element={<StoreManagerPage />} />
+              <Route path="/product-lookup" element={<ProductLookupPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
@@ -47,3 +51,4 @@ export default function App() {
     </QueryClientProvider>
   );
 }
+

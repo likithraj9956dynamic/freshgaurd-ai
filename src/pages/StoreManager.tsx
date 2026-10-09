@@ -3,6 +3,7 @@
 // ============================================================
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useDemos } from '../hooks/useDemos';
 import { LoadingState } from '../components/state';
 import type { StoreTask } from '../types';
@@ -13,8 +14,10 @@ import {
   ArrowRight,
   Sparkles,
   ClipboardCheck,
-  AlertCircle
+  AlertCircle,
+  ScanBarcode
 } from 'lucide-react';
+
 
 export function StoreManagerPage() {
   const { data, isLoading } = useDemos();
@@ -78,8 +81,19 @@ export function StoreManagerPage() {
               <span className="text-xl font-editorial text-[#16A34A]">{completed.length}</span>
             </div>
           </div>
+
+          <div className="pt-2">
+            <Link
+              to="/product-lookup"
+              className="btn-royal-outline text-xs inline-flex items-center gap-2"
+            >
+              <ScanBarcode className="w-4 h-4 text-[#C5A059]" />
+              <span>Verify Barcode in Open Food Facts Registry</span>
+            </Link>
+          </div>
         </div>
       </section>
+
 
       {/* Task Flow */}
       <section className="space-y-4">

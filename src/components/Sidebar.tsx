@@ -15,7 +15,8 @@ import {
   Menu,
   X,
   ShieldAlert,
-  Crown
+  Crown,
+  ScanBarcode
 } from 'lucide-react';
 
 const navItems = [
@@ -26,8 +27,10 @@ const navItems = [
   { path: '/decisions', label: 'Decision Chamber', subtitle: 'Strategy simulation & risk', icon: Scale },
   { path: '/actions', label: 'Action Centre', subtitle: 'Approval governance', icon: CheckCircle2 },
   { path: '/store-manager', label: 'Store Manager', subtitle: 'Daily task list', icon: Smartphone },
+  { path: '/product-lookup', label: 'Product Registry', subtitle: 'Barcode & Open Food Facts', icon: ScanBarcode },
   { path: '/settings', label: 'Settings', subtitle: 'System & configuration', icon: Sliders },
 ];
+
 
 export function Sidebar({ location }: { location: ReturnType<typeof useLocation> }) {
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);

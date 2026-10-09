@@ -3,7 +3,7 @@
 // ============================================================
 
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Search, Bell, RefreshCw, Sparkles, ShieldCheck } from 'lucide-react';
 
 const pageTitles: Record<string, { title: string; category: string }> = {
@@ -14,6 +14,7 @@ const pageTitles: Record<string, { title: string; category: string }> = {
   '/decisions': { title: 'Decision Chamber', category: 'Operational Strategies & What-If' },
   '/actions': { title: 'Action Centre', category: 'Human Approval & Execution Governance' },
   '/store-manager': { title: 'Store Manager Workspace', category: 'Daily Operational Directives' },
+  '/product-lookup': { title: 'Product Intelligence & Barcode Registry', category: 'Open Food Facts Telemetry' },
   '/settings': { title: 'System Settings', category: 'Data Sources & Model Parameters' },
 };
 
@@ -27,8 +28,17 @@ function getHeaderMeta(pathname: string) {
 
 export function TopBar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState('');
   const meta = getHeaderMeta(location.pathname);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/product-lookup?barcode=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+    }
+  };
 
   return (
     <header
@@ -51,16 +61,17 @@ export function TopBar() {
 
       {/* Center Search & Actions */}
       <div className="flex items-center gap-5">
-        <div className="relative hidden md:block" style={{ width: '280px' }}>
+        <form onSubmit={handleSearchSubmit} className="relative hidden md:block" style={{ width: '280px' }}>
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#C5A059]/70" />
           <input
             type="text"
-            placeholder="Search stores, SKU, evidence..."
+            placeholder="Search barcode, SKU, product..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full rounded text-xs pl-9 pr-3 py-2 bg-[#071C16] text-[#FDFBF7] border border-[#C5A059]/20 focus:border-[#C5A059]/60 focus:outline-none transition-colors placeholder:text-[#8E9B90]/60 font-sans"
           />
-        </div>
+        </form>
+
 
         {/* Intelligence Mode Status */}
         <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded border border-[#C5A059]/25 bg-[#0A241D]/60 text-xs text-[#E0C588]">
