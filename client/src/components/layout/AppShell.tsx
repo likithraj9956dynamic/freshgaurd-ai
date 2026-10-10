@@ -9,6 +9,9 @@ interface AppShellProps {
   approvalsCount?: number;
   lastRefreshed?: string;
   onRefresh?: () => void;
+  currentUser?: any;
+  onOpenAuth?: () => void;
+  onLogout?: () => void;
 }
 
 export const AppShell: React.FC<AppShellProps> = ({
@@ -18,6 +21,9 @@ export const AppShell: React.FC<AppShellProps> = ({
   approvalsCount = 2,
   lastRefreshed = '08:42 IST',
   onRefresh,
+  currentUser,
+  onOpenAuth,
+  onLogout,
 }) => {
   const [internalTab, setInternalTab] = useState<NavTab>('overview');
 
@@ -31,6 +37,9 @@ export const AppShell: React.FC<AppShellProps> = ({
         activeTab={currentTab}
         onTabChange={handleTabChange}
         approvalsCount={approvalsCount}
+        currentUser={currentUser}
+        onOpenAuth={onOpenAuth}
+        onLogout={onLogout}
       />
 
       {/* Main Content Area */}

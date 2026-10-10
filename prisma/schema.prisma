@@ -507,16 +507,99 @@ model DataImportRun {
 }
 
 model User {
-  id               String            @id @default(uuid())
-  email            String            @unique
-  passwordHash     String            @map("password_hash")
-  fullName         String            @map("full_name")
-  role             String            @default("operator")
-  createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime          @updatedAt @map("updated_at")
+  id                String              @id @default(uuid())
+  email             String              @unique
+  passwordHash      String              @map("password_hash")
+  fullName          String              @map("full_name")
+  phoneNumber       String?             @map("phone_number")
+  role              String              @default("STORE_MANAGER") // MAIN_MANAGER, STORE_MANAGER, SUPPLIER
+  status            String              @default("PENDING") // PENDING, APPROVED, REJECTED, MORE_INFO_REQUIRED
+  emailVerified     Boolean             @default(false) @map("email_verified")
+  verificationToken String?             @map("verification_token")
+  employeeId        String?             @map("employee_id")
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+
   storeAssignments StoreAssignment[]
+  storeDetail      StoreDetail?
+  supplierDetail   SupplierDetail?
+  accessRequests   AccessRequest[]     @relation("ApplicantRequests")
+  decidedRequests  AccessRequest[]     @relation("DecidedRequests")
+  invitationsSent  ManagerInvitation[] @relation("InvitedBy")
 
   @@map("users")
+}
+
+model StoreDetail {
+  id             String   @id @default(uuid())
+  userId         String   @unique @map("user_id")
+  storeName      String   @map("store_name")
+  storeType      String   @map("store_type")
+  storeTypeOther String?  @map("store_type_other")
+  storeAddress   String?  @map("store_address")
+  city           String?
+  state          String?
+  employeeId     String?  @map("employee_id")
+  additionalInfo String?  @map("additional_info")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("store_details")
+}
+
+model SupplierDetail {
+  id                String   @id @default(uuid())
+  userId            String   @unique @map("user_id")
+  companyName       String   @map("company_name")
+  supplierType      String   @map("supplier_type")
+  supplierTypeOther String?  @map("supplier_type_other")
+  productsSupplied  String   @map("products_supplied")
+  businessAddress   String?  @map("business_address")
+  city              String?
+  state             String?
+  gstin             String?
+  additionalInfo    String?  @map("additional_info")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("supplier_details")
+}
+
+model AccessRequest {
+  id              String    @id @default(uuid())
+  userId          String    @map("user_id")
+  requestedRole   String    @map("requested_role") // MAIN_MANAGER, STORE_MANAGER, SUPPLIER
+  status          String    @default("PENDING") // PENDING, APPROVED, REJECTED, MORE_INFO_REQUIRED
+  requestData     Json?     @default("{}") @map("request_data")
+  rejectionReason String?   @map("rejection_reason")
+  moreInfoNote    String?   @map("more_info_note")
+  decidedBy       String?   @map("decided_by")
+  decidedAt       DateTime? @map("decided_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  applicant User  @relation("ApplicantRequests", fields: [userId], references: [id], onDelete: Cascade)
+  decider   User? @relation("DecidedRequests", fields: [decidedBy], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([status])
+  @@map("access_requests")
+}
+
+model ManagerInvitation {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  token     String   @unique
+  invitedBy String   @map("invited_by")
+  used      Boolean  @default(false)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  inviter User @relation("InvitedBy", fields: [invitedBy], references: [id], onDelete: Cascade)
+
+  @@map("manager_invitations")
 }
 
 model StoreAssignment {

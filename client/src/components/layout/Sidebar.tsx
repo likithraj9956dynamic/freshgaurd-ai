@@ -7,22 +7,32 @@ import {
   FileText,
   ShieldCheck,
   ChevronDown,
-  Sparkles,
+  Users,
+  LogOut,
+  LogIn,
 } from 'lucide-react';
 
-export type NavTab = 'overview' | 'signals' | 'approvals' | 'qa' | 'audit';
+export type NavTab = 'overview' | 'signals' | 'approvals' | 'qa' | 'audit' | 'access';
 
 interface SidebarProps {
   activeTab: NavTab;
   onTabChange: (tab: NavTab) => void;
   approvalsCount?: number;
+  currentUser?: any;
+  onOpenAuth?: () => void;
+  onLogout?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   activeTab,
   onTabChange,
   approvalsCount = 2,
+  currentUser,
+  onOpenAuth,
+  onLogout,
 }) => {
+  const isMainManager = currentUser?.role === 'MAIN_MANAGER' || !currentUser;
+
   const navItems = [
     {
       id: 'overview' as NavTab,
@@ -55,7 +65,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
       icon: FileText,
       badge: null,
     },
+    ...(isMainManager
+      ? [
+          {
+            id: 'access' as NavTab,
+            label: 'User access',
+            icon: Users,
+            badge: null,
+            badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+          },
+        ]
+      : []),
   ];
+
+  const getInitials = (name: string) => {
+    if (!name) return 'KM';
+    const parts = name.split(' ');
+    return parts.length >= 2 ? `${parts[0][0]}${parts[1][0]}`.toUpperCase() : name.substring(0, 2).toUpperCase();
+  };
 
   return (
     <aside className="w-64 bg-white border-r border-surface-border flex flex-col justify-between h-screen sticky top-0 shrink-0 select-none">
@@ -124,20 +151,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Bottom Profile Card */}
       <div className="p-4 border-t border-surface-border bg-slate-50/50">
-        <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-surface-border shadow-xs hover:border-slate-300 transition-all cursor-pointer">
-          <div className="flex items-center space-x-3 min-w-0">
-            {/* Avatar Initials */}
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white text-xs font-bold ring-2 ring-emerald-100 shrink-0">
-              KM
+        {currentUser ? (
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-surface-border shadow-xs hover:border-slate-300 transition-all">
+            <div className="flex items-center space-x-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white text-xs font-bold ring-2 ring-emerald-100 shrink-0">
+                {getInitials(currentUser.fullName)}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-slate-900 truncate">{currentUser.fullName}</p>
+                <p className="text-[11px] text-slate-500 truncate">
+                  {currentUser.role?.replace('_', ' ') || 'Operations'}
+                </p>
+              </div>
             </div>
-            {/* User Details */}
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold text-slate-900 truncate">Kavitha Menon</p>
-              <p className="text-[11px] text-slate-500 truncate">Head Office — Operations</p>
-            </div>
+            <button
+              onClick={onLogout}
+              className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg transition-all"
+              title="Sign Out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
-          <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 ml-1" />
-        </div>
+        ) : (
+          <div className="p-2.5 rounded-xl bg-white border border-surface-border shadow-xs flex items-center justify-between">
+            <div>
+              <p className="text-xs font-bold text-slate-900">Sign In / Register</p>
+              <p className="text-[11px] text-slate-500">Access Control</p>
+            </div>
+            <button
+              onClick={onOpenAuth}
+              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-xs flex items-center space-x-1 transition-all"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Login</span>
+            </button>
+          </div>
+        )}
       </div>
     </aside>
   );

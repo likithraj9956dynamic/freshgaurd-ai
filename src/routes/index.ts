@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import healthRoutes from './health.routes';
+import authRoutes from './auth.routes';
+import accessRequestRoutes from './access-request.routes';
 import operationalRoutes from './operational.routes';
 import importRoutes from './import.routes';
 import analyticsRoutes from './analytics.routes';
@@ -13,6 +15,8 @@ const router = Router();
 
 // Mount All API v1 Routes
 router.use('/', healthRoutes);
+router.use('/', authRoutes);
+router.use('/', accessRequestRoutes);
 router.use('/', operationalRoutes);
 router.use('/', importRoutes);
 router.use('/', analyticsRoutes);
