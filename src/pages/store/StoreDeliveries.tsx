@@ -33,7 +33,7 @@ export function StoreDeliveriesPage() {
             Inbound Deliveries &amp; PO Status
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Store #017 (Tacoma Downtown) · Carrier appointment windows and dock intake verification
+            FB-17 (Marathahalli) · Carrier appointment windows and dock intake verification
           </p>
         </div>
       </div>
@@ -115,10 +115,10 @@ export function StoreDeliveriesPage() {
             <AlertTriangle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="space-y-0.5">
               <span className="font-semibold text-red-900 block">
-                Carrier Freight Delay Notice (I-5 Corridor)
+                Carrier Freight Delay Notice ({po.supplier})
               </span>
               <p className="text-red-700">
-                Cascade Fresh Distributors vehicle FLEET-TRUCK-07 is delayed due to highway congestion. Cold-chain probe temperature verified compliant at 3.4°C.
+                {po.supplier} delivery ({po.orderNumber}) is delayed with no revised ETA. Cold-chain probe temperature verified compliant at 3.4°C.
               </p>
             </div>
           </div>

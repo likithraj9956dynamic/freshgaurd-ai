@@ -1,4 +1,4 @@
-﻿import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma';
 import { StoreService } from './store.service';
 import { BadRequestError, NotFoundError } from '../utils/errors';
 
@@ -253,7 +253,7 @@ export class ActionEngineService {
         storeId: action.storeId,
         actionId,
         title: 'Receive Inter-Store Stock Balancing Courier',
-        instructions: 'Check in 40 transfer units from Sacramento Central (CA_1) and restock refrigerated dairy display immediately.',
+        instructions: 'Check in 40 transfer units from Whitefield (#FB-16) and restock refrigerated dairy display immediately.',
         priority: 'high',
         status: 'pending',
         assignedTo: 'Inventory Associate',

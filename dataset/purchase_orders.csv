@@ -1,0 +1,112 @@
+po,supplier,store,sku,qty,expected_date,status
+PO-7001,Mother Bakery Supplies,FB-01,SKU-039,31,2026-11-11,Delivered
+PO-7002,Namdhari Fresh,FB-01,SKU-039,57,2026-11-15,Delivered
+PO-7003,Nandini Dairy Hub,FB-01,SKU-010,68,2026-11-17,Scheduled
+PO-7004,Metro Wholesale,FB-01,SKU-016,55,2026-11-18,Scheduled
+PO-7005,Namdhari Fresh,FB-02,SKU-004,110,2026-11-11,Delivered
+PO-7006,Nandini Dairy Hub,FB-02,SKU-010,43,2026-11-14,Delivered
+PO-7007,Hopcoms Bulk,FB-02,SKU-017,77,2026-11-15,Delivered
+PO-7008,Nandini Dairy Hub,FB-02,SKU-015,30,2026-11-16,Delivered
+PO-7009,Namdhari Fresh,FB-02,SKU-016,84,2026-11-17,Scheduled
+PO-7010,Mother Bakery Supplies,FB-03,SKU-021,32,2026-11-11,Delivered
+PO-7011,Namdhari Fresh,FB-03,SKU-030,94,2026-11-12,Delivered
+PO-7012,Nandini Dairy Hub,FB-03,SKU-008,48,2026-11-13,Delivered
+PO-7013,Namdhari Fresh,FB-03,SKU-033,62,2026-11-14,Delivered
+PO-7014,Mother Bakery Supplies,FB-03,SKU-028,112,2026-11-16,Delivered
+PO-7015,Metro Wholesale,FB-03,SKU-041,81,2026-11-18,Scheduled
+PO-7016,Nandini Dairy Hub,FB-04,SKU-012,79,2026-11-12,Delivered
+PO-7017,Mother Bakery Supplies,FB-04,SKU-032,28,2026-11-13,Delivered
+PO-7018,Mother Bakery Supplies,FB-04,SKU-012,40,2026-11-14,Delivered
+PO-7019,Namdhari Fresh,FB-04,SKU-010,37,2026-11-16,Delivered
+PO-7020,Hopcoms Bulk,FB-04,SKU-019,69,2026-11-18,Scheduled
+PO-7021,Hopcoms Bulk,FB-05,SKU-037,105,2026-11-11,Delivered
+PO-7022,Namdhari Fresh,FB-05,SKU-026,89,2026-11-16,Delivered
+PO-7023,Nandini Dairy Hub,FB-05,SKU-023,91,2026-11-17,Scheduled
+PO-7024,Nandini Dairy Hub,FB-05,SKU-024,104,2026-11-18,Scheduled
+PO-7025,Namdhari Fresh,FB-06,SKU-022,117,2026-11-11,Delivered
+PO-7026,Hopcoms Bulk,FB-06,SKU-042,62,2026-11-13,Delivered
+PO-7027,Nandini Dairy Hub,FB-06,SKU-026,47,2026-11-16,Delivered
+PO-7028,Hopcoms Bulk,FB-06,SKU-004,91,2026-11-17,Scheduled
+PO-7029,Namdhari Fresh,FB-07,SKU-022,65,2026-11-12,Delivered
+PO-7030,Metro Wholesale,FB-07,SKU-006,84,2026-11-14,Delivered
+PO-7031,Hopcoms Bulk,FB-07,SKU-039,51,2026-11-15,Delivered
+PO-7032,Namdhari Fresh,FB-07,SKU-039,114,2026-11-18,Scheduled
+PO-7033,Hopcoms Bulk,FB-08,SKU-012,107,2026-11-17,Scheduled
+PO-7034,Namdhari Fresh,FB-08,SKU-011,103,2026-11-18,Scheduled
+PO-7035,Metro Wholesale,FB-09,SKU-028,87,2026-11-11,Delivered
+PO-7036,Namdhari Fresh,FB-09,SKU-015,81,2026-11-14,Delivered
+PO-7037,Hopcoms Bulk,FB-09,SKU-001,70,2026-11-16,Delivered
+PO-7038,Hopcoms Bulk,FB-10,SKU-018,83,2026-11-13,Delivered
+PO-7039,Nandini Dairy Hub,FB-10,SKU-009,81,2026-11-14,Delivered
+PO-7040,Nandini Dairy Hub,FB-10,SKU-017,56,2026-11-16,Delivered
+PO-7041,Mother Bakery Supplies,FB-10,SKU-007,27,2026-11-17,Scheduled
+PO-7042,Mother Bakery Supplies,FB-10,SKU-025,27,2026-11-18,Scheduled
+PO-7043,Namdhari Fresh,FB-11,SKU-021,93,2026-11-12,Delivered
+PO-7044,Hopcoms Bulk,FB-11,SKU-025,95,2026-11-14,Delivered
+PO-7045,Mother Bakery Supplies,FB-11,SKU-037,52,2026-11-15,Delivered
+PO-7046,Namdhari Fresh,FB-12,SKU-007,22,2026-11-12,Delivered
+PO-7047,Metro Wholesale,FB-12,SKU-032,74,2026-11-13,Delivered
+PO-7048,Nandini Dairy Hub,FB-12,SKU-025,59,2026-11-15,Delivered
+PO-7049,Mother Bakery Supplies,FB-12,SKU-038,97,2026-11-17,Scheduled
+PO-7050,Namdhari Fresh,FB-12,SKU-008,21,2026-11-18,Scheduled
+PO-7051,Hopcoms Bulk,FB-13,SKU-006,86,2026-11-11,Delivered
+PO-7052,Metro Wholesale,FB-13,SKU-033,95,2026-11-13,Delivered
+PO-7053,Mother Bakery Supplies,FB-13,SKU-039,116,2026-11-15,Delivered
+PO-7054,Nandini Dairy Hub,FB-13,SKU-026,67,2026-11-17,Scheduled
+PO-7055,Mother Bakery Supplies,FB-14,SKU-001,49,2026-11-12,Delivered
+PO-7056,Mother Bakery Supplies,FB-14,SKU-016,105,2026-11-14,Delivered
+PO-7057,Hopcoms Bulk,FB-14,SKU-041,28,2026-11-15,Delivered
+PO-7058,Hopcoms Bulk,FB-14,SKU-032,103,2026-11-17,Scheduled
+PO-7059,Hopcoms Bulk,FB-14,SKU-007,71,2026-11-18,Scheduled
+PO-7060,Hopcoms Bulk,FB-15,SKU-023,37,2026-11-12,Delivered
+PO-7061,Mother Bakery Supplies,FB-15,SKU-008,94,2026-11-16,Delivered
+PO-7062,Hopcoms Bulk,FB-15,SKU-033,21,2026-11-17,Scheduled
+PO-7063,Metro Wholesale,FB-16,SKU-033,75,2026-11-12,Delivered
+PO-7064,Nandini Dairy Hub,FB-16,SKU-033,48,2026-11-14,Delivered
+PO-7065,Metro Wholesale,FB-16,SKU-026,111,2026-11-15,Delivered
+PO-7066,Nandini Dairy Hub,FB-16,SKU-016,65,2026-11-16,Delivered
+PO-7067,Mother Bakery Supplies,FB-17,SKU-035,88,2026-11-11,Delivered
+PO-7068,Nandini Dairy Hub,FB-17,SKU-021,93,2026-11-12,Delivered
+PO-7069,Hopcoms Bulk,FB-17,SKU-012,27,2026-11-13,Delivered
+PO-7070,Nandini Dairy Hub,FB-17,SKU-019,74,2026-11-15,Delivered
+PO-7071,Mother Bakery Supplies,FB-17,SKU-017,41,2026-11-16,Delivered
+PO-7072,Namdhari Fresh,FB-17,SKU-012,57,2026-11-18,Scheduled
+PO-7073,Metro Wholesale,FB-18,SKU-011,61,2026-11-13,Delivered
+PO-7074,Mother Bakery Supplies,FB-18,SKU-015,97,2026-11-15,Delivered
+PO-7075,Metro Wholesale,FB-18,SKU-034,72,2026-11-16,Delivered
+PO-7076,Namdhari Fresh,FB-18,SKU-010,22,2026-11-17,Scheduled
+PO-7077,Nandini Dairy Hub,FB-19,SKU-006,87,2026-11-11,Delivered
+PO-7078,Namdhari Fresh,FB-19,SKU-009,76,2026-11-13,Delivered
+PO-7079,Namdhari Fresh,FB-19,SKU-027,115,2026-11-15,Delivered
+PO-7080,Namdhari Fresh,FB-19,SKU-041,112,2026-11-16,Delivered
+PO-7081,Metro Wholesale,FB-19,SKU-030,36,2026-11-17,Scheduled
+PO-7082,Mother Bakery Supplies,FB-19,SKU-011,83,2026-11-18,Scheduled
+PO-7083,Metro Wholesale,FB-20,SKU-017,95,2026-11-11,Delivered
+PO-7084,Mother Bakery Supplies,FB-20,SKU-040,76,2026-11-13,Delivered
+PO-7085,Nandini Dairy Hub,FB-20,SKU-004,84,2026-11-15,Delivered
+PO-7086,Namdhari Fresh,FB-20,SKU-010,48,2026-11-17,Scheduled
+PO-7087,Hopcoms Bulk,FB-21,SKU-019,97,2026-11-13,Delivered
+PO-7088,Metro Wholesale,FB-21,SKU-009,26,2026-11-14,Delivered
+PO-7089,Namdhari Fresh,FB-21,SKU-033,34,2026-11-15,Delivered
+PO-7090,Namdhari Fresh,FB-21,SKU-028,111,2026-11-17,Scheduled
+PO-7091,Mother Bakery Supplies,FB-21,SKU-041,84,2026-11-18,Scheduled
+PO-7092,Mother Bakery Supplies,FB-22,SKU-027,85,2026-11-13,Delivered
+PO-7093,Nandini Dairy Hub,FB-22,SKU-027,109,2026-11-14,Delivered
+PO-7094,Metro Wholesale,FB-22,SKU-014,118,2026-11-16,Delivered
+PO-7095,Mother Bakery Supplies,FB-22,SKU-007,68,2026-11-18,Scheduled
+PO-7096,Metro Wholesale,FB-23,SKU-008,74,2026-11-11,Delivered
+PO-7097,Namdhari Fresh,FB-23,SKU-032,46,2026-11-13,Delivered
+PO-7098,Namdhari Fresh,FB-23,SKU-009,113,2026-11-14,Delivered
+PO-7099,Nandini Dairy Hub,FB-23,SKU-004,112,2026-11-15,Delivered
+PO-7100,Mother Bakery Supplies,FB-24,SKU-037,70,2026-11-13,Delivered
+PO-7101,Namdhari Fresh,FB-24,SKU-025,74,2026-11-17,Scheduled
+PO-7102,Nandini Dairy Hub,FB-25,SKU-011,81,2026-11-11,Delivered
+PO-7103,Metro Wholesale,FB-25,SKU-003,101,2026-11-12,Delivered
+PO-7104,Mother Bakery Supplies,FB-25,SKU-009,51,2026-11-13,Delivered
+PO-7105,Nandini Dairy Hub,FB-25,SKU-011,78,2026-11-14,Delivered
+PO-7106,Namdhari Fresh,FB-17,SKU-023,44,2026-11-13,Delayed – no revised date
+PO-7107,Namdhari Fresh,FB-17,SKU-014,41,2026-11-13,Delayed – no revised date
+PO-7108,Namdhari Fresh,FB-17,SKU-022,32,2026-11-13,Delayed – no revised date
+PO-7109,Namdhari Fresh,FB-17,SKU-005,31,2026-11-13,Delayed – no revised date
+PO-7110,Namdhari Fresh,FB-17,SKU-011,35,2026-11-13,Delayed – no revised date
+PO-7111,Namdhari Fresh,FB-17,SKU-042,30,2026-11-13,Delayed – no revised date

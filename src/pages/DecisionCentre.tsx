@@ -76,7 +76,7 @@ export function DecisionCentrePage() {
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-            Compare 3 targeted operational strategies for Store 017. Weigh projected margin benefit, fleet logistics costs,
+            Compare 3 targeted operational strategies for FB-17 (Marathahalli). Weigh projected margin benefit, fleet logistics costs,
             and uncertainty. Explicit human sign-off is mandatory prior to simulating automated execution.
           </p>
 
@@ -92,7 +92,7 @@ export function DecisionCentrePage() {
                 const store = useAIStore.getState();
                 store.openCopilot();
                 store.sendCopilotMessage(
-                  `Evaluate the operational intervention strategies for Store 017: Option A (Dynamic Markdown Flash Sale), Option B (Inter-store stock transfer from Bellevue #1014), and Option C (Expedited Supplier Purchase Order re-delivery). Which option optimizes margin recovery while minimizing spoilage?`
+                  `Evaluate the operational intervention strategies for FB-17 (Marathahalli): Option A (Dynamic Markdown Flash Sale), Option B (Inter-store stock transfer from Banashankari #FB-03), and Option C (Expedited Supplier Purchase Order re-delivery). Which option optimizes margin recovery while minimizing spoilage?`
                 );
               }}
               className="btn-primary text-xs px-3.5 py-2 flex items-center gap-2"
@@ -221,7 +221,7 @@ export function DecisionCentrePage() {
                 Executive Authorization Required
               </h4>
               <p className="text-xs text-slate-600 leading-relaxed">
-                By ticking below, you acknowledge having reviewed the supporting telemetry for Store 017
+                By ticking below, you acknowledge having reviewed the supporting telemetry for Store FB-17
                 and authorize simulated dispatch of strategy <strong className="text-slate-900 font-medium">"{currentDecision.title}"</strong>.
               </p>
             </div>

@@ -74,10 +74,10 @@ export function SupplierDashboardPage() {
             <Clock className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="space-y-0.5">
               <span className="font-semibold text-slate-900 block">
-                Delivery Delay Alert: PO CF-10482 to Tacoma Downtown is Delayed in Transit
+                Delivery Delay Alert: PO {delayedOrders[0]?.orderNumber || 'PO-7106'} to {delayedOrders[0]?.storeName || 'Marathahalli (#FB-17)'} is Delayed in Transit
               </span>
               <p className="text-slate-600 leading-relaxed">
-                Carrier vehicle FLEET-TRUCK-07 is delayed due to I-5 corridor traffic. Revised ETA: 15:00 Today. Cold-chain probe temperature verified at 3.4°C.
+                Carrier shipment {delayedOrders[0]?.deliveryVehicleId || 'FLEET-KA-04-TRUCK-07'} is delayed without revised delivery date. Cold-chain probe temperature verified at 3.4°C.
               </p>
             </div>
           </div>
@@ -141,7 +141,7 @@ export function SupplierDashboardPage() {
           <div className="text-2xl font-bold text-slate-900">
             1 <span className="text-xs font-normal text-slate-500">Request</span>
           </div>
-          <p className="text-[11px] text-slate-500">Store 017 emergency replenishment</p>
+          <p className="text-[11px] text-slate-500">FB-17 (Marathahalli) emergency replenishment</p>
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-﻿import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { AssistantService } from '../services/ai/assistant.service';
 import { ApiResponse } from '../utils/apiResponse';
 import { assistantQuerySchema } from '../validators/briefing.validator';

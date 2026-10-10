@@ -1,22 +1,73 @@
 // ============================================================
-// FreshGuard AI — Mock Data: Products
+// FreshGuard AI — Dataset-Sourced Products (Real Retail Catalog)
+// Source: dataset/products.csv (42 SKUs)
 // ============================================================
 
 import type { Product } from '../types';
 
-export const PRODUCTS: Product[] = [
-  { id: 'p1', sku: 'FRESH-001', name: 'Organic Baby Spinach 5oz', category: 'Produce', subcategory: 'Leafy Greens', brand: 'FreshBasket', packSize: '5 oz', unit: 'unit', costPrice: 1.85, retailPrice: 3.49, marginPercent: 47, procurementVendor: 'Amazon Fresh Supply', reorderPoint: 48, active: true, iconHint: 'leaf' },
-  { id: 'p2', sku: 'FRESH-002', name: 'Baby Carrots 1lb', category: 'Produce', subcategory: 'Root Vegetables', brand: 'FreshBasket', packSize: '1 lb', unit: 'lb', costPrice: 1.20, retailPrice: 2.49, marginPercent: 52, procurementVendor: 'Rainier Produce Co', reorderPoint: 64, active: true, iconHint: 'carrot' },
-  { id: 'p3', sku: 'MEAT-001', name: 'Ground Beef 80/20 1lb', category: 'Meat', subcategory: 'Ground Beef', brand: 'FreshBasket', packSize: '1 lb', unit: 'lb', costPrice: 4.20, retailPrice: 6.99, marginPercent: 39, procurementVendor: 'Cascade Ranch', reorderPoint: 22, active: true, iconHint: 'hamburger' },
-  { id: 'p4', sku: 'MEAT-002', name: 'Chicken Breast 1lb', category: 'Meat', subcategory: 'Chicken', brand: 'FreshBasket', packSize: '1 lb', unit: 'lb', costPrice: 3.40, retailPrice: 5.99, marginPercent: 44, procurementVendor: 'Rainier Ranch', reorderPoint: 30, active: true, iconHint: 'bird' },
-  { id: 'p5', sku: 'DAIRY-001', name: 'Whole Milk 1gal', category: 'Dairy', subcategory: 'Milk', brand: 'FreshBasket', packSize: '1 gal', unit: 'unit', costPrice: 2.80, retailPrice: 3.99, marginPercent: 30, procurementVendor: 'Pacific Dairy Co', reorderPoint: 50, active: true, iconHint: 'milk' },
-  { id: 'p6', sku: 'DAIRY-002', name: 'Large Eggs 18ct', category: 'Dairy', subcategory: 'Eggs', brand: 'FreshBasket', packSize: '18 ct', unit: 'count', costPrice: 3.60, retailPrice: 4.99, marginPercent: 28, procurementVendor: 'Willamette Poultry', reorderPoint: 36, active: true, iconHint: 'egg' },
-  { id: 'p7', sku: 'BAKE-001', name: 'Sourdough Boule 20oz', category: 'Bakery', subcategory: 'Bread', brand: 'FreshBasket', packSize: '20 oz', unit: 'unit', costPrice: 2.10, retailPrice: 4.99, marginPercent: 58, procurementVendor: 'Morning Bakery', reorderPoint: 36, active: true, iconHint: 'bread' },
-  { id: 'p8', sku: 'BAKE-002', name: 'Artisan Bagels 6ct', category: 'Bakery', subcategory: 'Bagels', brand: 'FreshBasket', packSize: '6 ct', unit: 'flat', costPrice: 2.40, retailPrice: 4.49, marginPercent: 47, procurementVendor: 'Brooklyn Bagels', reorderPoint: 24, active: true, iconHint: 'bagel' },
-  { id: 'p9', sku: 'FRZ-001', name: 'Wild Caught Salmon Fillet 1lb', category: 'Frozen', subcategory: 'Seafood', brand: 'FreshBasket', packSize: '1 lb', unit: 'lb', costPrice: 8.20, retailPrice: 12.99, marginPercent: 37, procurementVendor: 'Alaska Seafood Ltd', reorderPoint: 12, active: true, iconHint: 'fish' },
-  { id: 'p10', sku: 'FRZ-002', name: 'Organic Blueberries 6oz', category: 'Frozen', subcategory: 'Berries', brand: 'FreshBasket', packSize: '6 oz', unit: 'oz', costPrice: 1.95, retailPrice: 3.99, marginPercent: 51, procurementVendor: 'Crystal Springs Farm', reorderPoint: 40, active: true, iconHint: 'berries' },
-  { id: 'p11', sku: 'GROC-001', name: 'Sourdough Bread Bowl 6"', category: 'Grocery', subcategory: 'Bakery', brand: 'FreshBasket', packSize: '6"', unit: 'unit', costPrice: 0.85, retailPrice: 1.99, marginPercent: 57, procurementVendor: 'Regional Distributor', reorderPoint: 96, active: true, iconHint: 'bowl' },
-  { id: 'p12', sku: 'GROC-002', name: 'Extra Virgin Olive Oil 750ml', category: 'Grocery', subcategory: 'Cooking Oils', brand: 'FreshBasket', packSize: '750 ml', unit: 'unit', costPrice: 4.60, retailPrice: 7.99, marginPercent: 42, procurementVendor: 'Mediterranean Foods Inc', reorderPoint: 28, active: true, iconHint: 'oil' },
-  { id: 'p13', sku: 'GROC-003', name: 'Heavy Cream 16oz', category: 'Grocery', subcategory: 'Dairy', brand: 'FreshBasket', packSize: '16 oz', unit: 'unit', costPrice: 1.50, retailPrice: 2.99, marginPercent: 50, procurementVendor: 'Pacific Dairy Co', reorderPoint: 48, active: true, iconHint: 'cream' },
-  { id: 'p14', sku: 'RAW-001', name: 'Rotisserie Chicken 1.5lb', category: 'Deli', subcategory: 'Prepared', brand: 'FreshBasket', packSize: '1.5 lb', unit: 'unit', costPrice: 3.20, retailPrice: 5.49, marginPercent: 42, procurementVendor: 'In-house Kitchen', reorderPoint: 30, active: true, iconHint: 'chicken' },
+const rawProducts = [
+  { sku: 'SKU-001', name: 'Milk Bread', category: 'Bakery', price: 60, perishability: 'High', shelfLife: 3, icon: 'bread' },
+  { sku: 'SKU-002', name: 'Brown Bread', category: 'Bakery', price: 60, perishability: 'High', shelfLife: 3, icon: 'bread' },
+  { sku: 'SKU-003', name: 'Pav', category: 'Bakery', price: 30, perishability: 'High', shelfLife: 1, icon: 'bread' },
+  { sku: 'SKU-004', name: 'Croissant', category: 'Bakery', price: 120, perishability: 'High', shelfLife: 1, icon: 'croissant' },
+  { sku: 'SKU-005', name: 'Banana Cake', category: 'Bakery', price: 60, perishability: 'High', shelfLife: 3, icon: 'cake' },
+  { sku: 'SKU-006', name: 'Rusk', category: 'Bakery', price: 60, perishability: 'High', shelfLife: 3, icon: 'bread' },
+  { sku: 'SKU-007', name: 'Toned Milk 500ml', category: 'Dairy', price: 120, perishability: 'High', shelfLife: 2, icon: 'milk' },
+  { sku: 'SKU-008', name: 'Curd 400g', category: 'Dairy', price: 30, perishability: 'High', shelfLife: 5, icon: 'milk' },
+  { sku: 'SKU-009', name: 'Paneer 200g', category: 'Dairy', price: 60, perishability: 'High', shelfLife: 3, icon: 'cheese' },
+  { sku: 'SKU-010', name: 'Butter 100g', category: 'Dairy', price: 80, perishability: 'High', shelfLife: 2, icon: 'butter' },
+  { sku: 'SKU-011', name: 'Buttermilk', category: 'Dairy', price: 250, perishability: 'High', shelfLife: 2, icon: 'milk' },
+  { sku: 'SKU-012', name: 'Ghee 200ml', category: 'Dairy', price: 45, perishability: 'High', shelfLife: 3, icon: 'oil' },
+  { sku: 'SKU-013', name: 'Tomato 1kg', category: 'Fruits & Veg', price: 45, perishability: 'High', shelfLife: 4, icon: 'tomato' },
+  { sku: 'SKU-014', name: 'Onion 1kg', category: 'Fruits & Veg', price: 450, perishability: 'High', shelfLife: 3, icon: 'onion' },
+  { sku: 'SKU-015', name: 'Banana (dozen)', category: 'Fruits & Veg', price: 80, perishability: 'High', shelfLife: 3, icon: 'banana' },
+  { sku: 'SKU-016', name: 'Spinach', category: 'Fruits & Veg', price: 450, perishability: 'High', shelfLife: 2, icon: 'leaf' },
+  { sku: 'SKU-017', name: 'Coriander', category: 'Fruits & Veg', price: 30, perishability: 'High', shelfLife: 3, icon: 'leaf' },
+  { sku: 'SKU-018', name: 'Potato 1kg', category: 'Fruits & Veg', price: 60, perishability: 'High', shelfLife: 2, icon: 'potato' },
+  { sku: 'SKU-019', name: 'Apple 1kg', category: 'Fruits & Veg', price: 60, perishability: 'High', shelfLife: 3, icon: 'apple' },
+  { sku: 'SKU-020', name: 'Carrot 500g', category: 'Fruits & Veg', price: 80, perishability: 'High', shelfLife: 4, icon: 'carrot' },
+  { sku: 'SKU-021', name: 'Idli Batter 1kg', category: 'Ready to Eat', price: 80, perishability: 'High', shelfLife: 1, icon: 'bowl' },
+  { sku: 'SKU-022', name: 'Dosa Batter 1kg', category: 'Ready to Eat', price: 120, perishability: 'High', shelfLife: 2, icon: 'bowl' },
+  { sku: 'SKU-023', name: 'Chapati (10)', category: 'Ready to Eat', price: 60, perishability: 'High', shelfLife: 1, icon: 'bread' },
+  { sku: 'SKU-024', name: 'Veg Sandwich', category: 'Ready to Eat', price: 30, perishability: 'High', shelfLife: 2, icon: 'sandwich' },
+  { sku: 'SKU-025', name: 'Fruit Bowl', category: 'Ready to Eat', price: 45, perishability: 'High', shelfLife: 1, icon: 'bowl' },
+  { sku: 'SKU-026', name: 'Sona Masoori Rice 5kg', category: 'Staples', price: 30, perishability: 'Low', shelfLife: 180, icon: 'package' },
+  { sku: 'SKU-027', name: 'Toor Dal 1kg', category: 'Staples', price: 450, perishability: 'Low', shelfLife: 180, icon: 'package' },
+  { sku: 'SKU-028', name: 'Atta 5kg', category: 'Staples', price: 450, perishability: 'Low', shelfLife: 365, icon: 'package' },
+  { sku: 'SKU-029', name: 'Sugar 1kg', category: 'Staples', price: 450, perishability: 'Low', shelfLife: 365, icon: 'package' },
+  { sku: 'SKU-030', name: 'Sunflower Oil 1L', category: 'Staples', price: 45, perishability: 'Low', shelfLife: 180, icon: 'oil' },
+  { sku: 'SKU-031', name: 'Salt 1kg', category: 'Staples', price: 120, perishability: 'Low', shelfLife: 180, icon: 'package' },
+  { sku: 'SKU-032', name: 'Ragi Flour 1kg', category: 'Staples', price: 120, perishability: 'Low', shelfLife: 180, icon: 'package' },
+  { sku: 'SKU-033', name: 'Biscuits', category: 'FMCG', price: 250, perishability: 'Low', shelfLife: 180, icon: 'cookie' },
+  { sku: 'SKU-034', name: 'Instant Noodles', category: 'FMCG', price: 120, perishability: 'Low', shelfLife: 365, icon: 'bowl' },
+  { sku: 'SKU-035', name: 'Tea 250g', category: 'FMCG', price: 30, perishability: 'Low', shelfLife: 540, icon: 'coffee' },
+  { sku: 'SKU-036', name: 'Coffee Powder 200g', category: 'FMCG', price: 45, perishability: 'Low', shelfLife: 540, icon: 'coffee' },
+  { sku: 'SKU-037', name: 'Detergent 1kg', category: 'FMCG', price: 120, perishability: 'Low', shelfLife: 540, icon: 'package' },
+  { sku: 'SKU-038', name: 'Soap', category: 'FMCG', price: 60, perishability: 'Low', shelfLife: 365, icon: 'package' },
+  { sku: 'SKU-039', name: 'Toothpaste', category: 'FMCG', price: 250, perishability: 'Low', shelfLife: 540, icon: 'package' },
+  { sku: 'SKU-040', name: 'Namkeen', category: 'FMCG', price: 450, perishability: 'Low', shelfLife: 540, icon: 'cookie' },
+  { sku: 'SKU-041', name: 'Chocolate Bar', category: 'FMCG', price: 450, perishability: 'Low', shelfLife: 180, icon: 'candy' },
+  { sku: 'SKU-042', name: 'Soft Drink 750ml', category: 'FMCG', price: 120, perishability: 'Low', shelfLife: 365, icon: 'glass' },
 ];
+
+export const PRODUCTS: Product[] = rawProducts.map((p, idx) => {
+  const cost = Math.round(p.price * 0.7);
+  const margin = Math.round(((p.price - cost) / p.price) * 100);
+  return {
+    id: `p_${p.sku.toLowerCase()}`,
+    sku: p.sku,
+    name: p.name,
+    category: p.category,
+    subcategory: p.category,
+    brand: 'FreshBasket Reserve',
+    packSize: 'Standard',
+    unit: 'unit' as const,
+    costPrice: cost,
+    retailPrice: p.price,
+    marginPercent: margin,
+    procurementVendor: p.category === 'Dairy' ? 'Kaveri Traders' : p.category === 'Bakery' ? 'Vasavi Bakers' : 'Sri Lakshmi Logistics',
+    reorderPoint: p.perishability === 'High' ? 15 : 40,
+    active: true,
+    iconHint: p.icon,
+  };
+});

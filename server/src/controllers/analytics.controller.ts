@@ -1,4 +1,4 @@
-﻿import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { AnalyticsEngineService } from '../services/analytics.service';
 import { ApiResponse } from '../utils/apiResponse';
 import { runAnalysisSchema, analyticsStoreQuerySchema } from '../validators/analytics.validator';

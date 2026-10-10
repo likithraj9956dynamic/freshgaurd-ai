@@ -1,4 +1,14 @@
-﻿import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma';
+import {
+  getSalesByStore,
+  getDatasetSales,
+  getProductBySku,
+  resolveStoreId,
+  resolveSku,
+  isDatasetLoaded,
+  loadDatasets,
+  type DatasetSale,
+} from './datasetLoader';
 import { mockProducts } from './seed.service';
 
 export interface SalesQueryFilters {
@@ -15,6 +25,7 @@ export class SalesService {
     const limit = filters.limit || 50;
     const skip = (page - 1) * limit;
 
+    // 1. Try Prisma Database first
     try {
       const whereClause: any = { storeId };
       if (filters.productId) whereClause.productId = filters.productId;
@@ -47,10 +58,82 @@ export class SalesService {
         };
       }
     } catch {
-      // Fallback to generated realistic sales records
+      // Database unavailable, fall through to dataset loader
     }
 
-    // Generate simulated in-memory records
+    // 2. Real Dataset CSV Fallback
+    loadDatasets();
+    const targetStore = resolveStoreId(storeId);
+    let datasetSales: DatasetSale[] = getSalesByStore(targetStore);
+
+    // If storeId not matched directly, fallback to all dataset sales or map
+    if (datasetSales.length === 0) {
+      const allSales = getDatasetSales();
+      if (allSales.length > 0) {
+        datasetSales = allSales;
+      }
+    }
+
+    if (datasetSales.length > 0) {
+      let filtered = datasetSales;
+      if (filters.productId) {
+        const targetSku = resolveSku(filters.productId);
+        filtered = filtered.filter((s) => s.sku === targetSku || s.sku === filters.productId);
+      }
+      if (filters.startDate) {
+        filtered = filtered.filter((s) => s.date >= (filters.startDate as string));
+      }
+      if (filters.endDate) {
+        filtered = filtered.filter((s) => s.date <= (filters.endDate as string));
+      }
+
+      // Sort by date descending
+      filtered.sort((a, b) => b.date.localeCompare(a.date));
+
+      const total = filtered.length;
+      const paginated = filtered.slice(skip, skip + limit);
+
+      const data = paginated.map((sale) => {
+        const prod = getProductBySku(sale.sku);
+        return {
+          id: `${sale.store}_${sale.sku}_${sale.date}`,
+          storeId: sale.store,
+          productId: sale.sku,
+          saleDate: sale.date,
+          unitsSold: sale.qtySold,
+          unitPrice: prod?.price || (sale.qtySold > 0 ? Number((sale.revenue / sale.qtySold).toFixed(2)) : 0),
+          revenue: sale.revenue,
+          dataSource: 'dataset_csv',
+          product: prod
+            ? {
+                id: prod.sku,
+                name: prod.product,
+                category: prod.category,
+                unitPrice: prod.price,
+                perishability: prod.perishability,
+                shelfLifeDays: prod.shelfLifeDays,
+              }
+            : {
+                id: sale.sku,
+                name: sale.sku,
+                category: 'General',
+                unitPrice: sale.qtySold > 0 ? Number((sale.revenue / sale.qtySold).toFixed(2)) : 0,
+              },
+        };
+      });
+
+      return {
+        data,
+        meta: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    }
+
+    // 3. Fallback to seed products if dataset is unavailable
     const today = new Date();
     const mockList: any[] = [];
     const productsToUse = filters.productId
@@ -76,7 +159,7 @@ export class SalesService {
           unitsSold,
           unitPrice: prod.unitPrice,
           revenue,
-          dataSource: 'simulated_demo',
+          dataSource: 'simulated_fallback',
           product: prod,
         });
       }

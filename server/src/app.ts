@@ -1,4 +1,4 @@
-﻿import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { type Application, type Request, type Response, type NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -6,6 +6,7 @@ import path from 'path';
 import apiRoutes from './routes';
 import { errorHandler } from './middleware/error.middleware';
 import { NotFoundError } from './utils/errors';
+import { loadDatasets } from './services/datasetLoader';
 
 // Ensure BigInt values serialize properly in JSON responses
 (BigInt.prototype as any).toJSON = function () {
@@ -13,6 +14,13 @@ import { NotFoundError } from './utils/errors';
 };
 
 export const createApp = (): Application => {
+  // Pre-load CSV datasets if available
+  try {
+    loadDatasets();
+  } catch (err) {
+    console.warn('[FreshGuard AI] Note on dataset pre-loading:', err);
+  }
+
   const app = express();
 
   // Security & Utility Middlewares

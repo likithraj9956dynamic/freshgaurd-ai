@@ -69,14 +69,14 @@ export function StoreDashboardPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-              Store 017 Operations
+              {user?.assignedStoreName?.replace(/FreshBasket\s*/i, '') || 'Store'} Operations
             </h1>
             <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-50 text-emerald-800 border border-emerald-200">
-              TACOMA DOWNTOWN
+              {user?.assignedStoreId || 'FB-17'}
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Store Director: {user?.name} · Active Shift: Oct 10, 2026 · Hours: 07:00 – 22:00 PST
+            Store Director: {user?.name} · Active Shift: Oct 10, 2026 · Hours: 07:00 – 22:00 IST
           </p>
         </div>
 
@@ -104,10 +104,10 @@ export function StoreDashboardPage() {
           <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
           <div className="space-y-0.5">
             <span className="font-semibold text-slate-900 block">
-              Store Alert: 12 Fast-Moving Products Out of Stock · Inbound PO CF-10482 Delayed
+              Store Alert: Inbound PO #{STORE_17_PURCHASE_ORDER.orderNumber} Delayed ({STORE_17_PURCHASE_ORDER.supplier})
             </span>
             <p className="text-slate-600 leading-relaxed">
-              Produce and meat shelves require replenishment. Cascade Fresh Distributors vehicle is delayed on I-5 (revised ETA 15:00 PST).
+              Perishable bakery and fresh shelves require replenishment. {STORE_17_PURCHASE_ORDER.supplier} delivery is delayed without revised ETA (dataset PO-7106).
             </p>
           </div>
         </div>

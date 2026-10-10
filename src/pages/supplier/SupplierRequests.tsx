@@ -41,7 +41,7 @@ export function SupplierRequestsPage() {
           <div className="space-y-1.5">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200">
               <AlertOctagon className="w-3.5 h-3.5 text-amber-700" />
-              <span>Cascade Fresh Distributors · Expedited Replenishment Directives</span>
+              <span>Supplier Logistics · Expedited Replenishment Directives</span>
             </div>
             <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
               Emergency Stock Requests

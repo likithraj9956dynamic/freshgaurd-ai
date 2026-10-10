@@ -27,10 +27,7 @@ dist/
 .env
 .env.*
 !.env.example
+.vercel
 
-# Backend build output
-dist-server/
-
-# Python bytecode
 __pycache__/
 *.pyc

@@ -250,15 +250,15 @@ export function SettingsPage() {
         <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-800">
-              Signature Benchmark: Tacoma Downtown (Store #017)
+              Signature Benchmark: Marathahalli Branch (Store FB-17)
             </span>
             <span className="inline-flex items-center text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200">
               Surveillance Case
             </span>
           </div>
           <p className="text-xs text-slate-600 leading-relaxed">
-            Store 017 exhibits the multi-signal challenge: Revenue -18%, Footfall -5%, Transactions -15%,
-            Wastage +28%, 12 fast-moving stockouts, and Purchase Order CF-10482 delayed 36 hours.
+            Store FB-17 exhibits the multi-signal challenge: Revenue -18%, Footfall -5%, Transactions -15%,
+            Wastage +28%, 12 fast-moving stockouts, and Purchase Order PO-10482 delayed 36 hours.
           </p>
           <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200 font-mono">
             CALIBRATION PROTOCOL: Separates observed telemetry from diagnostic conjecture.

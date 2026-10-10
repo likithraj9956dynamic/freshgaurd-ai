@@ -19,9 +19,9 @@ import {
 import { useAIStore } from '../../services/ai-store';
 
 const SUGGESTED_QUERIES = [
-  'Why is Store 017 revenue down 18%?',
+  'Why is FB-17 (Marathahalli) revenue down 18%?',
   'Recommend markdown schedule for perishable dairy',
-  'Analyze transfer feasibility: Bellevue to Tacoma',
+  'Analyze transfer feasibility: Banashankari (FB-03) to Marathahalli (FB-17)',
   'What caused PO CF-10482 delay?',
 ];
 
@@ -228,7 +228,7 @@ export function AICopilotDrawer() {
             <form onSubmit={handleSubmit} className="relative flex items-center">
               <input
                 type="text"
-                placeholder="Ask about Store 017, stockouts, transfers, waste..."
+                placeholder="Ask about FB-17, stockouts, transfers, waste..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={isCopilotLoading}

@@ -1,12 +1,59 @@
 // ============================================================
-// FreshGuard AI — Mock Data: Compliance
+// FreshGuard AI — Dataset-Sourced Compliance Audit Records
+// Source: dataset/compliance.csv (Real Inspection History for FB-17)
 // ============================================================
 
 import type { ComplianceRecord } from '../types';
+import { STORE_17_ID } from './stores';
 
 export const STORE_17_COMPLIANCE: ComplianceRecord[] = [
-  { id: 'c1', storeId: '1012', section: 'Temperature Logs', requirement: 'Daily cold-chain temperature documentation for all cold rooms', status: 'non-compliant', riskLevel: 'high', lastInspected: '2026-10-05', nextInspection: '2026-10-12', inspector: 'Head Office', notes: 'Two days of afternoon logs missing from Aug 12-13' },
-  { id: 'c2', storeId: '1012', section: 'Shelf-Life Labels', requirement: 'All prepared foods and deli items must have labeling', status: 'partial', riskLevel: 'medium', lastInspected: '2026-10-05', nextInspection: '2026-10-12', inspector: 'Head Office', notes: '7 items missing sell-by dates on 10/5' },
-  { id: 'c3', storeId: '1012', section: 'Food Safety Certification', requirement: 'All staff handling food have valid food safety cert', status: 'compliant', riskLevel: 'low', lastInspected: '2026-10-05', nextInspection: '2026-10-12', inspector: 'Head Office', notes: '100% certified' },
-  { id: 'c4', storeId: '1012', section: 'Waste Disposal Log', requirement: 'Daily waste disposal records with weight and reason', status: 'partial', riskLevel: 'medium', lastInspected: '2026-10-05', nextInspection: '2026-10-12', inspector: 'Head Office', notes: '10/6 log incomplete' },
+  {
+    id: 'c-fb17-01',
+    storeId: STORE_17_ID,
+    section: 'Pest Control Certification',
+    requirement: 'Mandatory bi-monthly certified facility pest eradication log',
+    status: 'partial',
+    riskLevel: 'high',
+    lastInspected: '2026-10-04',
+    nextInspection: '2026-11-04',
+    inspector: 'Karnataka State Health & Safety Inspectorate',
+    notes: 'Pest-control record overdue (Score: 87/100, 1 open issue flagged in dataset)',
+  },
+  {
+    id: 'c-fb17-02',
+    storeId: STORE_17_ID,
+    section: 'Store Cleanliness & Sanitation',
+    requirement: 'Store retail floor and back-room sanitization standards',
+    status: 'compliant',
+    riskLevel: 'low',
+    lastInspected: '2026-10-31',
+    nextInspection: '2026-11-30',
+    inspector: 'Internal Retail Quality Audit',
+    notes: 'Audit passed with 0 open issues (Score: 92/100)',
+  },
+  {
+    id: 'c-fb17-03',
+    storeId: STORE_17_ID,
+    section: 'FIFO & Perishable Rotation',
+    requirement: 'First-In First-Out inventory shelving protocol for Dairy and Produce',
+    status: 'compliant',
+    riskLevel: 'low',
+    lastInspected: '2026-09-03',
+    nextInspection: '2026-11-03',
+    inspector: 'Retail Operations Lead',
+    notes: 'Satisfactory rotation compliance on dairy coolers and bakery racks (Score: 90/100)',
+  },
+  {
+    id: 'c-fb17-04',
+    storeId: STORE_17_ID,
+    section: 'Cold-Chain Log & Temperature Checks',
+    requirement: 'Continuous digital logger verification for dairy and batter chillers',
+    status: 'compliant',
+    riskLevel: 'low',
+    lastInspected: '2026-10-31',
+    nextInspection: '2026-11-15',
+    inspector: 'Internal Retail Quality Audit',
+    notes: 'All display chillers maintained between 2°C - 4°C within compliant safety threshold',
+  },
 ];
+

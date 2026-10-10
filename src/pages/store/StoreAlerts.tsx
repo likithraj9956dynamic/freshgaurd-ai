@@ -33,7 +33,7 @@ export function StoreAlertsPage() {
 
     const newRecord: WastageRecord = {
       id: `w-${Date.now()}`,
-      storeId: '1012',
+      storeId: 'FB-17',
       date: new Date().toISOString().split('T')[0],
       department,
       productName: productName.trim(),
@@ -65,7 +65,7 @@ export function StoreAlertsPage() {
             Wastage &amp; Spoilage Log
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Store #017 (Tacoma Downtown) · Perishable shrinkage audit and discard tracking
+            FB-17 (Marathahalli) · Perishable shrinkage audit and discard tracking
           </p>
         </div>
 

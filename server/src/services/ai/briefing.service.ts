@@ -1,7 +1,7 @@
-﻿import { prisma } from '../../config/prisma';
+import { prisma } from '../../config/prisma';
 import { AnalyticsEngineService } from '../analytics.service';
 import { ActionEngineService } from '../action.service';
-import { TtsService, TtsResult } from './tts.service';
+import { TtsService, type TtsResult } from './tts.service';
 
 export interface BriefingModel {
   id: string;

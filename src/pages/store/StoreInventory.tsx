@@ -49,7 +49,7 @@ export function StoreInventoryPage() {
             Inventory &amp; Shelf-Life Ledger
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Store #017 (Tacoma Downtown) · Surveillance of on-hand quantities, days of supply, and perishable expiry
+            FB-17 (Marathahalli) · Surveillance of on-hand quantities, days of supply, and perishable expiry
           </p>
         </div>
       </div>

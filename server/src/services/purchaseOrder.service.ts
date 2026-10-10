@@ -1,4 +1,11 @@
-﻿import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma';
+import {
+  getPurchaseOrdersByStore,
+  getDatasetPurchaseOrders,
+  getProductBySku,
+  loadDatasets,
+  type DatasetPurchaseOrder,
+} from './datasetLoader';
 import { mockProducts } from './seed.service';
 
 export interface PurchaseOrderQueryFilters {
@@ -13,6 +20,7 @@ export class PurchaseOrderService {
     const limit = filters.limit || 50;
     const skip = (page - 1) * limit;
 
+    // 1. Try Prisma Database first
     try {
       const whereClause: any = { storeId };
       if (filters.status) whereClause.status = filters.status;
@@ -44,10 +52,107 @@ export class PurchaseOrderService {
         };
       }
     } catch {
-      // Fallback
+      // Database unavailable, fall through to dataset loader
     }
 
-    // In-memory fallback
+    // 2. Real Dataset CSV Fallback
+    loadDatasets();
+    let datasetPOs: DatasetPurchaseOrder[] = getPurchaseOrdersByStore(storeId);
+
+    if (datasetPOs.length === 0) {
+      const allPOs = getDatasetPurchaseOrders();
+      if (allPOs.length > 0) {
+        datasetPOs = allPOs;
+      }
+    }
+
+    if (datasetPOs.length > 0) {
+      // Group items by PO number
+      const poMap = new Map<string, {
+        id: string;
+        storeId: string;
+        supplierName: string;
+        orderDate: string;
+        expectedDelivery: string;
+        actualDelivery: string | null;
+        status: string;
+        dataSource: string;
+        createdAt: string;
+        items: Array<{
+          id: string;
+          productId: string;
+          quantityOrdered: number;
+          quantityReceived: number | null;
+          product: any;
+        }>;
+      }>();
+
+      for (const po of datasetPOs) {
+        const poKey = po.po || `PO_${po.store}_${po.expectedDate}`;
+        const prod = getProductBySku(po.sku);
+
+        if (!poMap.has(poKey)) {
+          const isDelayed = po.status.toLowerCase().includes('delayed') || po.status.toLowerCase().includes('pending');
+          const isDelivered = po.status.toLowerCase().includes('received') || po.status.toLowerCase().includes('delivered');
+
+          poMap.set(poKey, {
+            id: poKey,
+            storeId: po.store,
+            supplierName: po.supplier || 'Primary Logistics Partner',
+            orderDate: po.expectedDate,
+            expectedDelivery: po.expectedDate,
+            actualDelivery: isDelivered ? po.expectedDate : null,
+            status: isDelayed ? 'delayed' : (isDelivered ? 'delivered' : 'pending'),
+            dataSource: 'dataset_csv',
+            createdAt: `${po.expectedDate}T08:00:00.000Z`,
+            items: [],
+          });
+        }
+
+        const poEntry = poMap.get(poKey)!;
+        poEntry.items.push({
+          id: `item_${poKey}_${po.sku}`,
+          productId: po.sku,
+          quantityOrdered: po.qty,
+          quantityReceived: poEntry.status === 'delivered' ? po.qty : null,
+          product: prod ? {
+            id: prod.sku,
+            name: prod.product,
+            category: prod.category,
+            unitPrice: prod.price,
+            perishability: prod.perishability,
+          } : {
+            id: po.sku,
+            name: po.sku,
+            category: 'General',
+            unitPrice: 0,
+          },
+        });
+      }
+
+      let orderList = Array.from(poMap.values());
+      if (filters.status) {
+        orderList = orderList.filter((o) => o.status.toLowerCase() === filters.status?.toLowerCase());
+      }
+
+      // Sort by orderDate descending
+      orderList.sort((a, b) => b.orderDate.localeCompare(a.orderDate));
+
+      const total = orderList.length;
+      const paginated = orderList.slice(skip, skip + limit);
+
+      return {
+        data: paginated,
+        meta: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    }
+
+    // 3. Fallback to seed mock POs
     const mockList = [
       {
         id: `PO-${storeId}-1001`,
@@ -57,7 +162,7 @@ export class PurchaseOrderService {
         expectedDelivery: '2026-10-04',
         actualDelivery: '2026-10-04',
         status: 'delivered',
-        dataSource: 'simulated_demo',
+        dataSource: 'simulated_fallback',
         createdAt: '2026-10-01T08:00:00.000Z',
         items: [
           {
@@ -84,42 +189,22 @@ export class PurchaseOrderService {
         expectedDelivery: '2026-10-08',
         actualDelivery: null,
         status: 'delayed',
-        dataSource: 'simulated_demo',
+        dataSource: 'simulated_fallback',
         createdAt: '2026-10-06T09:30:00.000Z',
         items: [
           {
             id: 'poi_3',
-            productId: mockProducts[5].id,
+            productId: mockProducts[5]?.id || mockProducts[0].id,
             quantityOrdered: 30,
             quantityReceived: null,
-            product: mockProducts[5],
-          },
-        ],
-      },
-      {
-        id: `PO-${storeId}-1003`,
-        storeId,
-        supplierName: 'Valley Farms Express',
-        orderDate: '2026-10-08',
-        expectedDelivery: '2026-10-11',
-        actualDelivery: null,
-        status: 'shipped',
-        dataSource: 'simulated_demo',
-        createdAt: '2026-10-08T11:15:00.000Z',
-        items: [
-          {
-            id: 'poi_4',
-            productId: mockProducts[8].id,
-            quantityOrdered: 50,
-            quantityReceived: null,
-            product: mockProducts[8],
+            product: mockProducts[5] || mockProducts[0],
           },
         ],
       },
     ];
 
     let filtered = mockList;
-    if (filters.status) filtered = filtered.filter((po) => po.status === filters.status);
+    if (filters.status) filtered = filtered.filter((o) => o.status === filters.status);
 
     const total = filtered.length;
     const paginated = filtered.slice(skip, skip + limit);

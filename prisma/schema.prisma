@@ -1,6 +1,7 @@
 // FreshGuard AI - Prisma Schema
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -507,14 +508,25 @@ model DataImportRun {
 }
 
 model User {
-  id               String            @id @default(uuid())
-  email            String            @unique
-  passwordHash     String            @map("password_hash")
-  fullName         String            @map("full_name")
-  role             String            @default("operator")
-  createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime          @updatedAt @map("updated_at")
+  id               String              @id @default(uuid())
+  email            String              @unique
+  passwordHash     String              @map("password_hash")
+  fullName         String              @map("full_name")
+  phoneNumber      String?             @map("phone_number")
+  role             String              @default("store_manager") // main_manager, store_manager, supplier
+  status           String              @default("APPROVED") // PENDING, APPROVED, REJECTED, SUSPENDED
+  isEmailVerified  Boolean             @default(false) @map("is_email_verified")
+  assignedStoreId  String?             @map("assigned_store_id")
+  assignedStoreName String?            @map("assigned_store_name")
+  supplierId       String?             @map("supplier_id")
+  supplierName     String?             @map("supplier_name")
+  createdAt        DateTime            @default(now()) @map("created_at")
+  updatedAt        DateTime            @updatedAt @map("updated_at")
   storeAssignments StoreAssignment[]
+  applicantRequests AccessRequest[]   @relation("ApplicantRequests")
+  reviewedRequests  AccessRequest[]   @relation("ReviewerRequests")
+  decisionsMade    ApprovalDecision[]
+  invitationsSent  ManagerInvitation[]
 
   @@map("users")
 }
@@ -531,4 +543,93 @@ model StoreAssignment {
 
   @@unique([userId, storeId], name: "uq_user_store")
   @@map("store_assignments")
+}
+
+model AccessRequest {
+  id                  String             @id @default(uuid())
+  applicantId         String?            @map("applicant_id")
+  applicant           User?              @relation("ApplicantRequests", fields: [applicantId], references: [id], onDelete: SetNull)
+  requestedRole       String             @map("requested_role") // main_manager, store_manager, supplier
+  fullName            String             @map("full_name")
+  email               String             @map("email")
+  phoneNumber         String             @map("phone_number")
+  passwordHash        String             @map("password_hash")
+  status              String             @default("PENDING") @map("status") // PENDING, APPROVED, REJECTED, MORE_INFO_REQUIRED
+  submissionDate      DateTime           @default(now()) @map("submission_date")
+  
+  // Store Manager details
+  storeName           String?            @map("store_name")
+  storeType           String?            @map("store_type")
+  storeAddress        String?            @map("store_address")
+  city                String?            @map("city")
+  state               String?            @map("state")
+  employeeId          String?            @map("employee_id")
+  
+  // Supplier details
+  supplierName        String?            @map("supplier_name")
+  supplierType        String?            @map("supplier_type")
+  productsSupplied    String?            @map("products_supplied")
+  gstin               String?            @map("gstin")
+  
+  // Additional context & decision record
+  additionalInfo      String?            @map("additional_info") @db.Text
+  reviewedById        String?            @map("reviewed_by_id")
+  reviewer            User?              @relation("ReviewerRequests", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt          DateTime?          @map("reviewed_at")
+  decisionReason      String?            @map("decision_reason") @db.Text
+  managerInstructions String?            @map("manager_instructions") @db.Text
+  
+  createdAt           DateTime           @default(now()) @map("created_at")
+  updatedAt           DateTime           @updatedAt @map("updated_at")
+  
+  decisions           ApprovalDecision[]
+
+  @@index([email])
+  @@index([status])
+  @@index([requestedRole])
+  @@map("access_requests")
+}
+
+model ApprovalDecision {
+  id        String        @id @default(uuid())
+  requestId String        @map("request_id")
+  request   AccessRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  deciderId String        @map("decider_id")
+  decider   User          @relation(fields: [deciderId], references: [id], onDelete: Cascade)
+  action    String        @map("action") // APPROVE, REJECT, REQUEST_MORE_INFO
+  reason    String?       @map("reason") @db.Text
+  notes     String?       @map("notes") @db.Text
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  @@index([requestId])
+  @@index([deciderId])
+  @@map("approval_decisions")
+}
+
+model ManagerInvitation {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  invitationToken String   @unique @map("invitation_token")
+  invitedById     String   @map("invited_by_id")
+  invitedBy       User     @relation(fields: [invitedById], references: [id], onDelete: Cascade)
+  status          String   @default("PENDING") // PENDING, ACCEPTED, EXPIRED, REVOKED
+  expiresAt       DateTime @map("expires_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("manager_invitations")
+}
+
+model EmailLog {
+  id             String   @id @default(uuid())
+  recipientEmail String   @map("recipient_email")
+  subject        String
+  templateType   String   @map("template_type")
+  status         String   @default("QUEUED") // QUEUED, SENT, FAILED, SIMULATED
+  errorMessage   String?  @map("error_message")
+  metadata       Json?    @default("{}")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@index([recipientEmail])
+  @@index([status])
+  @@map("email_logs")
 }

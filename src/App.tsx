@@ -2,7 +2,7 @@
 // FreshGuard AI — Enterprise Role-Based Application Entry & Routing
 // ============================================================
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastProvider } from './components/ToastProvider';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -22,6 +22,7 @@ import { NetworkPage } from './pages/Network';
 import { ActionCenterPage } from './pages/ActionCenter';
 import { ProductLookupPage } from './pages/ProductLookup';
 import { SettingsPage } from './pages/Settings';
+import { AccessManagementPage } from './pages/AccessManagement';
 
 // Store Manager Pages (Branch #017 Assigned Scope)
 import { StoreDashboardPage } from './pages/store/StoreDashboard';
@@ -73,6 +74,18 @@ function ProductLookupRedirect() {
   return <Navigate to="/manager/product-lookup" replace />;
 }
 
+// Dynamic Store Dossier Redirect (preserves storeId param)
+function LegacyStoreRedirect() {
+  const { storeId } = useParams<{ storeId?: string }>();
+  return <Navigate to={`/manager/stores/${storeId || 'FB-01'}`} replace />;
+}
+
+// Dynamic Investigation Redirect (preserves issueId/storeId param)
+function LegacyInvestigationRedirect() {
+  const { issueId } = useParams<{ issueId?: string }>();
+  return <Navigate to={issueId ? `/manager/investigations/${issueId}` : '/manager/investigations'} replace />;
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -98,6 +111,14 @@ export default function App() {
                   element={
                     <ProtectedRoute allowedRoles={['main_manager']}>
                       <DashboardPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/manager/access-management"
+                  element={
+                    <ProtectedRoute allowedRoles={['main_manager']}>
+                      <AccessManagementPage />
                     </ProtectedRoute>
                   }
                 />
@@ -265,9 +286,10 @@ export default function App() {
                 {/* ========================================================
                     LEGACY COMPATIBILITY & CONVENIENCE ALIASES
                     ======================================================== */}
-                <Route path="/stores/:storeId" element={<Navigate to="/manager/stores/1012" replace />} />
+                <Route path="/stores/:storeId" element={<LegacyStoreRedirect />} />
+                <Route path="/stores" element={<Navigate to="/manager/network" replace />} />
                 <Route path="/investigations" element={<Navigate to="/manager/investigations" replace />} />
-                <Route path="/investigations/:issueId" element={<Navigate to="/manager/investigations" replace />} />
+                <Route path="/investigations/:issueId" element={<LegacyInvestigationRedirect />} />
                 <Route path="/decisions" element={<Navigate to="/manager/decisions" replace />} />
                 <Route path="/decisions/:decisionId" element={<Navigate to="/manager/decisions" replace />} />
                 <Route path="/network" element={<Navigate to="/manager/network" replace />} />

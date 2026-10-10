@@ -53,7 +53,7 @@ export function SupplierOrdersPage() {
             Purchase Orders Ledger
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Cascade Fresh Distributors · Confirm, manage and reconcile assigned retail purchase orders
+            Supplier Logistics Partner · Confirm, manage and reconcile assigned retail purchase orders
           </p>
         </div>
       </div>

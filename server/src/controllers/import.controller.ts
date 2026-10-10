@@ -1,4 +1,4 @@
-﻿import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { ImportService } from '../services/import.service';
 import { SeedService } from '../services/seed.service';
 import { ApiResponse } from '../utils/apiResponse';

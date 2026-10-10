@@ -1,4 +1,4 @@
-﻿import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma';
 import { StoreService } from './store.service';
 import { AnalyticsEngineService } from './analytics.service';
 import { NotFoundError } from '../utils/errors';
@@ -84,13 +84,13 @@ export class DecisionEngineService {
         decisionId,
         actionType: 'urgent_replenishment',
         title: 'Expedited Secondary Supplier Replenishment',
-        description: 'Route immediate emergency shipment of 100 units of Organic Milk and Atlantic Salmon via air/express logistics.',
+        description: 'Route immediate emergency shipment of 100 units of Milk Bread and Toned Milk via express logistics.',
         parameters: {
-          supplier: 'Fresh Direct Priority Logistics',
+          supplier: 'Namdhari Fresh Priority Logistics',
           expediteDays: 1,
           shippingPremium: 75.0,
           replenishUnits: 100,
-          targetSKUs: ['FOODS_1_001', 'FOODS_1_006'],
+          targetSKUs: ['SKU-001', 'SKU-007'],
         },
         estimatedCost: 75.0,
         estimatedBenefit: 430.0,
@@ -103,15 +103,15 @@ export class DecisionEngineService {
         id: opt2Id,
         decisionId,
         actionType: 'inter_store_transfer',
-        title: 'Inter-Store Inventory Balancing Transfer from Sacramento (CA_1)',
-        description: 'Transfer 40 excess units of Organic Milk and produce from Sacramento Supercenter to Downtown Market.',
+        title: 'Inter-Store Inventory Balancing Transfer from Whitefield (FB-16)',
+        description: 'Transfer 40 excess units of dairy and bread from Whitefield branch to Marathahalli.',
         parameters: {
-          sourceStoreId: 'CA_1',
-          sourceStoreName: 'FreshGuard Sacramento Central',
+          sourceStoreId: 'FB-16',
+          sourceStoreName: 'FreshBasket Whitefield (#FB-16)',
           targetStoreId: storeId,
           unitsToTransfer: 40,
           courierFee: 45.0,
-          transitHours: 4,
+          transitHours: 2,
         },
         estimatedCost: 45.0,
         estimatedBenefit: 280.0,
@@ -304,8 +304,8 @@ export class DecisionEngineService {
 
       simulationLog.push({
         step: 4,
-        event: `Simulated transfer of ${transferUnits} units from Sacramento Central (CA_1)`,
-        metricImpact: `Stockout duration collapsed from 72h to 6h; transport logistics cost: $45.00`,
+        event: `Simulated transfer of ${transferUnits} units from Whitefield (#FB-16)`,
+        metricImpact: `Stockout duration collapsed from 72h to 2h; intra-city transfer fee: ₹450.00`,
       });
     }
 

@@ -1,4 +1,4 @@
-﻿import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { BriefingService } from '../services/ai/briefing.service';
 import { ApiResponse } from '../utils/apiResponse';
 import { generateBriefingSchema } from '../validators/briefing.validator';

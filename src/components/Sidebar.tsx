@@ -23,7 +23,8 @@ import {
   CalendarClock,
   Layers,
   Flame,
-  ShieldCheck
+  ShieldCheck,
+  UserCheck
 } from 'lucide-react';
 
 export function Sidebar({ location }: { location: ReturnType<typeof useLocation> }) {
@@ -59,8 +60,9 @@ export function Sidebar({ location }: { location: ReturnType<typeof useLocation>
     // Default: Main Manager
     return [
       { path: '/manager', label: 'Operations Overview', subtitle: 'Network executive summary', icon: LayoutDashboard, exact: true },
-      { path: '/manager/network', label: 'Store Network', subtitle: '12 regional branches', icon: Store },
-      { path: '/manager/stores/1012', label: 'Store 017 Dossier', subtitle: 'Detailed investigation', icon: ShieldCheck },
+      { path: '/manager/access-management', label: 'User Access Governance', subtitle: 'Approve & manage roles', icon: UserCheck },
+      { path: '/manager/network', label: 'Store Network', subtitle: '25 regional branches', icon: Store },
+      { path: '/manager/stores/FB-17', label: 'Store Dossier', subtitle: 'Branch analytics & records', icon: ShieldCheck },
       { path: '/manager/investigations', label: 'AI Investigations', subtitle: 'Causal root analysis', icon: Search },
       { path: '/manager/decisions', label: 'Decision Chamber', subtitle: 'Strategy simulation', icon: Scale },
       { path: '/manager/actions', label: 'Action Governance', subtitle: 'Approvals ledger', icon: CheckCircle2 },
@@ -76,9 +78,9 @@ export function Sidebar({ location }: { location: ReturnType<typeof useLocation>
       case 'main_manager':
         return { label: 'Main Manager', sub: 'Network Operations HQ' };
       case 'store_manager':
-        return { label: 'Store Manager', sub: 'Branch #017 (Tacoma)' };
+        return { label: 'Store Manager', sub: user?.assignedStoreName || 'Branch Operations' };
       case 'supplier':
-        return { label: 'Supplier Partner', sub: 'Cascade Fresh Logistics' };
+        return { label: 'Supplier Partner', sub: user?.supplierName || 'Logistics Partner' };
       default:
         return { label: 'User', sub: 'Operations' };
     }

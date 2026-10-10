@@ -189,16 +189,23 @@ export async function testAIConnection(config: AIConfig): Promise<{ success: boo
 
 /**
  * Universal text generation — supports Google Gemini and OpenAI.
+ * Optimized for token economy and high responsiveness.
  */
-export async function generateAIText(prompt: string, systemPrompt?: string): Promise<{ text: string; source: 'gemini' | 'openai' }> {
+export async function generateAIText(
+  prompt: string,
+  systemPrompt?: string,
+  options: { maxOutputTokens?: number; temperature?: number } = {}
+): Promise<{ text: string; source: 'gemini' | 'openai' }> {
   const config = loadAIConfig();
   const apiKey = config.apiKey?.trim() || EMBEDDED_GEMINI_KEY;
+  const maxOutputTokens = options.maxOutputTokens || 600;
+  const temperature = options.temperature ?? 0.2;
 
   if (config.provider === 'gemini') {
     const model = config.model && config.model !== 'gemini-1.5-flash' ? config.model : 'gemini-flash-latest';
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
     const combinedPrompt = systemPrompt
-      ? `[SYSTEM INSTRUCTION: ${systemPrompt}]\n\n[USER REQUEST]:\n${prompt}`
+      ? `[SYSTEM: ${systemPrompt}]\n[USER]:\n${prompt}`
       : prompt;
 
     let res = await fetch(url, {
@@ -206,7 +213,7 @@ export async function generateAIText(prompt: string, systemPrompt?: string): Pro
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ role: 'user', parts: [{ text: combinedPrompt }] }],
-        generationConfig: { temperature: 0.3, maxOutputTokens: 1200 },
+        generationConfig: { temperature, maxOutputTokens },
       }),
     });
 
@@ -218,7 +225,7 @@ export async function generateAIText(prompt: string, systemPrompt?: string): Pro
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: combinedPrompt }] }],
-          generationConfig: { temperature: 0.3, maxOutputTokens: 1200 },
+          generationConfig: { temperature, maxOutputTokens },
         }),
       });
     }
@@ -249,8 +256,8 @@ export async function generateAIText(prompt: string, systemPrompt?: string): Pro
       body: JSON.stringify({
         model: config.model || 'gpt-4o-mini',
         messages,
-        temperature: 0.3,
-        max_tokens: 1200,
+        temperature,
+        max_tokens: maxOutputTokens,
       }),
     });
 
@@ -271,43 +278,43 @@ export async function generateAIText(prompt: string, systemPrompt?: string): Pro
 
 /**
  * Analyzes Open Food Facts product telemetry and formulates retail merchandising directives.
+ * Token-optimized: slices ingredients, categories, and uses compact JSON schema.
  */
 export async function analyzeProductWithAI(
   product: ValidatedOpenFoodFactsProduct
 ): Promise<AIProductAnalysis> {
-  const prompt = `
-Analyze this retail food product from Open Food Facts telemetry for a premium grocery chain (FreshBasket / FreshGuard AI):
-- Product Name: ${product.productName || 'Unknown'}
+  // Token optimization: Compact input strings to prevent prompt ballooning
+  const ingredientsCompact = (product.ingredientsText || 'Not specified').slice(0, 250);
+  const categoriesCompact = (product.categories || []).slice(0, 4).join(', ') || 'General Grocery';
+
+  const prompt = `Retail food product:
+- Name: ${product.productName || 'Unknown'}
 - Brand: ${product.brands || 'Unknown'}
-- Categories: ${product.categories.join(', ') || 'General Grocery'}
-- Ingredients: ${product.ingredientsText || 'Not specified'}
-- Nutri-Score: ${product.nutriscoreGrade || 'N/A'}
-- NOVA Group: ${product.novaGroup ?? 'N/A'}
-- Allergens: ${product.allergens || 'None declared'}
-- Serving Size / Quantity: ${product.quantity || product.servingSize || 'Standard'}
+- Category: ${categoriesCompact}
+- Ingredients: ${ingredientsCompact}
+- NutriScore: ${product.nutriscoreGrade || 'N/A'}
+- NOVA: ${product.novaGroup ?? 'N/A'}
 
-Produce a structured JSON response with this exact schema:
+Return JSON strictly:
 {
-  "freshnessRiskScore": <number between 5 and 95>,
-  "freshnessRiskLevel": <"Low" | "Moderate" | "Elevated" | "Critical">,
-  "storageRecommendation": <brief storage temperature and humidity directive>,
-  "temperatureTarget": <e.g. "2°C - 4°C" or "Ambient 18°C">,
-  "shelfLifeEstimate": <estimated retail shelf life, e.g. "3 - 5 Days after display" or "12 Months ambient">,
+  "freshnessRiskScore": <5-95>,
+  "freshnessRiskLevel": <"Low"|"Moderate"|"Elevated"|"Critical">,
+  "storageRecommendation": <concise storage temp/humidity directive>,
+  "temperatureTarget": <e.g. "2°C - 4°C">,
+  "shelfLifeEstimate": <e.g. "3-5 Days">,
   "markdownStrategy": [
-    { "daysRemaining": "5 Days", "discountPct": "15%", "action": "First markdown tag" },
-    { "daysRemaining": "2 Days", "discountPct": "35%", "action": "Flash sale endcap" },
-    { "daysRemaining": "1 Day", "discountPct": "60%", "action": "Final clearance / deli repurpose" }
+    { "daysRemaining": "5d", "discountPct": "15%", "action": "Markdown tag" },
+    { "daysRemaining": "2d", "discountPct": "35%", "action": "Endcap promo" },
+    { "daysRemaining": "1d", "discountPct": "60%", "action": "Clearance" }
   ],
-  "merchandisingDirectives": [<3 concise bullet points for store staff regarding placement, rotation, and display lighting>],
-  "qualityControlAudit": [<3 key visual/olfactory criteria for daily staff inspection>],
-  "executiveSummary": <concise 2-sentence executive summary of wastage sensitivity and turnover velocity>
-}
-Respond strictly with valid JSON. No markdown backticks if possible, or inside standard json fences.
-`;
+  "merchandisingDirectives": [<3 concise directives>],
+  "qualityControlAudit": [<3 inspection cues>],
+  "executiveSummary": <concise 2-sentence summary>
+}`;
 
-  const systemPrompt = 'You are FreshGuard AI, an elite retail operations and perishable inventory intelligence agent for upscale supermarket chains. Output valid JSON only.';
+  const systemPrompt = 'FreshGuard AI inventory analyst. Output compact valid JSON only.';
 
-  const { text, source } = await generateAIText(prompt, systemPrompt);
+  const { text, source } = await generateAIText(prompt, systemPrompt, { maxOutputTokens: 500, temperature: 0.2 });
 
   try {
     const cleanedJson = text.replace(/```json/gi, '').replace(/```/g, '').trim();

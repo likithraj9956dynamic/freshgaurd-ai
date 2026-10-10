@@ -162,8 +162,8 @@ export function NetworkPage() {
             <StoreDetail
               store={selected}
               transfers={transfers.filter((t) => t.sourceStoreId === selected.storeId || t.destinationStoreId === selected.storeId)}
-              onViewStore={() => navigate(`/stores/${selected.storeId}`)}
-              onInvestigate={() => navigate('/investigations/issue-001')}
+              onViewStore={() => navigate(`/manager/stores/${selected.storeId}`)}
+              onInvestigate={() => navigate(`/manager/investigations/${selected.storeId}`)}
               isCritical={selected.status === 'critical'}
             />
           ) : (
@@ -241,7 +241,7 @@ function StoreDetail({
           </button>
           {isCritical && (
             <button type="button" onClick={onInvestigate} className="btn-secondary w-full text-xs justify-center py-2">
-              Investigate Store 017
+              Investigate Branch #{store.storeId}
             </button>
           )}
         </div>

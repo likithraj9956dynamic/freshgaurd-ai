@@ -72,7 +72,7 @@ export function StoreTasksPage() {
             Daily Directives Ledger
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Store #017 (Tacoma Downtown) · Advance items through Acknowledged → In-Progress → Completed
+            FB-17 (Marathahalli) · Advance items through Acknowledged → In-Progress → Completed
           </p>
         </div>
 

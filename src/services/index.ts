@@ -67,8 +67,6 @@ export * from './openfoodfacts';
 export * from './ai';
 export * from './ai-store';
 
-// --- Real Backend API Client (Express + Prisma) ---
-// Use these functions to make live calls to /api/v1/* when backend is deployed.
-export * from './api-client';
-
+// --- Machine Learning Intelligence ---
+export * from './ml';
 

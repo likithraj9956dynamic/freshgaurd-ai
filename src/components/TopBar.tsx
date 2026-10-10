@@ -13,8 +13,9 @@ const pageMeta: Record<string, { title: string; category: string }> = {
   // Main Manager
   '/': { title: 'Operations Overview', category: 'Executive Briefing' },
   '/manager': { title: 'Operations Overview', category: 'Network Briefing' },
-  '/manager/network': { title: 'Store Network', category: '12 Regional Branches' },
-  '/manager/stores/1012': { title: 'Store 017 Investigation', category: 'Tacoma Downtown Branch' },
+  '/manager/access-management': { title: 'User Access Governance', category: 'Role Authorizations & Requests' },
+  '/manager/network': { title: 'Store Network', category: '25 Regional Branches' },
+  '/manager/stores/FB-17': { title: 'FB-17 Marathahalli Dossier', category: 'Marathahalli Branch' },
   '/manager/investigations': { title: 'AI Investigations', category: 'Causal Root Analysis' },
   '/manager/decisions': { title: 'Decision Chamber', category: 'Strategy Simulation' },
   '/manager/actions': { title: 'Action Governance', category: 'Approvals Ledger' },
@@ -22,7 +23,7 @@ const pageMeta: Record<string, { title: string; category: string }> = {
   '/manager/settings': { title: 'System Settings', category: 'Configurations & Model Keys' },
 
   // Store Manager
-  '/store': { title: 'Store Overview', category: 'Branch #017 (Tacoma)' },
+  '/store': { title: 'Store Overview', category: 'Assigned Branch' },
   '/store/tasks': { title: 'Daily Tasks Ledger', category: 'Floor Directives' },
   '/store/inventory': { title: 'Inventory & Expiry', category: 'Shelf-Life Surveillance' },
   '/store/alerts': { title: 'Wastage & Spoilage', category: 'Shrinkage Logs' },

@@ -55,13 +55,13 @@ export function SupplierDeliveriesPage() {
           <div className="space-y-1.5">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
               <CalendarClock className="w-3.5 h-3.5 text-emerald-700" />
-              <span>Cascade Fresh Distributors · Fleet Logistics Ledger</span>
+              <span>Logistics & Fleet Network Ledger</span>
             </div>
             <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
               Delivery Fleet Schedules & Telemetry
             </h1>
             <p className="text-xs sm:text-sm text-slate-500">
-              Real-time monitoring of refrigerated freight, driver manifests, carrier ETAs, and sensor telemetry across Pacific Northwest receiving docks.
+              Real-time monitoring of refrigerated freight, driver manifests, carrier ETAs, and sensor telemetry across retail franchise receiving docks.
             </p>
           </div>
 
@@ -178,7 +178,7 @@ export function SupplierDeliveriesPage() {
               {isDelayed && (
                 <div className="p-3 rounded bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-rose-600 flex-shrink-0" />
-                  <span>Freight transit delay logged on I-5 corridor. FreshBasket Store 017 dock master notified.</span>
+                  <span>Freight transit delay logged on Outer Ring Road corridor. FreshBasket FB-17 (Marathahalli) dock master notified.</span>
                 </div>
               )}
             </div>

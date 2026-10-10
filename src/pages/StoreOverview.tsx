@@ -39,7 +39,7 @@ export function StoreOverviewPage() {
 
   if (isLoading) return <LoadingState message="Accessing secure store archives..." />;
 
-  const currentStoreId = storeId || '1012';
+  const currentStoreId = storeId || data?.stores?.[0]?.id || 'FB-01';
 
   // Data isolation guard: Store Manager can only view their assigned store; Supplier cannot view store dossiers
   if (user && !canAccessStore(currentStoreId)) {
@@ -47,15 +47,23 @@ export function StoreOverviewPage() {
   }
   const store = data?.stores?.find((s) => s.id === currentStoreId);
   const issues = data?.issues?.filter((i) => i.storeId === currentStoreId) || [];
-  const wastage = currentStoreId === '1012' ? data?.wastage || [] : [];
-  const purchaseOrders = currentStoreId === '1012' && data?.purchaseOrder ? [data.purchaseOrder] : [];
+  const wastage = data?.wastage?.filter?.((w: any) => w.storeId === currentStoreId || !w.storeId) || data?.wastage || [];
+  const purchaseOrders = data?.purchaseOrder ? [data.purchaseOrder].filter((po: any) => po.storeId === currentStoreId || !po.storeId) : [];
   const sales = data?.sales;
 
   if (!store) {
     return <EmptyState title="Store Not Located" description="The requested franchise location does not exist in network records." />;
   }
 
-  const isStore17 = currentStoreId === '1012';
+  const revenueVariance = store.revenueTarget > 0
+    ? Math.round(((store.revenueActual - store.revenueTarget) / store.revenueTarget) * 100)
+    : 0;
+  const isCriticalOrAtRisk = store.status === 'critical' || store.status === 'at-risk' || revenueVariance < -10;
+  const wastageSurge = isCriticalOrAtRisk ? '+28%' : store.status === 'warning' ? '+14%' : '+2.4%';
+  const stockoutCount = isCriticalOrAtRisk ? '12 SKU' : store.status === 'warning' ? '5 SKU' : '1 SKU';
+  const baselineFootfall = Math.round(store.totalSquareFootage * 0.08);
+  const currentFootfall = isCriticalOrAtRisk ? Math.round(baselineFootfall * 0.95) : baselineFootfall;
+  const completedPurchases = isCriticalOrAtRisk ? Math.round(baselineFootfall * 0.33) : Math.round(baselineFootfall * 0.42);
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
@@ -113,20 +121,22 @@ export function StoreOverviewPage() {
             </span>
             <span className="text-[10px] text-slate-500">Target: ${store.revenueTarget.toLocaleString()}</span>
           </div>
-          <div className="p-3 rounded bg-rose-50 border border-rose-200">
-            <span className="text-[11px] font-semibold text-rose-700 uppercase tracking-wide block">Sales Variance</span>
-            <span className="text-xl font-bold text-rose-800 mt-0.5 block">-18%</span>
-            <span className="text-[10px] text-rose-600">Past 4-week window</span>
+          <div className={`p-3 rounded border ${revenueVariance < 0 ? 'bg-rose-50 border-rose-200' : 'bg-emerald-50 border-emerald-200'}`}>
+            <span className={`text-[11px] font-semibold uppercase tracking-wide block ${revenueVariance < 0 ? 'text-rose-700' : 'text-emerald-700'}`}>Sales Variance</span>
+            <span className={`text-xl font-bold mt-0.5 block ${revenueVariance < 0 ? 'text-rose-800' : 'text-emerald-800'}`}>
+              {revenueVariance > 0 ? `+${revenueVariance}%` : `${revenueVariance}%`}
+            </span>
+            <span className={`text-[10px] ${revenueVariance < 0 ? 'text-rose-600' : 'text-emerald-600'}`}>Past 4-week window</span>
           </div>
-          <div className="p-3 rounded bg-rose-50 border border-rose-200">
-            <span className="text-[11px] font-semibold text-rose-700 uppercase tracking-wide block">Wastage Surge</span>
-            <span className="text-xl font-bold text-rose-800 mt-0.5 block">+28%</span>
-            <span className="text-[10px] text-rose-600">Escalating spoilage</span>
+          <div className={`p-3 rounded border ${isCriticalOrAtRisk ? 'bg-rose-50 border-rose-200' : 'bg-slate-50 border-slate-200'}`}>
+            <span className={`text-[11px] font-semibold uppercase tracking-wide block ${isCriticalOrAtRisk ? 'text-rose-700' : 'text-slate-600'}`}>Wastage Rate</span>
+            <span className={`text-xl font-bold mt-0.5 block ${isCriticalOrAtRisk ? 'text-rose-800' : 'text-slate-800'}`}>{wastageSurge}</span>
+            <span className={`text-[10px] ${isCriticalOrAtRisk ? 'text-rose-600' : 'text-slate-500'}`}>{isCriticalOrAtRisk ? 'Escalating spoilage' : 'Baseline tolerance'}</span>
           </div>
-          <div className="p-3 rounded bg-amber-50 border border-amber-200">
-            <span className="text-[11px] font-semibold text-amber-800 uppercase tracking-wide block">Stockout Count</span>
-            <span className="text-xl font-bold text-amber-900 mt-0.5 block">12 SKU</span>
-            <span className="text-[10px] text-amber-700">Fast-moving items</span>
+          <div className={`p-3 rounded border ${isCriticalOrAtRisk ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-200'}`}>
+            <span className={`text-[11px] font-semibold uppercase tracking-wide block ${isCriticalOrAtRisk ? 'text-amber-800' : 'text-slate-600'}`}>Stockout Count</span>
+            <span className={`text-xl font-bold mt-0.5 block ${isCriticalOrAtRisk ? 'text-amber-900' : 'text-slate-800'}`}>{stockoutCount}</span>
+            <span className={`text-[10px] ${isCriticalOrAtRisk ? 'text-amber-700' : 'text-slate-500'}`}>{isCriticalOrAtRisk ? 'Fast-moving items' : 'Standard buffer'}</span>
           </div>
         </div>
       </section>
@@ -178,11 +188,14 @@ export function StoreOverviewPage() {
                 <span className="inline-flex items-center text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
                   Observed Operational Facts
                 </span>
-                <h3 className="text-lg font-semibold text-slate-900 pt-1">The 4-Week Anomaly Breakdown</h3>
+                <h3 className="text-lg font-semibold text-slate-900 pt-1">
+                  {store.name} Operational Anomaly Breakdown
+                </h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-3xl">
-                  Store 017 exhibits a severe disparity between footfall and revenue conversion. Customers continue
-                  visiting the store (-5%), yet transactions are down -15% and revenue is down -18%. Shelves in fast-moving
-                  produce and dairy are depleted.
+                  {isCriticalOrAtRisk
+                    ? `${store.name} exhibits an operational disparity in the ${store.location.area} branch. While store footfall remains active (~${currentFootfall.toLocaleString()} shoppers), transaction conversion is depressed and revenue is tracking at ${revenueVariance}% (${store.revenueActual.toLocaleString()} actual vs ${store.revenueTarget.toLocaleString()} target). Core fresh categories require inventory replenishment.`
+                    : `${store.name} (${store.id}) is operating within steady baseline operational parameters in the ${store.location.area} cluster. Revenue variance is tracking at ${revenueVariance}% ($${store.revenueActual.toLocaleString()} vs budget of $${store.revenueTarget.toLocaleString()}) with normal shelf inventory velocity.`
+                  }
                 </p>
               </div>
 
@@ -193,23 +206,31 @@ export function StoreOverviewPage() {
                 <div className="space-y-3">
                   <div className="p-3.5 rounded bg-slate-50 border border-slate-200">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-700">Footfall vs Transaction Gap</span>
-                      <span className="text-xs font-mono font-bold text-rose-700">-10% Spread</span>
+                      <span className="text-xs font-semibold text-slate-700">Footfall vs Transaction Spread</span>
+                      <span className={`text-xs font-mono font-bold ${isCriticalOrAtRisk ? 'text-rose-700' : 'text-emerald-700'}`}>
+                        {isCriticalOrAtRisk ? '-10% Spread' : 'Nominal (Balanced)'}
+                      </span>
                     </div>
                     <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
-                      2,090 shoppers entered the store (down only 5% from 2,200), but only 685 completed purchases
-                      (down 15% from 806). Customers left without purchasing intended fresh items.
+                      {isCriticalOrAtRisk
+                        ? `${currentFootfall.toLocaleString()} shoppers entered the ${store.name} store, but only ${completedPurchases.toLocaleString()} completed full purchases due to stockout depletion in perishable lines.`
+                        : `${currentFootfall.toLocaleString()} shoppers entered ${store.name}, with ${completedPurchases.toLocaleString()} completed checkouts matching anticipated basket sizes for this location.`
+                      }
                     </p>
                   </div>
 
                   <div className="p-3.5 rounded bg-slate-50 border border-slate-200">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-700">Concurrent Spoilage Surge</span>
-                      <span className="text-xs font-mono font-bold text-rose-700">+28% Spoilage</span>
+                      <span className="text-xs font-semibold text-slate-700">Wastage &amp; Fresh Loss Rate</span>
+                      <span className={`text-xs font-mono font-bold ${isCriticalOrAtRisk ? 'text-rose-700' : 'text-emerald-700'}`}>
+                        {wastageSurge}
+                      </span>
                     </div>
                     <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
-                      While fast-movers were stocked out, slower-moving organic greens and beef sustained spoilage
-                      prior to sale, indicating receiving schedule friction and shelf-rotation breakdowns.
+                      {isCriticalOrAtRisk
+                        ? `While high-velocity items were depleted, slower-moving fresh greens sustained spoilage prior to sale, indicating receiving schedule friction and shelf-rotation breakdowns in the ${store.location.area} branch.`
+                        : `Wastage is tracking within healthy tolerance across dairy, bakery, and produce sections for ${store.name}.`
+                      }
                     </p>
                   </div>
                 </div>
@@ -289,8 +310,10 @@ export function StoreOverviewPage() {
                 </span>
                 <h3 className="text-lg font-semibold text-slate-900 pt-1">Separating Fact from Assumption</h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  We resist jumping to premature single-cause conclusions. While late delivery CF-10482 occurred,
-                  it may only account for a portion of the -18% sales decline.
+                  {isCriticalOrAtRisk
+                    ? `Diagnostic protocol for ${store.name}. While localized logistics disruptions occurred, root cause assessment examines both fulfilment velocity and in-store merchandising.`
+                    : `Baseline diagnostic protocol for ${store.name}. Telemetry indicates stable operations with minimal disruption across fresh categories.`
+                  }
                 </p>
               </div>
 
@@ -298,15 +321,20 @@ export function StoreOverviewPage() {
                 <div className="p-4 rounded bg-emerald-50 border border-emerald-200 space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                      Leading Hypothesis · Confidence 62%
+                      Leading Hypothesis · Confidence {isCriticalOrAtRisk ? '64%' : '91%'}
                     </span>
                   </div>
                   <h4 className="text-sm font-semibold text-slate-900">
-                    Availability Gaps from Supplier Delivery Caused Empty Baskets
+                    {isCriticalOrAtRisk
+                      ? `Availability Gaps from Inbound Route Impacted ${store.name}`
+                      : `Normal Replenishment Velocity Maintained at ${store.name}`
+                    }
                   </h4>
                   <p className="text-xs text-slate-700 leading-relaxed">
-                    Shoppers seeking weekly fresh essentials left the store empty-handed or bought partial baskets
-                    at competitors in Tacoma Downtown.
+                    {isCriticalOrAtRisk
+                      ? `Shoppers seeking weekly essentials at ${store.name} in ${store.location.area} encountered stockouts in fast-moving items, impacting overall basket size.`
+                      : `Inventory turnover and replenishment cycles in ${store.location.area} are meeting demand forecasts.`
+                    }
                   </p>
                 </div>
 
@@ -315,10 +343,10 @@ export function StoreOverviewPage() {
                     Alternative Hypothesis A
                   </span>
                   <h4 className="text-sm font-semibold text-slate-900">
-                    Store Replenishment Gaps &amp; Stockroom Misplacement
+                    Store Replenishment Gaps &amp; Stockroom Staging
                   </h4>
                   <p className="text-xs text-slate-600 leading-relaxed">
-                    Staff shortages during peak hours may have left delivered crates unstacked in cold storage.
+                    Peak-hour store staffing allocation in {store.location.area} may impact shelf restocking velocity during high footfall periods.
                   </p>
                 </div>
 
@@ -327,10 +355,10 @@ export function StoreOverviewPage() {
                     Alternative Hypothesis B
                   </span>
                   <h4 className="text-sm font-semibold text-slate-900">
-                    Downtown Competitor Promotional Cannibalization
+                    Regional Micro-Market Promotional Shifts
                   </h4>
                   <p className="text-xs text-slate-600 leading-relaxed">
-                    Aggressive rival produce discounting during the same 4-week window could suppress sales.
+                    Rival retail promotions in the {store.location.area} market corridor may influence peripheral produce category shopping patterns.
                   </p>
                 </div>
               </div>
@@ -346,7 +374,7 @@ export function StoreOverviewPage() {
                 </span>
                 <h3 className="text-lg font-semibold text-slate-900 pt-1">Recommended Tactical Interventions</h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Immediate restorative actions requiring head office human sign-off prior to execution.
+                  Immediate restorative actions requiring head office human sign-off prior to execution for {store.name}.
                 </p>
               </div>
 
@@ -356,10 +384,9 @@ export function StoreOverviewPage() {
                     <span className="text-[10px] font-semibold text-emerald-700 uppercase tracking-wide">
                       Intervention A · Immediate
                     </span>
-                    <h4 className="text-sm font-semibold text-slate-900">Emergency Inter-Store Stock Transfer</h4>
+                    <h4 className="text-sm font-semibold text-slate-900">Inter-Store Stock Balancing</h4>
                     <p className="text-xs text-slate-600 leading-relaxed">
-                      Dispatch refrigerated transfer of 34 units of Baby Spinach and 28 lbs of Chicken from Cedar Hills/Gresham
-                      surplus stores. Restores top shelves within 6 hours.
+                      Dispatch balanced transfer of surplus produce from adjacent network branches to {store.name}. Restores core display shelves within 6 hours.
                     </p>
                   </div>
                   <button
@@ -376,10 +403,9 @@ export function StoreOverviewPage() {
                     <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">
                       Intervention B · Governance
                     </span>
-                    <h4 className="text-sm font-semibold text-slate-900">Supplier Escalation with Cascade Fresh</h4>
+                    <h4 className="text-sm font-semibold text-slate-900">Supplier Fulfilment Verification</h4>
                     <p className="text-xs text-slate-600 leading-relaxed">
-                      Issue formal Service Level Agreement (SLA) penalty notice for PO CF-10482 breach and require
-                      priority re-route for tomorrow morning.
+                      Issue route performance notification for deliveries servicing {store.name} ({store.location.area}) and confirm next intake schedule.
                     </p>
                   </div>
                   <button
@@ -431,7 +457,7 @@ export function StoreOverviewPage() {
           </div>
 
           <div className="space-y-2">
-            {purchaseOrders.map((po) => (
+            {purchaseOrders.map((po: any) => (
               <div key={po.id} className="bg-white p-3.5 rounded-lg border border-slate-200 shadow-sm space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-mono font-bold text-slate-800">{po.orderNumber} · {po.supplier}</span>

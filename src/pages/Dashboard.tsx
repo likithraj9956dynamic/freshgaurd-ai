@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDemos } from '../hooks/useDemos';
 import { LoadingState, EmptyState } from '../components/state';
 import type { Store, DetectedIssue, Investigation, DecisionOption, Action } from '../types';
+import { MlIntelligenceCard } from '../components/MlIntelligenceCard';
 import {
   AlertTriangle,
   Store as StoreIcon,
@@ -24,7 +25,9 @@ import {
   Megaphone,
   ScanBarcode,
   Clock,
-  ShieldAlert
+  ShieldAlert,
+  UserCheck,
+  Users
 } from 'lucide-react';
 
 export function DashboardPage() {
@@ -95,11 +98,18 @@ export function DashboardPage() {
 
         <div className="flex items-center gap-2">
           <Link
-            to="/manager/stores/1012"
+            to="/manager/access-management"
+            className="btn-secondary text-xs flex items-center gap-1.5"
+          >
+            <UserCheck className="w-3.5 h-3.5" />
+            <span>User Access & Approvals</span>
+          </Link>
+          <Link
+            to="/manager/stores/FB-17"
             className="btn-primary text-xs flex items-center gap-1.5"
           >
             <ShieldAlert className="w-3.5 h-3.5" />
-            <span>Inspect Store 017 (Critical)</span>
+            <span>Inspect FB-17 Marathahalli (Critical)</span>
           </Link>
         </div>
       </div>
@@ -110,10 +120,10 @@ export function DashboardPage() {
           <AlertTriangle className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
           <div className="space-y-0.5">
             <span className="font-semibold text-slate-900 block">
-              Operational Priority Alert: 2 of 12 Stores Require Intervention
+              Operational Priority Alert: 2 of 25 Stores Require Intervention
             </span>
             <p className="text-slate-600 leading-relaxed">
-              Store 017 (Tacoma Downtown) has 12 out-of-stock products, delayed supplier delivery CF-10482, and a -17.95% sales decline. Store 003 (Southcenter) shows abnormal dairy shrinkage.
+              FB-17 (Marathahalli) has 12 out-of-stock products, delayed supplier delivery, and a -17.95% sales decline. FB-03 (Banashankari) shows abnormal dairy shrinkage.
             </p>
           </div>
         </div>
@@ -149,7 +159,7 @@ export function DashboardPage() {
             {attentionStores.length} <span className="text-xs font-normal text-slate-500">/ {stores.length} total</span>
           </div>
           <p className="text-[11px] text-slate-500">
-            Store 017 (Critical) &amp; Store 003 (At-Risk)
+            FB-17 (Critical) &amp; FB-03 (At-Risk)
           </p>
         </div>
 
@@ -165,7 +175,7 @@ export function DashboardPage() {
             18 <span className="text-xs font-normal text-slate-500">SKUs network-wide</span>
           </div>
           <p className="text-[11px] text-slate-500">
-            12 concentrated in produce &amp; poultry at Store 017
+            12 concentrated in produce &amp; poultry at FB-17 Marathahalli
           </p>
         </div>
 
@@ -197,11 +207,14 @@ export function DashboardPage() {
             +4.2% <span className="text-xs font-normal text-slate-500">vs target</span>
           </div>
           <p className="text-[11px] text-slate-500">
-            +28% localized increase at Tacoma branch
+            +28% localized increase at Marathahalli branch
           </p>
         </div>
 
       </div>
+
+      {/* 3b. Machine Learning Perishable Intelligence Engine (Trained Models) */}
+      <MlIntelligenceCard />
 
       {/* 4. Priority Issues Table Section */}
       <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
@@ -352,6 +365,54 @@ export function DashboardPage() {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* 6. User Access Management Summary (Security & Governance) */}
+      <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
+        <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded bg-[#164e3d] text-white flex items-center justify-center">
+              <UserCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-semibold text-slate-900">
+                User Access & Role Governance
+              </h2>
+              <p className="text-xs text-slate-500">
+                Review pending applicant registrations and authorize store and supplier roles
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/manager/access-management"
+            className="btn-primary text-xs flex items-center gap-1"
+          >
+            <span>Review Access Requests</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+        <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
+          <div className="flex items-center gap-6">
+            <div>
+              <span className="text-slate-400 block text-[11px]">Pending Reviews</span>
+              <span className="text-base font-bold text-amber-700">2 Requests</span>
+            </div>
+            <div className="border-l border-slate-200 pl-6">
+              <span className="text-slate-400 block text-[11px]">Authorized Directory</span>
+              <span className="text-base font-bold text-slate-900">3 Users Active</span>
+            </div>
+            <div className="border-l border-slate-200 pl-6">
+              <span className="text-slate-400 block text-[11px]">Role Validation</span>
+              <span className="text-emerald-700 font-semibold flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                Backend Enforced
+              </span>
+            </div>
+          </div>
+          <p className="text-slate-500 max-w-sm text-[11px] leading-relaxed">
+            Main Managers have sole authority to grant branch and supplier access across the FreshBasket network.
+          </p>
         </div>
       </div>
 

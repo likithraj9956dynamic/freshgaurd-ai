@@ -1,4 +1,4 @@
-﻿import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { SalesService } from '../services/sales.service';
 import { InventoryService } from '../services/inventory.service';
 import { WastageService } from '../services/wastage.service';

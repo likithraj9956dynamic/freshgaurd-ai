@@ -1,7 +1,7 @@
-﻿import { prisma } from '../config/prisma';
+import { prisma } from '../config/prisma';
 import { StoreService } from './store.service';
 import { AnalyticsEngineService } from './analytics.service';
-import { AiAdapter, EvidenceBundle } from './ai/aiAdapter';
+import { AiAdapter, type EvidenceBundle } from './ai/aiAdapter';
 import { NotFoundError } from '../utils/errors';
 
 export interface CausalNode {
@@ -173,8 +173,8 @@ export class InvestigationEngineService {
       {
         id: 'node_inventory_shortage',
         entityType: 'inventory',
-        entityId: `${storeId}_FOODS_1_001`,
-        label: 'Zero Safety Stock (Organic Milk & Salmon)',
+        entityId: `${storeId}_SKU-001`,
+        label: 'Zero Safety Stock (Milk Bread & Toned Milk)',
         nodeType: 'intermediate_driver',
         data: {
           currentStock: 0,
@@ -282,7 +282,7 @@ export class InvestigationEngineService {
         evidenceType: 'telemetry',
         data: {
           stockoutRate: `${health.stockoutRatePct}%`,
-          zeroStockSKUs: ['FOODS_1_001', 'FOODS_1_006'],
+          zeroStockSKUs: ['SKU-001', 'SKU-007'],
           safetyStockTarget: 15,
         },
         verified: true,

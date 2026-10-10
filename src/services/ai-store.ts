@@ -41,7 +41,7 @@ const INITIAL_COPILOT_MESSAGES: CopilotMessage[] = [
   {
     id: 'msg-welcome',
     role: 'assistant',
-    content: `**Welcome to FreshGuard AI Executive Copilot.**\n\nI am connected to the FreshBasket operations telemetry network. You can ask me to analyze Store 017's stockouts, simulate dynamic markdowns, recommend inter-store transfers, or audit any product barcode.`,
+    content: `**Welcome to FreshGuard AI Executive Copilot.**\n\nI am connected to the FreshBasket operations telemetry network. You can ask me to analyze FB-17 (Marathahalli)'s stockouts, simulate dynamic markdowns, recommend inter-store transfers, or audit any product barcode.`,
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
   },
 ];
@@ -122,10 +122,13 @@ export const useAIStore = create<AIStoreState>((set, get) => {
         isCopilotLoading: true,
       }));
 
-      const systemPrompt = `You are FreshGuard AI, the operations intelligence assistant for the FreshBasket supermarket network. You specialize in retail analytics, food waste prevention, cold-chain logistics, and store management. Be direct, authoritative, and concise. Format with bullet points and bold highlights.`;
+      const systemPrompt = `You are FreshGuard AI, the operations intelligence assistant for the FreshBasket supermarket network. Specialize in retail analytics, perishable food waste prevention, and cold-chain logistics. Be direct, authoritative, and concise. Answer in 120 words or fewer using bullet points.`;
 
       try {
-        const { text: aiResponseText, source } = await generateAIText(trimmed, systemPrompt);
+        const { text: aiResponseText, source } = await generateAIText(trimmed, systemPrompt, {
+          maxOutputTokens: 350,
+          temperature: 0.2,
+        });
 
         const assistantMsg: CopilotMessage = {
           id: `ai-${Date.now()}`,
